@@ -1,50 +1,133 @@
 # [PROJECT_NAME] Constitution
+
 <!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
+### [Simplicity and Usability]
+
 <!-- Example: I. Library-First -->
+
 [PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+The system must be simple, intuitive, and immediately usable without training.
 
-### [PRINCIPLE_2_NAME]
+Clean and minimal user interfaces
+
+Attendance marking completed in seconds
+
+Fully usable on both desktop and mobile devices
+
+### [Speed and Performance]
+
 <!-- Example: II. CLI Interface -->
+
 [PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+The system must provide fast response times, especially during QR Code attendance.
 
-### [PRINCIPLE_3_NAME]
+Near-instant QR Code scanning and validation
+
+Optimized server-side processing and database access
+
+No user action should depend on long or blocking operation
+
+### [Simple and Maintainable Architecture]
+
 <!-- Example: III. Test-First (NON-NEGOTIABLE) -->
+
 [PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+The project architecture must remain intentionally simple and easy to understand.
 
-### [PRINCIPLE_4_NAME]
+Use of an MVC architecture
+
+Clear separation of concerns (Model, View, Controller)
+
+Preference for stable and proven technologies
+
+### [Data Integrity and Persistence]
+
 <!-- Example: IV. Integration Testing -->
+
 [PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+Attendance data is critical and must never be lost.
 
-### [PRINCIPLE_5_NAME]
+Use of a relational database
+
+Automatic data persistence and saving
+
+Guaranteed data consistency and integrity (transactions, constraints)
+
+### [Security, Privacy, and Compliance]
+
 <!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
 
-## [SECTION_2_NAME]
+[PRINCIPLE_5_DESCRIPTION]
+Security and personal data protection are non-negotiable.
+
+Full compliance with GDPR
+
+Secure access control (authentication and authorization)
+
+Confidentiality of personal data
+
+Fraud prevention mechanisms:
+
+One-time attendance per user
+
+Time-limited QR Code validity
+
+## [Functional and Non-Functional Constraints]
+
 <!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
 
 [SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+Fast and reliable QR Code attendance
 
-## [SECTION_3_NAME]
+Usable on both desktop and mobile platforms
+
+Consistently fast response times
+
+Full traceability of actions (who, when, what)
+
+Collection of personal data limited to what is strictly necessary
+
+## [Development Workflow and Quality Standards]
+
 <!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
 
 [SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+All features must comply with simplicity, performance, and security principles
+
+Changes must never compromise:
+
+Attendance speed
+
+Data protection and GDPR compliance
+
+Tests must cover:
+
+Attendance scenarios
+
+Fraud attempts
+
+Unauthorized access
 
 ## Governance
+
 <!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
 [GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other technical and functional decisions
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
+Any amendment must:
+
+Be documented
+
+Be justified
+
+Preserve simplicity, security, and GDPR compliance
+
+All pull requests and reviews must verify compliance with this constitution
+
+**Version**: [1.0.0] | **Ratified**: [2026-01-07] | **Last Amended**: [2026-01-07]
+
 <!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->

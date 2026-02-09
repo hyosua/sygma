@@ -1,0 +1,67 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sygma-backend
+    volumes:
+      - ./backend:/var/www/html
+    ports:
+      - "8000:8000"
+    env_file:
+    - ./backend/.env
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=sygma
+      - DB_USERNAME=sygma
+      - DB_PASSWORD=sygma_pass
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - sygma-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sygma-frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api
+    depends_on:
+      - backend
+    networks:
+      - sygma-network
+
+  db:
+    image: postgres:16-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sygma -d sygma"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    container_name: sygma-db
+    environment:
+      POSTGRES_DB: sygma
+      POSTGRES_USER: sygma
+      POSTGRES_PASSWORD: sygma_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - sygma-network
+
+networks:
+  sygma-network:
+    driver: bridge
+
+volumes:
+  pgdata:
