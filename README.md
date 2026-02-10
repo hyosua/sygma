@@ -12,12 +12,11 @@
 ## 💻 Configuration Windows (Recommandé)
 
 Pour que le projet soit fluide (pas de lenteurs React/Laravel), suivez cet ordre :
-1. Installez **Docker Desktop** avec le moteur **WSL2**.
+1. Télécharger et installer **Docker Desktop** avec le moteur **WSL2** [depuis le site officiel](https://www.docker.com/products/docker-desktop)
 2. **IMPORTANT** : Ne clonez pas le projet sur votre Bureau ou dans "Mes Documents". 
    - Ouvrez un terminal Ubuntu (WSL).
    - Clonez le projet dans votre `home` Linux : `cd ~ && mkdir projects && cd projects`.
    - Ouvrez ce dossier dans VS Code via l'extension "WSL".
-
 ---
 
 ## ⚡️ Premier Setup (Installation)
