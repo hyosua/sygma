@@ -34,7 +34,7 @@ Pour garantir des performances optimales et éviter les bugs de fichiers entre W
 
 3. Clonez le dépôt :
    ```bash
-   git clone https://github.com/votre-organisation/sygma.git
+   git clone https://github.com/hyosua/sygma.git
    cd sygma
    ```
 
@@ -55,7 +55,7 @@ Une fois le projet ouvert dans VS Code (via WSL) :
 cp backend/.env.example backend/.env
 ```
 
-(Demandez les accès pour les variables sensibles si nécessaire).
+(Demandez les accès pour les variables env si je ne vous les ai pas déjà donnés).
 
 ### Lancement du projet
 
