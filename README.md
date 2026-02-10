@@ -1,90 +1,83 @@
-# Sygma - Gestion de Présence Numérique 🚀
+# Sygma - Gestion de Présence Numérique 
 
-Hello l'équipe ! Bienvenue sur le dépôt du projet Sygma. 
-
-Ce projet utilise une architecture moderne avec un **Backend Laravel 11**, un **Frontend React 18** et une base de données **PostgreSQL**. Tout est orchestré avec **Docker** pour que nous ayons tous exactement le même environnement, même sur Windows.
-
----
-
-## 🛠 Prérequis (Windows)
-
-Avant de commencer, installez ces deux outils indispensables :
-1.  **[Docker Desktop pour Windows](https://www.docker.com/products/docker-desktop/)**  
-    *⚠️ Lors de l'installation, assurez-vous de cocher l'option "Use WSL2 based engine" pour de meilleures performances.*
-2.  **[Git for Windows](https://gitforwindows.org/)** (qui installe "Git Bash").
+## 📋 Table des matières
+1. [💻 Configuration Windows (Recommandé)](#-configuration-windows-recommandé)
+2. [⚡️ Premier Setup (Installation)](#️-premier-setup-installation)
+3. [🛠 Session de travail quotidienne](#-session-de-travail-quotidienne)
+4. [🌿 Procédure Git & Collaboration](#-procédure-git--collaboration)
+5. [🌐 Accès & Commandes](#-accès--commandes)
 
 ---
 
-## ⚡️ Installation Rapide (First Setup)
+## 💻 Configuration Windows (Recommandé)
 
-Ouvrez un terminal (**Git Bash** ou **PowerShell**) dans le dossier où vous voulez mettre le projet :
+Pour que le projet soit fluide (pas de lenteurs React/Laravel), suivez cet ordre :
+1. Installez **Docker Desktop** avec le moteur **WSL2**.
+2. **IMPORTANT** : Ne clopez pas le projet sur votre Bureau ou dans "Mes Documents". 
+   - Ouvrez un terminal Ubuntu (WSL).
+   - Clonez le projet dans votre `home` Linux : `cd ~ && mkdir projects && cd projects`.
+   - Ouvrez ce dossier dans VS Code via l'extension "WSL".
 
-### 1. Cloner le projet
+---
+
+## ⚡️ Premier Setup (Installation)
+
+Une fois le projet cloné :
+
+1. **Fichiers d'environnement** :
+   Contactez [Ton Nom] pour récupérer les valeurs réelles du `.env`. Copiez-les dans `backend/.env`.
+
+2. **Lancement automatique** :
+   ```bash
+   # Build et démarrage des conteneurs
+   docker compose up -d --build
+
+   # Installation automatique (Backend + Frontend)
+   docker compose exec backend composer install
+   docker compose exec backend php artisan key:generate
+   docker compose exec backend php artisan migrate --seed
+   docker compose exec frontend npm install
+   ```
+
+---
+
+## 🛠 Session de travail quotidienne
+
+Plus besoin de tout réinstaller ! Chaque matin, faites simplement :
+
+- `git pull origin main` - Récupérer le travail des collègues
+- `docker compose up -d` - Lancer les serveurs
+- **Travaillez !** - Les changements de code sont répercutés en temps réel
+- En fin de journée : `docker compose stop`
+
+---
+
+## 🌿 Procédure Git & Collaboration
+
+Pour éviter de "casser" le projet des autres, respectons ce flux :
+
+### 1. Créer une branche pour chaque tâche
+
 ```bash
-git clone https://github.com/VOTRE_NOM/NOM_DU_PROJET.git
-cd Sygma
+git checkout -b "feat/nom-de-ta-fonctionnalite"
 ```
 
-### 2. Configurer l'environnement (.env)
-Il faut créer le fichier de configuration pour le backend.
-*   **Sur PowerShell / Git Bash :**
-    ```bash
-    cp backend/.env.example backend/.env
-    ```
-*   **Sur l'invite de commande (CMD) :**
-    ```cmd
-    copy backend\.env.example backend\.env
-    ```
+### 2. Avant de Push
 
-### 3. Lancer Docker
-Assurez-vous que **Docker Desktop est bien lancé** dans votre barre des tâches, puis :
+Assurez-vous que votre code fonctionne et faites un dernier pull :
+
 ```bash
-docker compose up -d --build
-```
-
-### 4. Initialiser le Backend (Laravel)
-On installe les dépendances PHP et on prépare la base de données :
-```bash
-# Installation des packages
-docker compose exec backend composer install
-
-# Génération de la clé de sécurité
-docker compose exec backend php artisan key:generate
-
-# Création des tables
-docker compose exec backend php artisan migrate
-```
-
-### 5. Initialiser le Frontend (React)
-On installe les dépendances JavaScript :
-```bash
-docker compose exec frontend npm install
+git pull origin main
+git add .
+git commit -m "Description claire de ce que j'ai fait"
+git push origin feat/nom-de-ta-fonctionnalite
 ```
 
 ---
 
-## 🌐 Accès à l'application
+## 🌐 Accès & Commandes
 
-Une fois que tout est lancé, vous pouvez accéder aux services ici :
+- **Front-end** : http://localhost:3000
+- **Back-end(API)** : http://localhost:8000
 
-*   **Frontend (React)** : [http://localhost:3000](http://localhost:3000)
-*   **Backend API (Laravel)** : [http://localhost:8000](http://localhost:8000)
-
----
-
-## 💡 Commandes Utiles (Windows)
-
-*   **Arrêter le projet** : `docker compose down`
-*   **Relancer le projet** : `docker compose up -d`
-*   **Voir ce qui se passe (Logs)** : `docker compose logs -f`
-*   **Accéder au terminal du backend** : `docker compose exec backend bash`
-
----
-
-## 🤝 Quelques règles pour collaborer
-
-1.  **Git Pull** : Avant de commencer à bosser, faites toujours un `git pull origin main`.
-2.  **Migrations** : Si vous voyez de nouveaux fichiers dans `backend/database/migrations`, lancez `docker compose exec backend php artisan migrate`.
-3.  **Docker** : Si vous avez une erreur bizarre après un pull, tentez un `docker compose up -d --build`.
-
-Si vous avez un souci de configuration sur Windows, envoyez-moi un message.
+Besoin d'aide ? Utilisez la commande `docker compose logs -f` et envoyez une capture d'écran du message d'erreur.

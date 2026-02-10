@@ -39,7 +39,7 @@ Thumbs.db
 .idea/
 *.log
 
-# config files
+# Misc
 .specify
 .gemini
 specs/001-presence-numerique
