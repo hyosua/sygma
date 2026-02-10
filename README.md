@@ -13,7 +13,7 @@
 
 Pour que le projet soit fluide (pas de lenteurs React/Laravel), suivez cet ordre :
 1. Installez **Docker Desktop** avec le moteur **WSL2**.
-2. **IMPORTANT** : Ne clopez pas le projet sur votre Bureau ou dans "Mes Documents". 
+2. **IMPORTANT** : Ne clonez pas le projet sur votre Bureau ou dans "Mes Documents". 
    - Ouvrez un terminal Ubuntu (WSL).
    - Clonez le projet dans votre `home` Linux : `cd ~ && mkdir projects && cd projects`.
    - Ouvrez ce dossier dans VS Code via l'extension "WSL".
@@ -25,7 +25,7 @@ Pour que le projet soit fluide (pas de lenteurs React/Laravel), suivez cet ordre
 Une fois le projet cloné :
 
 1. **Fichiers d'environnement** :
-   Contactez [Ton Nom] pour récupérer les valeurs réelles du `.env`. Copiez-les dans `backend/.env`.
+   Copiez les valeurs d'environnement dans `backend/.env`.
 
 2. **Lancement automatique** :
    ```bash
@@ -43,12 +43,12 @@ Une fois le projet cloné :
 
 ## 🛠 Session de travail quotidienne
 
-Plus besoin de tout réinstaller ! Chaque matin, faites simplement :
+Plus besoin de tout réinstaller ! À chaque session, faites simplement :
 
 - `git pull origin main` - Récupérer le travail des collègues
 - `docker compose up -d` - Lancer les serveurs
-- **Travaillez !** - Les changements de code sont répercutés en temps réel
-- En fin de journée : `docker compose stop`
+- **Codez** - Les changements de code sont répercutés en temps réel
+- En fin de session : `docker compose stop`
 
 ---
 

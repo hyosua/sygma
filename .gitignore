@@ -39,7 +39,8 @@ Thumbs.db
 .idea/
 *.log
 
-# Misc
+# IA
 .specify
 .gemini
+GEMINI.md
 specs/001-presence-numerique
