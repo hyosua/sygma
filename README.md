@@ -1,7 +1,7 @@
 # Sygma - Gestion de Présence Numérique 🚀
 
 ## 📋 Table des matières
-1. [💻 Configuration Windows (Recommandé)](#1-configuration-windows-recommandé)
+1. [💻 Configuration de l'environnement](#1-configuration-de-l'environnement)
 2. [📥 Mise en place du dépôt (Clonage)](#2-mise-en-place-du-dépôt-clonage)
 3. [⚡️ Premier Setup (Installation)](#3-premier-setup-installation)
 4. [🛠 Session de travail quotidienne](#4-session-de-travail-quotidienne)
@@ -11,13 +11,12 @@
 
 ---
 
-## 1. 💻 Configuration Windows (Recommandé)
+## 1. Configuration de l'environnement
 
-Pour garantir des performances optimales et éviter les bugs de fichiers entre Windows et Docker, suivez cet ordre :
-
-1. **Docker Desktop** : Installez-le avec le moteur **WSL2** activé. [Télécharger ici](https://www.docker.com/products/docker-desktop).
-2. **WSL2** : Ouvrez un PowerShell en administrateur et tapez `wsl --update` pour être à jour.
-3. **VS Code** : Installez l'extension officielle **"WSL"** de Microsoft.
+- **Docker Desktop** : [Installez-le](https://www.docker.com/products/docker-desktop) et assurez-vous qu'il tourne.  
+- **VS Code** : Installez l'extension officielle WSL de Microsoft.  
+- **Connexion** : Cliquez sur le bouton bleu "><" en bas à gauche de VS Code → **Connect to WSL**.  
+  *(Si Ubuntu n'est pas installé, VS Code vous proposera de le faire automatiquement).*
 
 ---
 
@@ -25,7 +24,7 @@ Pour garantir des performances optimales et éviter les bugs de fichiers entre W
 
 **⚠️ IMPORTANT :** Ne clonez pas le projet dans vos dossiers Windows habituels (Bureau, Documents). Pour que Docker soit rapide, le code doit être dans Linux.
 
-1. Ouvrez votre terminal **Ubuntu** (ou votre distribution WSL).
+1. Une fois que VS Code affiche **WSL: Ubuntu** en bas à gauche, ouvrez le terminal intégré (`Ctrl + ù`)
 2. Créez un dossier pour vos projets :
    ```bash
    cd ~
@@ -54,24 +53,40 @@ Une fois le projet ouvert dans VS Code (via WSL) :
 ```bash
 cp backend/.env.example backend/.env
 ```
-
 (Demandez les accès pour les variables env si je ne vous les ai pas déjà donnés).
 
 ### Lancement du projet
 
+Vous avez deux méthodes pour installer les dépendances et démarrer le projet :
+
+#### Option A : La méthode rapide (Recommandé)
+Utilisez le script automatisé qui s'occupe de tout (build, install, migrations, seed) :
+
 ```bash
-# Construction des images et démarrage
-docker compose up -d --build
-
-# Configuration du Backend
-docker compose exec backend composer install
-docker compose exec backend php artisan key:generate
-docker compose exec backend php artisan migrate --seed
-
-# Configuration du Frontend
-docker compose exec frontend npm install
+chmod +x sygma.sh
+./sygma.sh install
 ```
 
+#### Option B : La méthode manuelle
+Si vous préférez exécuter les commandes étape par étape :
+
+1. **Installation des dépendances** (une seule fois) :
+```bash
+docker compose build
+docker compose run --rm backend composer install
+docker compose run --rm frontend npm install
+```
+
+2. **Démarrage des serveurs** :
+```bash
+docker compose up -d
+```
+
+3. **Initialisation de la BDD** :
+```bash
+docker compose exec backend php artisan key:generate
+docker compose exec backend php artisan migrate --seed
+```
 ---
 
 ## 4. 🛠 Session de travail quotidienne
@@ -130,10 +145,10 @@ J'ai créé un script `./sygma.sh` pour vous simplifier la vie.
 Ne pas oublier de lui donner les permissions d'exécution avec `chmod +x sygma.sh`.
 *Pour l'utiliser sous Windows, faites-le depuis votre terminal WSL ou Git Bash.*
 
+* **Installation complète** : `./sygma.sh install` (Build + Install + Migrate)
 * **Démarrer le projet** : `./sygma.sh start`
-* **Tout installer (npm + composer)** : `./sygma.sh install`
-* **Mettre à jour la base de données** : `./sygma.sh migrate`
-* **Nettoyer le cache Laravel** : `./sygma.sh clear`
+* **Arrêter le projet** : `./sygma.sh stop`
+* **Réparer / Réinstaller** : `./sygma.sh repair` (Réinstalle les dépendances)
 
 ### 2. Installer de nouveaux packages
 Si vous avez besoin d'ajouter une dépendance spécifique :

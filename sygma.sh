@@ -2,33 +2,48 @@
 
 # Couleurs pour le terminal
 GREEN='\033[0;32m'
-NC='\033[0m' # No Color
-
-echo -e "${GREEN}🐘 Assistant Sygma v1.0${NC}"
+NC='\033[0m' # Pas de couleur
 
 case "$1" in
+    install)
+        echo -e "${GREEN}1. Construction des images...${NC}"
+        docker compose build
+        
+        echo -e "${GREEN}2. Installation des dépendances Backend (PHP)...${NC}"
+        docker compose run --rm backend composer install
+        
+        echo -e "${GREEN}3. Installation des dépendances Frontend (NPM)...${NC}"
+        docker compose run --rm frontend npm install
+        
+        echo -e "${GREEN}4. Lancement des conteneurs...${NC}"
+        docker compose up -d
+        
+        echo -e "${GREEN}5. Configuration finale (Key & Migrations)...${NC}"
+        docker compose exec backend php artisan key:generate
+        docker compose exec backend php artisan migrate --seed
+        
+        echo -e "${GREEN}✅ Installation terminée ! Accès : http://localhost:3000${NC}"
+        ;;
+        
     start)
         docker compose up -d
+        echo -e "${GREEN}🚀 Services démarrés !${NC}"
         ;;
+
     stop)
         docker compose stop
+        echo -e "${GREEN}🛑 Services arrêtés.${NC}"
         ;;
-    install)
-        echo "📦 Installation des dépendances..."
-        docker compose exec backend composer install
-        docker compose exec frontend npm install
+
+    repair)
+        echo -e "${GREEN}🔧 Réparation en cours (Nettoyage cache + réinstallation)...${NC}"
+        docker compose run --rm backend composer install
+        docker compose run --rm frontend npm install
+        docker compose restart
         ;;
-    migrate)
-        echo "🗄 Migration de la base de données..."
-        docker compose exec backend php artisan migrate
-        ;;
-    clear)
-        echo "🧹 Nettoyage du cache..."
-        docker compose exec backend php artisan config:clear
-        docker compose exec backend php artisan cache:clear
-        ;;
+
     *)
-        echo "Usage: ./sygma.sh {start|stop|install|migrate|clear}"
+        echo "Usage: ./sygma.sh {install|start|stop|repair}"
         exit 1
         ;;
 esac
