@@ -32,11 +32,11 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 Create database migrations for all tables (users, roles, courses, sessions, emargements, attendances, enrollments) in `backend/database/migrations/`
-- [ ] T006 Setup Laravel Sanctum for API authentication in `backend/app/Http/Kernel.php` and `backend/routes/api.php`
-- [ ] T007 [P] Setup Spatie Laravel-permission and seed initial roles (Etudiant, Professeur, Gestionnaire) in `backend/database/seeders/RolesAndPermissionsSeeder.php`
-- [ ] T008 [P] Create Eloquent models (User, Role, Course, CourseSession, EmargementSession, Attendance) in `backend/app/Models/`
-- [ ] T009 Setup global API error handling and logging in `backend/app/Exceptions/Handler.php`
+- [X] T005 Create database migrations for all tables (users, roles, courses, sessions, emargements, attendances, enrollments) in `backend/database/migrations/`
+- [X] T006 Setup Laravel Sanctum for API authentication in `backend/app/Http/Kernel.php` and `backend/routes/api.php`
+- [X] T007 [P] Setup Spatie Laravel-permission and seed initial roles (Etudiant, Professeur, Gestionnaire) in `backend/database/seeders/RolesAndPermissionsSeeder.php`
+- [X] T008 [P] Create Eloquent models (User, Role, Course, CourseSession, EmargementSession, Attendance) in `backend/app/Models/`
+- [X] T009 Setup global API error handling and logging in `backend/app/Exceptions/Handler.php`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
