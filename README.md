@@ -3,7 +3,7 @@
 ## 📋 Table des matières
 1. [💻 Configuration de l'environnement](#1-configuration-de-lenvironnement)
 2. [📥 Mise en place du dépôt (Clonage)](#2--mise-en-place-du-dépôt-clonage)
-3. [⚡️ Premier Setup (Installation)](#3--premier-setup-installation)
+3. [⚡️ Premier Setup (Installation)](#installation)
 4. [🛠 Session de travail quotidienne](#4--session-de-travail-quotidienne)
 5. [🌿 Procédure Git & Collaboration](#5--procédure-git--collaboration)
 6. [🌐 Accès & Commandes](#6--accès--commandes)
@@ -45,7 +45,7 @@
 
 ---
 
-## 3. ⚡️ Premier Setup (Installation)
+## 3. Premier Setup (Installation){#installation}
 
 Une fois le projet ouvert dans VS Code (via WSL) :
 
