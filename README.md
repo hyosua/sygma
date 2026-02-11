@@ -1,7 +1,7 @@
 # Sygma - Gestion de Présence Numérique 🚀
 
 ## 📋 Table des matières
-1. [💻 Configuration de l'environnement](#1-configuration-de-l'environnement)
+1. [💻 Configuration de l'environnement](#1-configuration-de-lenvironnement)
 2. [📥 Mise en place du dépôt (Clonage)](#2-mise-en-place-du-dépôt-clonage)
 3. [⚡️ Premier Setup (Installation)](#3-premier-setup-installation)
 4. [🛠 Session de travail quotidienne](#4-session-de-travail-quotidienne)
@@ -25,6 +25,7 @@
 **⚠️ IMPORTANT :** Ne clonez pas le projet dans vos dossiers Windows habituels (Bureau, Documents). Pour que Docker soit rapide, le code doit être dans Linux.
 
 1. Une fois que VS Code affiche **WSL: Ubuntu** en bas à gauche, ouvrez le terminal intégré (`Ctrl + ù`)
+![Fenêtre Wsl](screenshots/wsl-window.png)   
 2. Créez un dossier pour vos projets :
    ```bash
    cd ~

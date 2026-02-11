@@ -22,7 +22,9 @@ case "$1" in
         docker compose exec backend php artisan key:generate
         docker compose exec backend php artisan migrate --seed
         
-        echo -e "${GREEN}✅ Installation terminée ! Accès : http://localhost:3000${NC}"
+        echo -e "${GREEN}✅ Installation terminée !${NC}"
+        echo -e "Accès Front-end : http://localhost:3000${NC}"
+        echo -e "Accès Back-end : http://localhost:8000${NC}"
         ;;
         
     start)
