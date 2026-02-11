@@ -127,6 +127,7 @@ Pour ajouter une librairie (ex: un package Composer ou un module NPM), vous ne d
 
 ### 1. La méthode "Raccourci" (Script Sygma)
 J'ai créé un script `./sygma.sh` pour vous simplifier la vie. 
+Ne pas oublier de lui donner les permissions d'exécution avec `chmod +x sygma.sh`.
 *Pour l'utiliser sous Windows, faites-le depuis votre terminal WSL ou Git Bash.*
 
 * **Démarrer le projet** : `./sygma.sh start`
