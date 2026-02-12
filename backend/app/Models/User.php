@@ -20,7 +20,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'nom',
         'email',
         'password',
     ];
@@ -48,23 +48,23 @@ class User extends Authenticatable
         ];
     }
 
-    public function enrollments()
+    public function inscriptions()
     {
-        return $this->hasMany(Enrollment::class);
+        return $this->hasMany(Inscription::class, 'utilisateur_id');
     }
 
-    public function courses()
+    public function cours()
     {
-        return $this->belongsToMany(Course::class, 'enrollments');
+        return $this->belongsToMany(Cours::class, 'inscriptions', 'utilisateur_id', 'cours_id');
     }
 
-    public function taughtSessions()
+    public function seancesEnseignees()
     {
-        return $this->hasMany(CourseSession::class, 'teacher_id');
+        return $this->hasMany(Seance::class, 'enseignant_id');
     }
 
-    public function attendances()
+    public function presences()
     {
-        return $this->hasMany(Attendance::class, 'student_id');
+        return $this->hasMany(Presence::class, 'etudiant_id');
     }
 }

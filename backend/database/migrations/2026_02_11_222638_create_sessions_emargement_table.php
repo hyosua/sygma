@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('emargement_sessions', function (Blueprint $table) {
+        Schema::create('sessions_emargement', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('course_session_id')->constrained()->onDelete('cascade');
-            $table->string('method'); // qr, manual
-            $table->string('token')->nullable()->unique();
-            $table->timestamp('expires_at')->nullable();
+            $table->foreignId('seance_id')->constrained('seances')->onDelete('cascade');
+            $table->string('methode'); // qr, manual
+            $table->string('jeton')->nullable()->unique();
+            $table->timestamp('expire_a')->nullable();
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
             $table->timestamps();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('emargement_sessions');
+        Schema::dropIfExists('sessions_emargement');
     }
 };
