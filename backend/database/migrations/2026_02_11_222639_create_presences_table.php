@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attendances', function (Blueprint $table) {
+        Schema::create('presences', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('emargement_session_id')->constrained()->onDelete('cascade');
-            $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
-            $table->string('status'); // present, absent
-            $table->timestamp('scanned_at')->nullable();
+            $table->foreignId('session_emargement_id')->constrained('sessions_emargement')->onDelete('cascade');
+            $table->foreignId('etudiant_id')->constrained('users')->onDelete('cascade');
+            $table->string('statut'); // present, absent
+            $table->timestamp('scanne_a')->nullable();
             $table->text('notes')->nullable();
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendances');
+        Schema::dropIfExists('presences');
     }
 };
