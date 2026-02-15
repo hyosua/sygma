@@ -161,21 +161,22 @@ Désormais, vous pouvez utiliser ces commandes partout :
 * **Vider/Réinitialiser BDD** : `sygma fresh`
 * **Réparer** : `sygma repair`
 
-### 2. Installer de nouveaux packages
-Si vous avez besoin d'ajouter une dépendance spécifique :
+### 2. Utilisation des outils (via le script)
+Plus besoin de taper de longues commandes Docker, utilisez les raccourcis :
 
-**Pour le Backend (PHP) :**
+**Pour le Backend (PHP/Laravel) :**
 ```bash
-docker compose exec backend composer require nom-du-package
+sygma composer require <package>  # Installer un package
+sygma artisan make:model <Nom>    # Créer un modèle
+sygma artisan migrate             # Lancer les migrations
 ```
 
 **Pour le Frontend (React) :**
-
 ```bash
-docker compose exec frontend npm install nom-du-package
+sygma npm install <package>       # Installer un package
 ```
 
-*Note : Une fois installé, le fichier package.json ou composer.json sera mis à jour sur votre ordinateur automatiquement grâce aux volumes Docker.*
+*Note : Ces commandes s'exécutent directement à l'intérieur des conteneurs Docker.*
 
 ---
 

@@ -85,8 +85,23 @@ case "$1" in
         fi
         ;;
 
+    composer)
+        shift
+        docker compose exec backend composer "$@"
+        ;;
+
+    npm)
+        shift
+        docker compose exec frontend npm "$@"
+        ;;
+
+    artisan)
+        shift
+        docker compose exec backend php artisan "$@"
+        ;;
+
     *)
-        echo "Usage: ./sygma.sh {install|start|stop|update|fresh|repair|setup}"
+        echo "Usage: sygma {install|start|stop|update|fresh|repair|setup|composer|npm|artisan}"
         exit 1
         ;;
 esac
