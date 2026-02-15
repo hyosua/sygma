@@ -95,9 +95,10 @@ docker compose exec backend php artisan migrate --seed
 Plus besoin de tout réinstaller ! À chaque nouvelle session :
 
 - **Récupérer le travail** : `git pull origin main`
-- **Démarrer les serveurs** : `docker compose up -d`
+- **Mettre à jour** : `./sygma.sh update` (Installe les nouvelles dépendances et applique les migrations)
+- **Démarrer les serveurs** : `./sygma.sh start`
 - **Travailler** : Les modifications de code sont visibles en temps réel.
-- **Quitter** : `docker compose stop` (libère la RAM de votre PC).
+- **Quitter** : `./sygma.sh stop` (libère la RAM de votre PC).
 
 ---
 
@@ -146,10 +147,12 @@ J'ai créé un script `./sygma.sh` pour vous simplifier la vie.
 Ne pas oublier de lui donner les permissions d'exécution avec `chmod +x sygma.sh`.
 *Pour l'utiliser sous Windows, faites-le depuis votre terminal WSL ou Git Bash.*
 
-* **Installation complète** : `./sygma.sh install` (Build + Install + Migrate)
+* **Installation complète** : `./sygma.sh install` (Build + Install + Migrate + Seed)
 * **Démarrer le projet** : `./sygma.sh start`
 * **Arrêter le projet** : `./sygma.sh stop`
-* **Réparer / Réinstaller** : `./sygma.sh repair` (Réinstalle les dépendances)
+* **Mise à jour (post-pull)** : `./sygma.sh update` (Install dépendances + Migrate)
+* **Réinitialisation BDD** : `./sygma.sh fresh` (Vider + Re-migrer + Seed)
+* **Réparer / Réinstaller** : `./sygma.sh repair` (Réinstalle tout + Migrate)
 
 ### 2. Installer de nouveaux packages
 Si vous avez besoin d'ajouter une dépendance spécifique :
