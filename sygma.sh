@@ -41,11 +41,30 @@ case "$1" in
         echo -e "${GREEN}🔧 Réparation en cours (Nettoyage cache + réinstallation)...${NC}"
         docker compose run --rm backend composer install
         docker compose run --rm frontend npm install
+        docker compose exec backend php artisan migrate
         docker compose restart
         ;;
 
+    update)
+        echo -e "${GREEN}🔄 Mise à jour de l'environnement (post-pull)...${NC}"
+        echo -e "${GREEN}1. Installation des dépendances...${NC}"
+        docker compose run --rm backend composer install
+        docker compose run --rm frontend npm install
+        
+        echo -e "${GREEN}2. Application des migrations...${NC}"
+        docker compose exec backend php artisan migrate
+        
+        echo -e "${GREEN}✅ Environnement à jour !${NC}"
+        ;;
+
+    fresh)
+        echo -e "${GREEN}⚠️ Réinitialisation complète de la base de données...${NC}"
+        docker compose exec backend php artisan migrate:fresh --seed
+        echo -e "${GREEN}✅ Base de données réinitialisée et synchronisée !${NC}"
+        ;;
+
     *)
-        echo "Usage: ./sygma.sh {install|start|stop|repair}"
+        echo "Usage: ./sygma.sh {install|start|stop|update|fresh|repair}"
         exit 1
         ;;
 esac
