@@ -143,16 +143,23 @@ git push origin feat/ma-fonctionnalite
 Pour ajouter une librairie (ex: un package Composer ou un module NPM), vous ne devez pas l'installer sur votre Windows. Vous devez demander au conteneur de le faire.
 
 ### 1. La méthode "Raccourci" (Script Sygma)
-J'ai créé un script `./sygma.sh` pour vous simplifier la vie. 
-Ne pas oublier de lui donner les permissions d'exécution avec `chmod +x sygma.sh`.
-*Pour l'utiliser sous Windows, faites-le depuis votre terminal WSL ou Git Bash.*
+J'ai créé un script `sygma` pour vous simplifier la vie. 
 
-* **Installation complète** : `./sygma.sh install` (Build + Install + Migrate + Seed)
-* **Démarrer le projet** : `./sygma.sh start`
-* **Arrêter le projet** : `./sygma.sh stop`
-* **Mise à jour (post-pull)** : `./sygma.sh update` (Install dépendances + Migrate)
-* **Réinitialisation BDD** : `./sygma.sh fresh` (Vider + Re-migrer + Seed)
-* **Réparer / Réinstaller** : `./sygma.sh repair` (Réinstalle tout + Migrate)
+**Configuration initiale (recommandé) :**
+Pour pouvoir taper `sygma` au lieu de `./sygma.sh`, lancez une fois :
+```bash
+chmod +x sygma.sh
+./sygma.sh setup
+source ~/.bashrc  # ou source ~/.zshrc
+```
+
+Désormais, vous pouvez utiliser ces commandes partout :
+* **Installer tout** : `sygma install`
+* **Démarrer** : `sygma start`
+* **Arrêter** : `sygma stop`
+* **Mettre à jour (post-pull)** : `sygma update`
+* **Vider/Réinitialiser BDD** : `sygma fresh`
+* **Réparer** : `sygma repair`
 
 ### 2. Installer de nouveaux packages
 Si vous avez besoin d'ajouter une dépendance spécifique :

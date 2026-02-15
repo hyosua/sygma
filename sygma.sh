@@ -63,8 +63,30 @@ case "$1" in
         echo -e "${GREEN}✅ Base de données réinitialisée et synchronisée !${NC}"
         ;;
 
+    setup)
+        echo -e "${GREEN}🔧 Configuration de l'alias 'sygma'...${NC}"
+        SCRIPT_PATH=$(realpath "$0")
+        SHELL_CONFIG=""
+
+        if [ -n "$($SHELL -c 'echo $ZSH_VERSION')" ]; then
+            SHELL_CONFIG="$HOME/.zshrc"
+        elif [ -n "$($SHELL -c 'echo $BASH_VERSION')" ]; then
+            SHELL_CONFIG="$HOME/.bashrc"
+        fi
+
+        if [ -n "$SHELL_CONFIG" ]; then
+            # Supprimer l'ancien alias s'il existe et ajouter le nouveau
+            sed -i '/alias sygma=/d' "$SHELL_CONFIG"
+            echo "alias sygma='$SCRIPT_PATH'" >> "$SHELL_CONFIG"
+            echo -e "${GREEN}✅ Alias 'sygma' ajouté à $SHELL_CONFIG${NC}"
+            echo -e "👉 Tapez ${GREEN}source $SHELL_CONFIG${NC} ou redémarrez votre terminal pour l'utiliser."
+        else
+            echo -e "❌ Impossible de détecter votre configuration shell (bash/zsh)."
+        fi
+        ;;
+
     *)
-        echo "Usage: ./sygma.sh {install|start|stop|update|fresh|repair}"
+        echo "Usage: ./sygma.sh {install|start|stop|update|fresh|repair|setup}"
         exit 1
         ;;
 esac
