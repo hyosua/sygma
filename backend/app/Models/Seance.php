@@ -9,6 +9,7 @@ class Seance extends Model
     protected $fillable = [
         'cours_id',
         'enseignant_id',
+        'groupe_id',
         'debut_a',
         'fin_a',
     ];
@@ -17,6 +18,11 @@ class Seance extends Model
         'debut_a' => 'datetime',
         'fin_a' => 'datetime',
     ];
+
+    public function groupe()
+    {
+        return $this->belongsTo(Groupe::class);
+    }
 
     public function cours()
     {

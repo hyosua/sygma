@@ -21,8 +21,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'nom',
+        'prenom',
         'email',
         'password',
+        'premiere_connexion',
+        'url_image_profil',
+        'ine',
+        'specialites',
+        'groupe_id',
     ];
 
     /**
@@ -45,7 +51,14 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'premiere_connexion' => 'boolean',
+            'specialites' => 'array',
         ];
+    }
+
+    public function groupe()
+    {
+        return $this->belongsTo(Groupe::class);
     }
 
     public function inscriptions()
