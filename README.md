@@ -1,5 +1,7 @@
 # Sygma - Gestion de Présence Numérique 
 
+**Sygma** est une application web dédiée à la dématérialisation de l'émargement. Elle permet aux étudiants de s'émarger via QR Code, aux enseignants de piloter les séances, et aux gestionnaires de suivre les absences.
+
 ## 📋 Table des matières
 1. [💻 Configuration de l'environnement](#1-configuration-de-lenvironnement)
 2. [📥 Mise en place du dépôt (Clonage)](#2--mise-en-place-du-dépôt-clonage)
@@ -15,41 +17,45 @@
 
 ## 1. Configuration de l'environnement
 
-- **Docker Desktop** : [Installez-le](https://www.docker.com/products/docker-desktop) et assurez-vous qu'il tourne.  
-- **VS Code** : Installez l'extension officielle WSL de Microsoft.  
-- **Connexion** : Cliquez sur le bouton bleu "><" en bas à gauche de VS Code → **Connect to WSL**.  
-  *(Si Ubuntu n'est pas installé, VS Code vous proposera de le faire automatiquement).*
+### 🪟 Si vous êtes sur Windows (Recommandé)
+- **Docker Desktop** : [Installez-le](https://www.docker.com/products/docker-desktop) et activez le moteur WSL2.
+- **VS Code** : Installez l'extension officielle **WSL** de Microsoft.
+- **Connexion** : Cliquez sur le bouton bleu "><" en bas à gauche de VS Code → **Connect to WSL**.
+
+### 🐧 Si vous êtes sur Linux (Natif)
+- **Docker** : Installez Docker et Docker Compose V2.
+- Assurez-vous que votre utilisateur appartient au groupe `docker` pour éviter d'utiliser `sudo`.
 
 ---
 
 ## 2. 📥 Mise en place du dépôt (Clonage)
 
-**⚠️ IMPORTANT :** Ne clonez pas le projet dans vos dossiers Windows habituels (Bureau, Documents). Pour que Docker soit rapide, le code doit être dans Linux.
+### 🪟 Sur Windows (via WSL)
+**⚠️ IMPORTANT :** Ne clonez pas le projet dans vos dossiers Windows habituels (C:\Users...). Pour que Docker soit rapide, le code doit résider dans le système de fichiers Linux.
 
-1. Une fois que VS Code affiche **WSL: Ubuntu** en bas à gauche, ouvrez le terminal intégré (`Ctrl + ù`)
-![Fenêtre Wsl](screenshots/wsl-window.png)   
-2. Créez un dossier pour vos projets :
+1. Ouvrez VS Code connecté à WSL (Ubuntu).
+2. Dans le terminal (`Ctrl + ù`), créez votre dossier de travail :
    ```bash
    cd ~
    mkdir -p projects && cd projects
-   ```
-
-3. Clonez le dépôt :
-   ```bash
    git clone https://github.com/hyosua/sygma.git
    cd sygma
-   ```
-
-4. Lancez VS Code dans ce dossier :
-   ```bash
    code .
    ```
+
+### 🐧 Sur Linux
+Clonez simplement le dépôt dans votre dossier de projets habituel :
+```bash
+git clone https://github.com/hyosua/sygma.git
+cd sygma
+code .
+```
 
 ---
 
 ## 3. Premier Setup (Installation)
 
-Une fois le projet ouvert dans VS Code (via WSL) :
+Une fois le projet ouvert dans votre terminal (WSL pour Windows ou natif pour Linux) :
 
 ### Configuration d'environnement
 
