@@ -184,7 +184,7 @@ sygma npm install <package>       # Installer un package
 
 ## 8. 📊 Visualisation & Requêtes BDD
 
-### Option 1 : Adminer (Le plus simple - Sans installation)
+### Adminer (Simple - Sans installation)
 C'est une interface web déjà prête.
 1. Ouvrez [http://localhost:8080](http://localhost:8080) dans votre navigateur.
 2. Connectez-vous avec :
@@ -193,18 +193,6 @@ C'est une interface web déjà prête.
    - **Utilisateur** : `sygma`
    - **Mot de passe** : `sygma_pass`
    - **Base de données** : `sygma`
-
-### Option 2 : Extension VS Code (Pour rester dans l'éditeur)
-Si vous préférez ne pas quitter VS Code, utilisez l'extension **PostgreSQL** de Chris Kolkman.
-
-1. **Installation** : Cherchez `PostgreSQL` (Chris Kolkman) dans les extensions et installez-la.
-2. **Configuration** : Cliquez sur le **+** dans l'onglet PostgreSQL :
-   - **Host** : `localhost`
-   - **User** : `sygma`
-   - **Password** : `sygma_pass`
-   - **Port** : `5432`
-   - **Database** : `sygma`
-
 ---
 
 ## 💡 Astuces de secours
