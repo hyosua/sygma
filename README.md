@@ -1,4 +1,4 @@
-# Sygma - Gestion de Présence Numérique 🚀
+# Sygma - Gestion de Présence Numérique 
 
 ## 📋 Table des matières
 1. [💻 Configuration de l'environnement](#1-configuration-de-lenvironnement)
