@@ -9,8 +9,9 @@ case "$1" in
         echo -e "${GREEN}1. Construction des images...${NC}"
         docker compose build
         
-        echo -e "${GREEN}2. Installation des dépendances Backend (PHP)...${NC}"
+        echo -e "${GREEN}2. Installation des dépendances Backend...${NC}"
         docker compose run --rm backend composer install
+        docker compose run --rm backend npm install
         
         echo -e "${GREEN}3. Installation des dépendances Frontend (NPM)...${NC}"
         docker compose run --rm frontend npm install
@@ -40,6 +41,7 @@ case "$1" in
     repair)
         echo -e "${GREEN}🔧 Réparation en cours (Nettoyage cache + réinstallation)...${NC}"
         docker compose run --rm backend composer install
+        docker compose run --rm backend npm install
         docker compose run --rm frontend npm install
         docker compose exec backend php artisan migrate
         docker compose restart
@@ -49,6 +51,7 @@ case "$1" in
         echo -e "${GREEN}🔄 Mise à jour de l'environnement (post-pull)...${NC}"
         echo -e "${GREEN}1. Installation des dépendances...${NC}"
         docker compose run --rm backend composer install
+        docker compose run --rm backend npm install
         docker compose run --rm frontend npm install
         
         echo -e "${GREEN}2. Application des migrations...${NC}"
@@ -92,7 +95,14 @@ case "$1" in
 
     npm)
         shift
-        docker compose exec frontend npm "$@"
+        if [ "$1" == "backend" ] || [ "$1" == "back" ]; then
+            shift
+            docker compose exec backend npm "$@"
+        else
+            # Si le premier argument est "frontend", on le shift, sinon on garde tout pour le frontend par défaut
+            if [ "$1" == "frontend" ] || [ "$1" == "front" ]; then shift; fi
+            docker compose exec frontend npm "$@"
+        fi
         ;;
 
     artisan)

@@ -76,6 +76,7 @@ Si vous préférez exécuter les commandes étape par étape :
 ```bash
 docker compose build
 docker compose run --rm backend composer install
+docker compose run --rm backend npm install
 docker compose run --rm frontend npm install
 ```
 
