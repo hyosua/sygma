@@ -9,6 +9,7 @@
 6. [🌐 Accès & Commandes](#6--accès--commandes)
 7. [🛠 Gestion des Librairies & Scripts](#7--gestion-des-librairies--scripts)
 8. [📊 Visualisation & Requêtes BDD](#8--visualisation--requêtes-bdd)
+9. [🧪 Tests & Données de démo](#9--tests--données-de-démo)
 
 ---
 
@@ -201,3 +202,27 @@ C'est une interface web déjà prête.
 - **Logs en direct** : `docker compose logs -f`
 - **Réinitialiser un conteneur** : `docker compose restart backend`
 - **Erreur de permissions** : `docker compose exec backend chown -R www-data:www-data storage`
+
+---
+
+## 9. 🧪 Tests & Données de démo
+
+### Peupler la base de données (Seeding)
+Pour remplir votre base avec des données de test (étudiants, enseignants, groupes LP Dawii/ASRI), utilisez :
+```bash
+sygma artisan db:seed --class=GroupeSeeder
+```
+*Note : Pour tout réinitialiser (supprime tout et recrée les données de base) : `sygma fresh`.*
+
+### Exécuter les tests
+Les tests permettent de vérifier que les fonctionnalités (comme la gestion des groupes) fonctionnent correctement.
+
+**Lancer tous les tests :**
+```bash
+sygma artisan test
+```
+
+**Lancer uniquement les tests liés aux groupes :**
+```bash
+sygma artisan test --filter GroupManagementTest
+```
