@@ -61,6 +61,15 @@ services:
     networks:
       - sygma-network
 
+  adminer:
+    image: adminer
+    container_name: sygma-adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - sygma-network
+
 networks:
   sygma-network:
     driver: bridge

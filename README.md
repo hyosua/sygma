@@ -136,6 +136,7 @@ git push origin feat/ma-fonctionnalite
 |---------|-----------|
 | Front-end (React) | http://localhost:3000 |
 | Back-end (API) | http://localhost:8000 |
+| Adminer (BDD) | http://localhost:8080 |
 | PostgreSQL | Port 5432 |
 
 ---
@@ -183,30 +184,26 @@ sygma npm install <package>       # Installer un package
 
 ## 8. 📊 Visualisation & Requêtes BDD
 
-Si vous souhaitez visualiser les données de la base de données ou exécuter des requêtes SQL directement depuis VS Code, il existe l'extension **PostgreSQL** de Chris Kolkman.
+### Option 1 : Adminer (Le plus simple - Sans installation)
+C'est une interface web déjà prête.
+1. Ouvrez [http://localhost:8080](http://localhost:8080) dans votre navigateur.
+2. Connectez-vous avec :
+   - **Système** : `PostgreSQL`
+   - **Serveur** : `db`
+   - **Utilisateur** : `sygma`
+   - **Mot de passe** : `sygma_pass`
+   - **Base de données** : `sygma`
 
-### 1. Installation
-1. Ouvrez le menu des extensions (`Ctrl + Shift + X`).
-2. Cherchez `PostgreSQL` (l'auteur est **Chris Kolkman**).
-3. Cliquez sur **Install**.
+### Option 2 : Extension VS Code (Pour rester dans l'éditeur)
+Si vous préférez ne pas quitter VS Code, utilisez l'extension **PostgreSQL** de Chris Kolkman.
 
-### 2. Configuration de la connexion
-Une fois l'extension installée :
-1. Cliquez sur l'icône **PostgreSQL** qui vient d'apparaître dans la barre latérale gauche (icône d'éléphant).
-2. Cliquez sur le petit **+** (**Add Connection**).
-3. Remplissez les informations suivantes (basées sur le `docker-compose.yml`) :
+1. **Installation** : Cherchez `PostgreSQL` (Chris Kolkman) dans les extensions et installez-la.
+2. **Configuration** : Cliquez sur le **+** dans l'onglet PostgreSQL :
    - **Host** : `localhost`
    - **User** : `sygma`
    - **Password** : `sygma_pass`
    - **Port** : `5432`
-   - **Connection name** : `Sygma Local` (ou ce que vous voulez)
    - **Database** : `sygma`
-   - **Use SSL** : `Disable` (par défaut)
-
-### 3. Utilisation
-- **Visualiser les tables** : Déroulez `Sygma Local` > `sygma` > `public` > `Tables`. Vous pouvez faire un clic droit sur une table > **Select Top 1000** pour voir les données.
-- **Nouvelle requête** : Cliquez sur le bouton **New Query** (icône de fichier avec un éclair) pour ouvrir un éditeur SQL.
-- **Excuter la requête** : Une fois dans l'éditeur SQL, F5 ou cliquez sur le bouton **Execute Query** (icône de lecteur de disque) pour exécuter votre requête.
 
 ---
 
