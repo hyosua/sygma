@@ -22,9 +22,13 @@
 - **VS Code** : Installez l'extension officielle **WSL** de Microsoft.
 - **Connexion** : Cliquez sur le bouton bleu "><" en bas à gauche de VS Code → **Connect to WSL**.
 
-### 🐧 Si vous êtes sur Linux (Natif)
+### 🐧 Si vous êtes sur Linux (Natif) ou WSL sans Docker Desktop
 - **Docker** : Installez Docker et Docker Compose V2.
-- Assurez-vous que votre utilisateur appartient au groupe `docker` pour éviter d'utiliser `sudo`.
+- **Permissions** : Par défaut, Docker nécessite `sudo`. Pour éviter cela, ajoutez votre utilisateur au groupe `docker` :
+  ```bash
+  sudo usermod -aG docker $USER
+  ```
+  **⚠️ IMPORTANT** : Vous devez fermer et réouvrir votre terminal (ou redémarrer WSL avec `wsl --shutdown` dans un PowerShell Windows) pour que cela soit pris en compte.
 
 ---
 
@@ -55,7 +59,19 @@ code .
 
 ## 3. Premier Setup (Installation)
 
-Une fois le projet ouvert dans votre terminal (WSL pour Windows ou natif pour Linux) :
+### ⚠️ Problème de permissions (Sudo) ?
+Si vous devez taper `sudo` avant chaque commande Docker ou si vous avez des erreurs "Permission Denied", lancez ces commandes :
+
+1. **Récupérer la propriété des fichiers** :
+   ```bash
+   sudo chown -R $USER:$USER .
+   ```
+2. **S'assurer que le script est exécutable** :
+   ```bash
+   chmod +x sygma.sh
+   ```
+
+---
 
 ### Configuration d'environnement
 
@@ -207,7 +223,8 @@ C'est une interface web déjà prête.
 
 - **Logs en direct** : `docker compose logs -f`
 - **Réinitialiser un conteneur** : `docker compose restart backend`
-- **Erreur de permissions** : `docker compose exec backend chown -R www-data:www-data storage`
+- **Récupérer les droits sur tout le projet** : `sudo chown -R $USER:$USER .`
+- **Erreur de permissions Laravel (storage)** : `docker compose exec backend chown -R www-data:www-data storage`
 
 ---
 
