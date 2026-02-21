@@ -1,9 +1,13 @@
-# Sygma - Gestion de Présence Numérique 
+# Sygma - Gestion de Présence Numérique
 
 **Sygma** est une application web dédiée à la dématérialisation de l'émargement. Elle permet aux étudiants de s'émarger via QR Code, aux enseignants de piloter les séances, et aux gestionnaires de suivre les absences.
 
-## 📋 Table des matières
-1. [💻 Configuration de l'environnement](#1-configuration-de-lenvironnement)
+## 👥 Auteurs
+- Emmanuelle Nsossani
+- Yahaya Coulibaly
+- Hyosua Colleter
+
+## 📋 Table des matières1. [💻 Configuration de l'environnement](#1-configuration-de-lenvironnement)
 2. [📥 Mise en place du dépôt (Clonage)](#2--mise-en-place-du-dépôt-clonage)
 3. [⚡️ Premier Setup (Installation)](#3-premier-setup-installation)
 4. [🛠 Session de travail quotidienne](#4--session-de-travail-quotidienne)
