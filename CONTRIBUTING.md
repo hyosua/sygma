@@ -67,10 +67,10 @@ Toutes les commandes se lancent via `sygma ...` (version courte) ou `docker comp
   docker compose exec frontend npm install <nom-du-package>
   ```
 
-  - **Lancer un script (lint, etc.) :**
-  ```bash
-  docker compose exec frontend npm run <nom-du-script>
-  ```
+- **Lancer un script (lint, etc.) :**
+   ```bash
+   docker compose exec frontend npm run <nom-du-script>
+   ```
 
 ### ⛔ Les Interdits
 
