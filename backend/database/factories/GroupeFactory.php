@@ -12,7 +12,7 @@ class GroupeFactory extends Factory
     public function definition(): array
     {
         return [
-            'nom' => $this->faker->unique()->randomElement(['LP Dawii', 'LP ASRI', 'M1 Informatique', 'M2 MIAGE']),
+            'nom' => $this->faker->unique()->randomElement(['LP Dawii', 'LP ASRI', 'M1 Informatique', 'M2 MIAGE', 'L1 Informatique', 'M2 Cybersécurité']),
             'promotion' => '2025-2026',
         ];
     }

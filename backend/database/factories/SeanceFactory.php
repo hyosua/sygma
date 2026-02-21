@@ -19,7 +19,7 @@ class SeanceFactory extends Factory
             'enseignant_id' => User::factory()->enseignant(),
             'groupe_id' => Groupe::factory(),
             'debut_a' => now()->addHour(),
-            'fin_a' => now()->addHours(3),
+            'fin_a' => now()->addHours(4),
         ];
     }
 }

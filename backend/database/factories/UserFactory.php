@@ -32,13 +32,40 @@ class UserFactory extends Factory
     }
 
     /**
+     * Configure the model factory.
+     *
+     * @return $this
+     */
+    public function configure()
+    {
+        return $this->afterCreating(function (\App\Models\User $user) {
+            if (!empty($this->role)) {
+                $user->assignRole($this->role);
+            }
+        });
+    }
+
+    /**
+     * State pour un rôle spécifique.
+     *
+     * @param string $roleName
+     * @return $this
+     */
+    public function withRole(string $roleName): static
+    {
+        return $this->state(function (array $attributes) use ($roleName) {
+            $this->role = $roleName;
+            return [];
+        });
+    }
+
+    /**
      * State pour un étudiant.
      */
     public function etudiant(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'ine' => fake()->bothify('##########?'),
-            'groupe_id' => Groupe::factory(),
+        return $this->withRole('etudiant')->state(fn(array $attributes) => [
+            'ine' => fake()->unique()->numerify('###########'),
         ]);
     }
 
@@ -47,7 +74,7 @@ class UserFactory extends Factory
      */
     public function enseignant(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->withRole('enseignant')->state(fn (array $attributes) => [
             'specialites' => fake()->randomElements(['PHP', 'Laravel', 'React', 'Docker', 'SQL'], 2),
             'premiere_connexion' => false,
         ]);
