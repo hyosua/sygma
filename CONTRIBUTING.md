@@ -55,33 +55,23 @@ Toutes les commandes se lancent via `sygma ...` (version courte) ou `docker comp
   ```bash
   docker compose exec backend composer require <nom-du-package>
   ```
-    _ou via le script `sygma` :_
-  ```bash
-  sygma composer require <nom-du-package>
-  ```- **Commandes Artisan :**
+
+- **Commandes Artisan :**
   ```bash
   docker compose exec backend php artisan <ta-commande>
   ```
-    _ou via le script `sygma` :_
-  ```bash
-  sygma artisan <ta-commande>
-  ```
+
 #### Frontend (React)
 - **Installer un package :**
   ```bash
   docker compose exec frontend npm install <nom-du-package>
   ```
-    _ou via le script `sygma` :_
-  ```bash
-  sygma npm install <nom-du-package>
-  ```- **Lancer un script (lint, etc.) :**
+
+  - **Lancer un script (lint, etc.) :**
   ```bash
   docker compose exec frontend npm run <nom-du-script>
   ```
-    _ou via le script `sygma` :_
-  ```bash
-  sygma npm run <nom-du-script>
-  ```
+
 ### ⛔ Les Interdits
 
 À ne **JAMAIS** faire :
