@@ -7,7 +7,8 @@
 - Yahaya Coulibaly
 - Hyosua Colleter
 
-## 📋 Table des matières1. [💻 Configuration de l'environnement](#1-configuration-de-lenvironnement)
+## 📋 Table des matières
+1. [💻 Configuration de l'environnement](#1-configuration-de-lenvironnement)
 2. [📥 Mise en place du dépôt (Clonage)](#2--mise-en-place-du-dépôt-clonage)
 3. [⚡️ Premier Setup (Installation)](#3-premier-setup-installation)
 4. [🛠 Session de travail quotidienne](#4--session-de-travail-quotidienne)
