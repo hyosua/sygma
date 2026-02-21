@@ -164,6 +164,7 @@ git push origin feat/ma-fonctionnalite
 | PostgreSQL | Port 5432 |
 
 ---
+
 ## 7. 🛠 Gestion des Librairies & Scripts
 
 Pour ajouter une librairie (ex: un package Composer ou un module NPM), vous ne devez pas l'installer sur votre Windows. Vous devez demander au conteneur de le faire.
@@ -207,6 +208,7 @@ sygma npm install <package>       # Installer un package
 ---
 
 ## 8. 📊 Visualisation & Requêtes BDD
+
 
 ### Adminer (Simple - Sans installation)
 C'est une interface web déjà prête.
