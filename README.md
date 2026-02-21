@@ -231,11 +231,29 @@ C'est une interface web déjà prête.
 ## 9. 🧪 Tests & Données de démo
 
 ### Peupler la base de données (Seeding)
-Pour remplir votre base avec des données de test (étudiants, enseignants, groupes LP Dawii/ASRI), utilisez :
+Pour obtenir un jeu de données de test complet et interconnecté (utilisateurs avec rôles variés, groupes, cours, inscriptions, séances et enregistrements de présence simulés), vous avez deux options :
+
+**Option 1 (Recommandée - via le script `sygma`) :**
+Utilisez la commande simplifiée :
 ```bash
-sygma artisan db:seed --class=GroupeSeeder
+sygma fresh
 ```
-*Note : Pour tout réinitialiser (supprime tout et recrée les données de base) : `sygma fresh`.*
+
+**Option 2 (Manuelle - via Docker Compose) :**
+Exécutez la commande Docker complète :
+```bash
+docker compose exec backend php artisan migrate:fresh --seed
+```
+
+Ces commandes sont les options recommandées pour une mise en place rapide d'un environnement de développement avec des données significatives et prêtes à l'emploi.
+
+**⚠️ IMPORTANT :** Ces commandes vont **supprimer toutes les données existantes** de votre base de données avant de la reconstruire et de la remplir avec les données de démonstration. Utilisez-les avec précaution !
+
+Après avoir exécuté l'une de ces commandes, vous aurez un utilisateur "gestionnaire" avec les identifiants :
+- Email : `admin@sygma.com`
+- Mot de passe : `password`
+
+---
 
 ### Exécuter les tests
 Les tests permettent de vérifier que les fonctionnalités (comme la gestion des groupes) fonctionnent correctement.

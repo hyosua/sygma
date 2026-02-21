@@ -9,12 +9,14 @@ use App\Models\Presence;
 use App\Models\Seance;
 use App\Models\SessionEmargement;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
+    use WithoutModelEvents; // Pour éviter les événements lors de la création des modèles
+
     /**
      * Seed the application's database.
      */
