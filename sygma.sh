@@ -4,24 +4,30 @@
 GREEN='\033[0;32m'
 NC='\033[0m' # Pas de couleur
 
+# Détection de l'UID et GID pour éviter les problèmes de droits root
+# On utilise 1000:1000 par défaut si on n'arrive pas à les détecter (rare sur Linux/macOS)
+CURRENT_UID=$(id -u 2>/dev/null || echo 1000)
+CURRENT_GID=$(id -g 2>/dev/null || echo 1000)
+DOCKER_USER_OPT="-u $CURRENT_UID:$CURRENT_GID"
+
 case "$1" in
     install)
         echo -e "${GREEN}1. Construction des images...${NC}"
         docker compose build
         
         echo -e "${GREEN}2. Installation des dépendances Backend...${NC}"
-        docker compose run --rm backend composer install
-        docker compose run --rm backend npm install
+        docker compose run --rm $DOCKER_USER_OPT backend composer install
+        docker compose run --rm $DOCKER_USER_OPT backend npm install
         
         echo -e "${GREEN}3. Installation des dépendances Frontend (NPM)...${NC}"
-        docker compose run --rm frontend npm install
+        docker compose run --rm $DOCKER_USER_OPT frontend npm install
         
         echo -e "${GREEN}4. Lancement des conteneurs...${NC}"
         docker compose up -d
         
         echo -e "${GREEN}5. Configuration finale (Key & Migrations)...${NC}"
-        docker compose exec backend php artisan key:generate
-        docker compose exec backend php artisan migrate --seed
+        docker compose exec $DOCKER_USER_OPT backend php artisan key:generate
+        docker compose exec $DOCKER_USER_OPT backend php artisan migrate --seed
         
         echo -e "${GREEN}✅ Installation terminée !${NC}"
         echo -e "Accès Front-end : http://localhost:3000${NC}"
@@ -40,29 +46,29 @@ case "$1" in
 
     repair)
         echo -e "${GREEN}🔧 Réparation en cours (Nettoyage cache + réinstallation)...${NC}"
-        docker compose run --rm backend composer install
-        docker compose run --rm backend npm install
-        docker compose run --rm frontend npm install
-        docker compose exec backend php artisan migrate
+        docker compose run --rm $DOCKER_USER_OPT backend composer install
+        docker compose run --rm $DOCKER_USER_OPT backend npm install
+        docker compose run --rm $DOCKER_USER_OPT frontend npm install
+        docker compose exec $DOCKER_USER_OPT backend php artisan migrate
         docker compose restart
         ;;
 
     update)
         echo -e "${GREEN}🔄 Mise à jour de l'environnement (post-pull)...${NC}"
         echo -e "${GREEN}1. Installation des dépendances...${NC}"
-        docker compose run --rm backend composer install
-        docker compose run --rm backend npm install
-        docker compose run --rm frontend npm install
+        docker compose run --rm $DOCKER_USER_OPT backend composer install
+        docker compose run --rm $DOCKER_USER_OPT backend npm install
+        docker compose run --rm $DOCKER_USER_OPT frontend npm install
         
         echo -e "${GREEN}2. Application des migrations...${NC}"
-        docker compose exec backend php artisan migrate
+        docker compose exec $DOCKER_USER_OPT backend php artisan migrate
         
         echo -e "${GREEN}✅ Environnement à jour !${NC}"
         ;;
 
     fresh)
         echo -e "${GREEN}⚠️ Réinitialisation complète de la base de données...${NC}"
-        docker compose exec backend php artisan migrate:fresh --seed
+        docker compose exec $DOCKER_USER_OPT backend php artisan migrate:fresh --seed
         echo -e "${GREEN}✅ Base de données réinitialisée et synchronisée !${NC}"
         ;;
 
@@ -90,24 +96,24 @@ case "$1" in
 
     composer)
         shift
-        docker compose exec backend composer "$@"
+        docker compose exec $DOCKER_USER_OPT backend composer "$@"
         ;;
 
     npm)
         shift
         if [ "$1" == "backend" ] || [ "$1" == "back" ]; then
             shift
-            docker compose exec backend npm "$@"
+            docker compose exec $DOCKER_USER_OPT backend npm "$@"
         else
             # Si le premier argument est "frontend", on le shift, sinon on garde tout pour le frontend par défaut
             if [ "$1" == "frontend" ] || [ "$1" == "front" ]; then shift; fi
-            docker compose exec frontend npm "$@"
+            docker compose exec $DOCKER_USER_OPT frontend npm "$@"
         fi
         ;;
 
     artisan)
         shift
-        docker compose exec backend php artisan "$@"
+        docker compose exec $DOCKER_USER_OPT backend php artisan "$@"
         ;;
 
     *)
