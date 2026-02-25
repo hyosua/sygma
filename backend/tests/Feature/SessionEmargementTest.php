@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Seance;
 
 class SessionEmargementTest extends TestCase
 {
@@ -19,13 +21,16 @@ class SessionEmargementTest extends TestCase
         // Création d'une session de cours pour cet enseignant
         $session = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
 
-        $response = $this->actingAs($enseignant)->get(route('session.emargement', ['seance' => $session]));
+        $response = $this->actingAs($enseignant)->post(route('api.emargement.start', [
+            'seance' => $session->id,
+            'methode' => 'qr',
+            ]));
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
-        $this->assertDatabaseHas('seances', [
-            'id' => $session->id,
-            'enseignant_id' => $enseignant->id,
+        $this->assertDatabaseHas('sessions_emargement', [
+            'seance_id' => $session->id,
+            'methode' => 'qr',
         ]);
     }
 }
