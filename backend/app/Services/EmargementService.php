@@ -8,6 +8,10 @@ use App\Models\User;
 use App\Models\Presence;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Exceptions\JetonInvalideException;
+use App\Exceptions\JetonExpireException;
+use App\Exceptions\SeanceNonActiveException;
+use App\Exceptions\DejaEmargeException;
 use Exception;
 
 class EmargementService
@@ -49,17 +53,17 @@ class EmargementService
         $session = SessionEmargement::where('jeton', $jeton)->first();
 
         if (!$session) {
-            throw new Exception("Jeton d'émargement invalide.");
+            throw new JetonInvalideException();
         }
 
         if ($session->expire_a && $session->expire_a->isPast()) {
-            throw new Exception("QR Code expiré, veuillez scanner le nouveau.");
+            throw new JetonExpireException();
         }
 
         // Vérification que la session d'émargement est bien associée à une séance active
         $seance = $session->seance;
         if (!$seance || !$seance->isActive()) {
-            throw new Exception("La séance associée à ce jeton n'est pas active.");
+            throw new SeanceNonActiveException();
         }
 
         // Vérification si l'étudiant a déjà émargé pour cette session
@@ -68,7 +72,7 @@ class EmargementService
             ->exists();
 
         if ($dejaPresent) {
-            throw new Exception("Vous avez déjà émargé pour cette séance.");
+            throw new DejaEmargeException();
         }
 
         // à faire plus tard : Logique de vérification de distance si $session->latitude est défini
@@ -109,7 +113,7 @@ class EmargementService
         return Str::random(32);
     }
 
-    /* Prochaines méthodes à implémenter: 
+    /* Prochaines méthodes à implémenter:
     * -fonction de calcul de distance entre les coordonnées de la session et celles de l'étudiant
     * -fonction qui vérifie qu'un étudiant est bien inscrit à la séance
     * - fonction pour cloturer une session d'émargement
