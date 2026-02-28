@@ -1,0 +1,127 @@
+.session-qr-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+}
+
+.session-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 1.5rem;
+}
+
+.session-header h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2.5rem;
+    color: #222;
+}
+
+.session-header p {
+    margin: 0.2rem 0;
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.session-main {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    align-items: start;
+}
+
+.qr-card {
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.qr-card h2 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    color: #444;
+}
+
+.qr-wrapper {
+    background: #f4f4f4;
+    padding: 1rem;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.qr-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.qr-expiry {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: #777;
+    font-style: italic;
+}
+
+.status-card {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+.status-card h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.75rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.stat-label {
+    color: #666;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #007bff;
+    font-size: 1.5rem;
+}
+
+.stop-button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.stop-button:hover {
+    background-color: #c82333;
+}
+
+@media (max-width: 900px) {
+    .session-main {
+        grid-template-columns: 1fr;
+    }
+}

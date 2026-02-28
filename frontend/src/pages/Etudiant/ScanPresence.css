@@ -1,0 +1,138 @@
+.scan-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.scan-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+}
+
+.scan-header h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.8rem;
+    color: #1a73e8;
+}
+
+.scan-header p {
+    margin: 0;
+    font-size: 1rem;
+    color: #5f6368;
+}
+
+.scan-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.scanner-wrapper {
+    width: 100%;
+    max-width: 500px;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+#reader {
+    width: 100% !important;
+    border: none !important;
+}
+
+/* On personnalise un peu les boutons de html5-qrcode qui arrivent avec des styles par défaut */
+#reader button {
+    background-color: #1a73e8;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px 5px;
+}
+
+#reader button:hover {
+    background-color: #1557b0;
+}
+
+.loading-card, .result-card {
+    background: white;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    text-align: center;
+    width: 100%;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #1a73e8;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.result-card h2 {
+    margin: 1rem 0;
+    font-size: 1.6rem;
+}
+
+.result-card .icon {
+    font-size: 4rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.success .icon { color: #28a745; }
+.error .icon { color: #dc3545; }
+
+.retry-button {
+    margin-top: 1.5rem;
+    padding: 12px 24px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.info-message {
+    margin-top: 1.5rem;
+    padding: 10px 15px;
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    width: 100%;
+}
+
+@media (max-width: 480px) {
+    .scan-container {
+        padding: 1rem;
+    }
+    
+    .scan-header h1 {
+        font-size: 1.5rem;
+    }
+}
