@@ -104,9 +104,19 @@ class EmargementService
     }
 
     /**
+     * Clôture une session d'émargement en mettant à jour sa date d'expiration à maintenant.
+     */
+    public function cloturerSession(SessionEmargement $session): SessionEmargement
+    {
+        $session->update([
+            'expire_a' => Carbon::now(),
+        ]);
+
+        return $session;
+    }
+
+    /**
      * Génère une chaîne aléatoire unique pour le jeton.
-     *
-     * @return string
      */
     protected function genererJeton(): string
     {

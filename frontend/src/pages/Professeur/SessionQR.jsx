@@ -1,28 +1,94 @@
 import React, { useState, useEffect } from 'react';
 import './SessionQR.css';
 
-const SessionQR = () => {
-    const [idSession, setIdSession] = useState('session_123'); // Simulation d'un ID de session
-    const [jeton, setJeton] = useState('jeton_ABC_789'); // Simulation d'un jeton dynamique
-    const [nombrePresents, setNombrePresents] = useState(0); // Simulation du nombre de présents
+const SessionQR = ({ seance_id = 10 }) => { // ID par défaut pour test
+    const [session, setSession] = useState(null);
+    const [jeton, setJeton] = useState('');
+    const [nombrePresents, setNombrePresents] = useState(0);
+    const [erreur, setErreur] = useState(null);
+    const [enChargement, setEnChargement] = useState(false);
 
-    // Simuler le changement de jeton toutes les 15 secondes pour la sécurité du QR Code
+    const token = localStorage.getItem('token'); 
+
+    // Fonction pour démarrer manuellement la session
+    const handleStartSession = async () => {
+        setEnChargement(true);
+        setErreur(null);
+        try {
+            const reponse = await fetch('http://localhost:8000/api/sessions-emargement', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    seance_id: seance_id,
+                    methode: 'qr',
+                }),
+            });
+            const donnees = await reponse.json();
+            if (reponse.ok) {
+                setSession(donnees);
+                setJeton(donnees.jeton);
+            } else {
+                setErreur(donnees.message || "Erreur lors du démarrage de la session.");
+            }
+        } catch (err) {
+            setErreur("Impossible de contacter le serveur.");
+        } finally {
+            setEnChargement(false);
+        }
+    };
+
+    // Récupérer le statut de la session (incluant le jeton actuel) toutes les 5 secondes
     useEffect(() => {
-        const intervalle = setInterval(() => {
-            setJeton(`jeton_${Math.random().toString(36).substring(7)}`);
-        }, 15000);
-        return () => clearInterval(intervalle);
-    }, []);
+        if (!session) return;
 
-    // Simuler l'arrivée d'étudiants
-    useEffect(() => {
-        const intervalle = setInterval(() => {
-            setNombrePresents(prev => prev + 1);
-        }, 30000); // 1 étudiant toutes les 30s
-        return () => clearInterval(intervalle);
-    }, []);
+        const intervalle = setInterval(async () => {
+            try {
+                const reponse = await fetch(`http://localhost:8000/api/sessions-emargement/${session.id}/status`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json',
+                    },
+                });
+                const donnees = await reponse.json();
+                if (reponse.ok) {
+                    setNombrePresents(donnees.nombre_presents);
+                    setJeton(donnees.jeton); // Le jeton est rafraîchi par le back si besoin
+                }
+            } catch (err) {
+                console.error("Échec de la récupération du statut", err);
+            }
+        }, 5000);
 
-    const urlQR = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(JSON.stringify({ idSession, jeton }))}`;
+        return () => clearInterval(intervalle);
+    }, [session, token]);
+
+    const handleStopSession = async () => {
+        if (!session) return;
+        try {
+            const reponse = await fetch(`http://localhost:8000/api/sessions-emargement/${session.id}/cloturer`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json',
+                },
+            });
+            if (reponse.ok) {
+                setSession(null);
+                setJeton('');
+                // On peut aussi rediriger ou afficher un message de fin
+            }
+        } catch (err) {
+            console.error("Échec de la clôture de la session", err);
+        }
+    };
+
+    const urlQR = jeton 
+        ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(JSON.stringify({ idSession: session?.id, jeton }))}`
+        : '';
 
     return (
         <div className="session-qr-container">
@@ -33,26 +99,48 @@ const SessionQR = () => {
             </header>
 
             <main className="session-main">
-                <div className="qr-card">
-                    <h2>Scanner pour valider votre présence</h2>
-                    <div className="qr-wrapper">
-                        <img src={urlQR} alt="QR Code d'émargement" className="qr-image" />
+                {erreur && <div className="error-message">{erreur}</div>}
+                
+                {!session ? (
+                    <div className="start-session-card">
+                        <h2>Prêt à démarrer l'émargement ?</h2>
+                        <p>Cliquez sur le bouton ci-dessous pour générer le QR Code de cette séance.</p>
+                        <button 
+                            onClick={handleStartSession} 
+                            className="start-button"
+                            disabled={enChargement}
+                        >
+                            {enChargement ? 'Démarrage...' : 'Démarrer la session'}
+                        </button>
                     </div>
-                    <p className="qr-expiry">Le QR Code se rafraîchit toutes les 15 secondes.</p>
-                </div>
+                ) : (
+                    <>
+                        <div className="qr-card">
+                            <h2>Scanner pour valider votre présence</h2>
+                            <div className="qr-wrapper">
+                                {jeton ? (
+                                    <img src={urlQR} alt="QR Code d'émargement" className="qr-image" />
+                                ) : (
+                                    <div className="qr-placeholder">Session terminée</div>
+                                )}
+                            </div>
+                            {jeton && <p className="qr-expiry">Le QR Code se rafraîchit automatiquement.</p>}
+                        </div>
 
-                <aside className="status-card">
-                    <h3>Statut de la session</h3>
-                    <div className="stat-item">
-                        <span className="stat-label">Présents :</span>
-                        <span className="stat-value">{nombrePresents}</span>
-                    </div>
-                    <div className="stat-item">
-                        <span className="stat-label">Inscrits :</span>
-                        <span className="stat-value">25</span>
-                    </div>
-                    <button className="stop-button">Terminer la session</button>
-                </aside>
+                        <aside className="status-card">
+                            <h3>Statut de la session</h3>
+                            <div className="stat-item">
+                                <span className="stat-label">Présents :</span>
+                                <span className="stat-value">{nombrePresents}</span>
+                            </div>
+                            <div className="stat-item">
+                                <span className="stat-label">Inscrits :</span>
+                                <span className="stat-value">25</span>
+                            </div>
+                            <button onClick={handleStopSession} className="stop-button">Terminer la session</button>
+                        </aside>
+                    </>
+                )}
             </main>
         </div>
     );

@@ -56,20 +56,44 @@ const ScanPresence = () => {
         setStatut('validation');
         setMessage('Validation de votre présence en cours...');
 
+        let jeton = donnees;
+        // Si les données sont au format JSON (comme généré par SessionQR)
         try {
-            // Simulation de l'appel API
-            console.log("Données envoyées :", { donneesQR: donnees, localisation });
-            
-            // Simuler un délai réseau
-            await new Promise(resoudre => setTimeout(resoudre, 2000));
+            const parsed = JSON.parse(donnees);
+            if (parsed.jeton) jeton = parsed.jeton;
+        } catch (e) {
+            // Pas du JSON, on utilise les données brutes
+        }
 
-            // Succès simulé
-            setStatut('succes');
-            setMessage('Présence validée avec succès ! Vous pouvez fermer cette page.');
+        try {
+            const token = localStorage.getItem('token'); // On suppose que le token est stocké ici
+            const reponse = await fetch('http://localhost:8000/api/presences/valider', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    jeton: jeton,
+                    latitude: localisation?.latitude,
+                    longitude: localisation?.longitude,
+                }),
+            });
+
+            const resultat = await reponse.json();
+
+            if (reponse.ok) {
+                setStatut('succes');
+                setMessage(resultat.message || 'Présence validée avec succès !');
+            } else {
+                setStatut('erreur');
+                setMessage(resultat.message || 'Erreur lors de la validation.');
+            }
         } catch (error) {
             setStatut('erreur');
-            setMessage('Erreur lors de la validation. Veuillez réessayer.');
-            console.log("Erreur lors de la validation de l'émargement", error);
+            setMessage('Impossible de contacter le serveur. Vérifiez votre connexion.');
+            console.error("Erreur lors de la validation de l'émargement", error);
         }
     };
 

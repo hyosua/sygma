@@ -120,6 +120,24 @@
     background-color: #c82333;
 }
 
+.start-button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    background-color: #f09643;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.start-button:hover {
+    background-color: #e08530;
+}
+
 @media (max-width: 900px) {
     .session-main {
         grid-template-columns: 1fr;
