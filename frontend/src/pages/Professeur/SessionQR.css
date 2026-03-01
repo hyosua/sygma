@@ -2,29 +2,27 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: #333;
-    background-color: #f9f9f9;
     min-height: 100vh;
+    background-color: var(--bg-main);
 }
 
 .session-header {
     text-align: center;
     margin-bottom: 3rem;
-    border-bottom: 2px solid #007bff;
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 1.5rem;
 }
 
 .session-header h1 {
-    margin: 0 0 0.5rem 0;
     font-size: 2.5rem;
-    color: #222;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
 }
 
 .session-header p {
-    margin: 0.2rem 0;
     font-size: 1.1rem;
-    color: #555;
+    color: var(--text-muted);
+    margin: 0.25rem 0;
 }
 
 .session-main {
@@ -34,26 +32,61 @@
     align-items: start;
 }
 
-.qr-card {
-    background: #fff;
+/* For when session is not started */
+.session-main:has(.start-session-card) {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.start-session-card, .qr-card, .status-card {
+    background: var(--bg-card);
     padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.start-session-card {
     text-align: center;
 }
 
-.qr-card h2 {
-    margin-top: 0;
-    margin-bottom: 2rem;
+.start-session-card h2 {
     font-size: 1.8rem;
-    color: #444;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+}
+
+.start-session-card p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.qr-card {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.qr-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    color: var(--text-main);
 }
 
 .qr-wrapper {
-    background: #f4f4f4;
-    padding: 1rem;
-    border-radius: 8px;
-    display: inline-block;
+    background: white; /* Always white so QR has good contrast */
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 300px;
+    min-height: 300px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
 }
 
 .qr-image {
@@ -62,26 +95,24 @@
     height: auto;
 }
 
+.qr-placeholder {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
 .qr-expiry {
     margin-top: 1.5rem;
     font-size: 0.9rem;
-    color: #777;
+    color: var(--text-light);
     font-style: italic;
 }
 
-.status-card {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-}
-
 .status-card h3 {
-    margin-top: 0;
     margin-bottom: 1.5rem;
     font-size: 1.4rem;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
 }
 
 .stat-item {
@@ -93,53 +124,72 @@
 }
 
 .stat-label {
-    color: #666;
+    color: var(--text-muted);
 }
 
 .stat-value {
     font-weight: bold;
-    color: #007bff;
+    color: var(--primary-color);
     font-size: 1.5rem;
+}
+
+.error-message {
+    grid-column: 1 / -1;
+    padding: 1rem 1.5rem;
+    background-color: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid var(--danger-color);
+    color: var(--danger-hover);
+    border-radius: var(--radius-sm);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.start-button {
+    background-color: var(--primary-color);
+    color: white;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+.start-button:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+}
+
+.start-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .stop-button {
     width: 100%;
     padding: 1rem;
-    margin-top: 1.5rem;
-    background-color: #dc3545;
+    margin-top: 2rem;
+    background-color: var(--danger-color);
     color: white;
-    border: none;
-    border-radius: 6px;
     font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
 }
 
 .stop-button:hover {
-    background-color: #c82333;
-}
-
-.start-button {
-    width: 100%;
-    padding: 1rem;
-    margin-top: 1.5rem;
-    background-color: #f09643;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.start-button:hover {
-    background-color: #e08530;
+    background-color: var(--danger-hover);
 }
 
 @media (max-width: 900px) {
     .session-main {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .session-qr-container {
+        padding: 1rem;
+    }
+    
+    .session-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .start-session-card, .qr-card, .status-card {
+        padding: 1.5rem;
     }
 }
