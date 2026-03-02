@@ -96,21 +96,29 @@ class EmargementController extends Controller
 
         try {
             $presence = $this->emargementService->validerPresenceParJeton($request->jeton, $etudiant, $coordonnees);
-            return response()->json([
+            $statusCode = 200;
+            $response = [
                 'message' => 'Présence validée avec succès',
                 'presence' => $presence
-            ], 200);
+            ];
         } catch (JetonInvalideException $e) {
-            return response()->json(['message' => 'Jeton invalide'], 400);
+            $statusCode = 400;
+            $response = ['message' => 'Jeton invalide'];
         } catch (JetonExpireException $e) {
-            return response()->json(['message' => 'Le QR Code a expiré, veuillez scanner le nouveau'], 400);
+            $statusCode = 400;
+            $response = ['message' => 'Le QR Code a expiré, veuillez scanner le nouveau'];
         } catch (SeanceNonActiveException $e) {
-            return response()->json(['message' => 'La séance n\'est pas active'], 400);
+            $statusCode = 400;
+            $response = ['message' => 'La séance n\'est pas active'];
         } catch (DejaEmargeException $e) {
-            return response()->json(['message' => 'Vous avez déjà émargé pour cette séance'], 400);
+            $statusCode = 400;
+            $response = ['message' => 'Vous avez déjà émargé pour cette séance'];
         } catch (Exception $e) {
-            return response()->json(['message' => 'Une erreur est survenue lors de la validation'], 500);
+            $statusCode = 500;
+            $response = ['message' => 'Une erreur est survenue lors de la validation'];
         }
+
+        return response()->json($response, $statusCode);
     }
 
     /**

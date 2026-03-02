@@ -3,7 +3,6 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import './ScanPresence.css';
 
 const ScanPresence = () => {
-    const [resultatScan, setResultatScan] = useState(null);
     const [statut, setStatut] = useState('attente'); // attente, lecture, validation, succes, erreur
     const [message, setMessage] = useState('');
     const [localisation, setLocalisation] = useState(null);
@@ -35,24 +34,24 @@ const ScanPresence = () => {
             fps: 5,
         });
 
-        const surSuccesScan = (resultat) => {
+        const onSuccesScan = (resultat) => {
             lecteur.clear();
-            setResultatScan(resultat);
-            gererEmargement(resultat);
+            handleEmargement(resultat);
         };
 
-        const surErreurScan = (error) => {
+        const onErreurScan = (error) => {
             // Ignorer les erreurs de scan continu
+            console.warn("Erreur de scan (ignorée):", error);
         };
 
-        lecteur.render(surSuccesScan, surErreurScan);
+        lecteur.render(onSuccesScan, onErreurScan);
 
         return () => {
             lecteur.clear().catch(error => console.error("Échec du nettoyage du lecteur", error));
         };
     }, []);
 
-    const gererEmargement = async (donnees) => {
+    const handleEmargement = async (donnees) => {
         setStatut('validation');
         setMessage('Validation de votre présence en cours...');
 
@@ -63,6 +62,8 @@ const ScanPresence = () => {
             if (parsed.jeton) jeton = parsed.jeton;
         } catch (e) {
             // Pas du JSON, on utilise les données brutes
+            console.warn("Données scannées non JSON, utilisation brute:", donnees);
+            console.warn("Erreur de parsing JSON (si attendu):", e);
         }
 
         try {
