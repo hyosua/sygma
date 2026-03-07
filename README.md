@@ -71,9 +71,9 @@ Si vous devez taper `sudo` avant chaque commande Docker ou si vous avez des erre
    ```bash
    sudo chown -R $USER:$USER .
    ```
-2. **S'assurer que le script est exécutable** :
+2. **S'assurer que make est installé** :
    ```bash
-   chmod +x sygma.sh
+   which make || sudo apt install make
    ```
 
 ---
@@ -90,11 +90,10 @@ cp backend/.env.example backend/.env
 Vous avez deux méthodes pour installer les dépendances et démarrer le projet :
 
 #### Option A : La méthode rapide (Recommandé)
-Utilisez le script automatisé qui s'occupe de tout (build, install, migrations, seed) :
+Utilisez le Makefile qui s'occupe de tout (build, install, migrations, seed) :
 
 ```bash
-chmod +x sygma.sh
-./sygma.sh install
+make install
 ```
 
 #### Option B : La méthode manuelle
@@ -125,10 +124,10 @@ docker compose exec backend php artisan migrate --seed
 Plus besoin de tout réinstaller ! À chaque nouvelle session :
 
 - **Récupérer le travail** : `git pull origin main`
-- **Mettre à jour** : `./sygma.sh update` (Installe les nouvelles dépendances et applique les migrations)
-- **Démarrer les serveurs** : `./sygma.sh start`
+- **Mettre à jour** : `make update` (Installe les nouvelles dépendances et applique les migrations)
+- **Démarrer les serveurs** : `make start`
 - **Travailler** : Les modifications de code sont visibles en temps réel.
-- **Quitter** : `./sygma.sh stop` (libère la RAM de votre PC).
+- **Quitter** : `make stop` (libère la RAM de votre PC).
 
 ---
 
@@ -174,38 +173,30 @@ git push origin feat/ma-fonctionnalite
 
 Pour ajouter une librairie (ex: un package Composer ou un module NPM), vous ne devez pas l'installer sur votre Windows. Vous devez demander au conteneur de le faire.
 
-### 1. La méthode "Raccourci" (Script Sygma)
-J'ai créé un script `sygma` pour vous simplifier la vie. 
+### 1. Les commandes Make
+Le projet utilise un `Makefile` pour simplifier les commandes courantes. Depuis la racine du projet :
 
-**Configuration initiale (recommandé) :**
-Pour pouvoir taper `sygma` au lieu de `./sygma.sh`, lancez une fois :
-```bash
-chmod +x sygma.sh
-./sygma.sh setup
-source ~/.bashrc  # ou source ~/.zshrc
-```
+* **Installer tout** : `make install`
+* **Démarrer** : `make start`
+* **Arrêter** : `make stop`
+* **Mettre à jour (post-pull)** : `make update`
+* **Vider/Réinitialiser BDD** : `make fresh`
+* **Réparer** : `make repair`
 
-Désormais, vous pouvez utiliser ces commandes partout :
-* **Installer tout** : `sygma install`
-* **Démarrer** : `sygma start`
-* **Arrêter** : `sygma stop`
-* **Mettre à jour (post-pull)** : `sygma update`
-* **Vider/Réinitialiser BDD** : `sygma fresh`
-* **Réparer** : `sygma repair`
-
-### 2. Utilisation des outils (via le script)
-Plus besoin de taper de longues commandes Docker, utilisez les raccourcis :
+### 2. Utilisation des outils (via make)
+Plus besoin de taper de longues commandes Docker :
 
 **Pour le Backend (PHP/Laravel) :**
 ```bash
-sygma composer require <package>  # Installer un package
-sygma artisan make:model <Nom>    # Créer un modèle
-sygma artisan migrate             # Lancer les migrations
+make composer ARGS="require <package>"  # Installer un package
+make artisan ARGS="make:model <Nom>"    # Créer un modèle
+make artisan ARGS="migrate"             # Lancer les migrations
 ```
 
 **Pour le Frontend (React) :**
 ```bash
-sygma npm install <package>       # Installer un package
+make npm-front ARGS="install <package>"  # Installer un package frontend
+make npm-back ARGS="install <package>"   # Installer un package backend
 ```
 
 *Note : Ces commandes s'exécutent directement à l'intérieur des conteneurs Docker.*
@@ -239,10 +230,10 @@ C'est une interface web déjà prête.
 ### Peupler la base de données (Seeding)
 Pour obtenir un jeu de données de test complet et interconnecté (utilisateurs avec rôles variés, groupes, cours, inscriptions, séances et enregistrements de présence simulés), vous avez deux options :
 
-**Option 1 (Recommandée - via le script `sygma`) :**
+**Option 1 (Recommandée - via make) :**
 Utilisez la commande simplifiée :
 ```bash
-sygma fresh
+make fresh
 ```
 
 **Option 2 (Manuelle - via Docker Compose) :**
@@ -266,10 +257,10 @@ Les tests permettent de vérifier que les fonctionnalités (comme la gestion des
 
 **Lancer tous les tests :**
 ```bash
-sygma artisan test
+make artisan ARGS="test"
 ```
 
 **Lancer uniquement les tests liés aux groupes :**
 ```bash
-sygma artisan test --filter GroupManagementTest
+make artisan ARGS="test --filter GroupManagementTest"
 ```

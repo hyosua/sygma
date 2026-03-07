@@ -58,7 +58,7 @@ Le premier build prend quelques minutes (téléchargement de la nouvelle image d
 ### 5. Relancer les services
 
 ```bash
-./sygma.sh start
+make start
 ```
 
 ### 6. Vérifier que tout fonctionne
@@ -70,7 +70,7 @@ docker compose ps
 Tous les conteneurs doivent être en statut `Up`.
 
 ```bash
-./sygma.sh artisan migrate --status
+make artisan ARGS="migrate --status"
 ```
 
 Toutes les migrations doivent apparaître comme appliquées. Ouvrir http://localhost:3000 dans le navigateur.
@@ -90,7 +90,7 @@ sudo chown -R $USER:$USER ./backend ./frontend
 Puis relancez :
 
 ```bash
-./sygma.sh start
+make start
 ```
 
 ### L'image ne se reconstruit pas (build identique à avant)
