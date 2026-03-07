@@ -26,7 +26,8 @@ WORKDIR /var/www/html
 # hérite de ces droits à l'initialisation (premier démarrage sans volume existant).
 # Sans ça, Docker crée le répertoire en root et composer install échoue
 # quand le conteneur tourne avec un utilisateur non-root (user: UID:GID).
-RUN mkdir -p /var/www/html/vendor && chown ${UID}:${GID} /var/www/html/vendor
+RUN mkdir -p /var/www/html/vendor /var/www/html/node_modules && \
+    chown ${UID}:${GID} /var/www/html /var/www/html/vendor /var/www/html/node_modules
 
 EXPOSE 8000
 

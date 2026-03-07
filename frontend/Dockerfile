@@ -10,15 +10,11 @@ RUN deluser --remove-home node 2>/dev/null || true && \
 
 WORKDIR /app
 
-# Pre-create node_modules with correct ownership so the named volume
-# inherits these permissions on first initialization (same pattern as backend).
 RUN mkdir -p /app/node_modules && chown ${UID}:${GID} /app /app/node_modules
 
 COPY --chown=${UID}:${GID} package*.json ./
 
 USER appuser
-
-RUN npm ci
 
 EXPOSE 3000
 
