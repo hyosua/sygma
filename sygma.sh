@@ -10,6 +10,11 @@ CURRENT_UID=$(id -u 2>/dev/null || echo 1000)
 CURRENT_GID=$(id -g 2>/dev/null || echo 1000)
 DOCKER_USER_OPT="-u $CURRENT_UID:$CURRENT_GID"
 
+# Exporté pour que docker-compose puisse lire ${SYGMA_UID} et ${SYGMA_GID} dans le yaml
+# On n'utilise pas UID/GID car UID est readonly en bash
+export SYGMA_UID="$CURRENT_UID"
+export SYGMA_GID="$CURRENT_GID"
+
 case "$1" in
     install)
         echo -e "${GREEN}1. Construction des images...${NC}"

@@ -1,39 +1,41 @@
-FROM php:8.3-fpm
+FROM php:8.3-cli-alpine
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     git \
     curl \
+    bash \
     libpng-dev \
-    libonig-dev \
+    oniguruma-dev \
     libxml2-dev \
     zip \
     unzip \
-    libpq-dev \
+    postgresql-dev \
     libzip-dev \
-    libicu-dev
+    icu-dev \
+    icu-libs \
+    nodejs \
+    npm
 
-# Install Node.js and NPM
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
 RUN docker-php-ext-configure intl && \
-    docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd intl
+    docker-php-ext-configure gd && \
+    docker-php-ext-install pdo_pgsql mbstring exif pcntl bcmath gd intl zip
 
-# Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
 WORKDIR /var/www/html
 
+# Cache layer : dépendances PHP
+COPY composer.json composer.lock ./
+RUN composer install --no-scripts --no-autoloader --prefer-dist --no-interaction
+
+# Cache layer : dépendances Node
+COPY package*.json ./
+RUN npm ci --prefer-offline
+
+# Source complète
 COPY . .
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN composer dump-autoload --optimize
 
 EXPOSE 8000
 
