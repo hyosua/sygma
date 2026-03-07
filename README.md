@@ -103,9 +103,9 @@ Si vous préférez exécuter les commandes étape par étape :
 1. **Installation des dépendances** (une seule fois) :
 ```bash
 docker compose build
-docker compose run --rm backend composer install
-docker compose run --rm backend npm install
-docker compose run --rm frontend npm install
+docker compose run --rm -u "$(id -u):$(id -g)" backend composer install
+docker compose run --rm -u "$(id -u):$(id -g)" backend npm install
+docker compose run --rm -u "$(id -u):$(id -g)" frontend npm install
 ```
 
 2. **Démarrage des serveurs** :
@@ -231,7 +231,6 @@ C'est une interface web déjà prête.
 - **Logs en direct** : `docker compose logs -f`
 - **Réinitialiser un conteneur** : `docker compose restart backend`
 - **Récupérer les droits sur tout le projet** : `sudo chown -R $USER:$USER .`
-- **Erreur de permissions Laravel (storage)** : `docker compose exec backend chown -R www-data:www-data storage`
 
 ---
 

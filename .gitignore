@@ -27,8 +27,6 @@ frontend/yarn-debug.log*
 frontend/yarn-error.log*
 frontend/.pnpm-debug.log*
 
-# Docker
-.dockerignore
 
 # Generic
 .DS_Store
