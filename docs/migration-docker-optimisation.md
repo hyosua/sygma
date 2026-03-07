@@ -19,6 +19,14 @@ Ce guide s'applique si vous avez déjà une installation Sygma fonctionnelle et 
 
 Pour ouvrir un terminal WSL depuis VS Code : `Ctrl + ù` (le terminal s'ouvre déjà en WSL si vous êtes connecté via l'extension WSL).
 
+- **`make`** doit être installé. Vérifiez avec `make --version`. Si la commande est introuvable :
+
+```bash
+sudo apt update && sudo apt install -y make
+```
+
+> Si vous ne souhaitez pas installer `make`, des équivalents `docker compose` sont indiqués à chaque étape concernée.
+
 ---
 
 ## Procédure de mise à jour
@@ -61,6 +69,11 @@ Le premier build prend quelques minutes (téléchargement de la nouvelle image d
 make start
 ```
 
+> Sans `make` :
+> ```bash
+> SYGMA_UID=$(id -u) SYGMA_GID=$(id -g) docker compose up -d
+> ```
+
 ### 6. Vérifier que tout fonctionne
 
 ```bash
@@ -70,8 +83,13 @@ docker compose ps
 Tous les conteneurs doivent être en statut `Up`.
 
 ```bash
-make artisan ARGS="migrate --status"
+make artisan ARGS="migrate:status"
 ```
+
+> Sans `make` :
+> ```bash
+> docker compose exec -u $(id -u):$(id -g) backend php artisan migrate:status
+> ```
 
 Toutes les migrations doivent apparaître comme appliquées. Ouvrir http://localhost:3000 dans le navigateur.
 
