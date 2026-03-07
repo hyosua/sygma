@@ -44,6 +44,9 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        UID: "${SYGMA_UID:-1000}"
+        GID: "${SYGMA_GID:-1000}"
     container_name: sygma-frontend
     restart: unless-stopped
     user: "${SYGMA_UID:-1000}:${SYGMA_GID:-1000}"
