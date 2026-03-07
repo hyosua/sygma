@@ -3,8 +3,10 @@ FROM node:20-alpine
 ARG UID=1000
 ARG GID=1000
 
-RUN addgroup -g ${GID} appgroup 2>/dev/null || true && \
-    adduser -u ${UID} -G appgroup -s /bin/sh -D appuser 2>/dev/null || true
+RUN deluser --remove-home node 2>/dev/null || true && \
+    delgroup node 2>/dev/null || true && \
+    addgroup -g ${GID} appgroup 2>/dev/null || true && \
+    adduser -u ${UID} -G appgroup -s /bin/sh -D appuser
 
 WORKDIR /app
 
