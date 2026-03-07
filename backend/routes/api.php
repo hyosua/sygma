@@ -3,8 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ControllerCours;
-
 use App\Http\Controllers\EmargementController;
+use App\Http\Controllers\SeanceController;
 
 Route::get('/user/{id}', [UserController::class, 'show']);
 Route::get('/user', function (Request $request) {
@@ -20,7 +20,7 @@ Route::post('/presences/valider', [EmargementController::class, 'validerPresence
 
 // Séances
 Route::get('/seances', [SeanceController::class, 'getSeances']);
-Route::get('/seances/{id}', [SeanceController::class, 'getSeance']);
+Route::get('/seances/{seance}', [SeanceController::class, 'getSeance']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Autres routes protégées si nécessaire

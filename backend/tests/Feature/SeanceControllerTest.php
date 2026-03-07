@@ -34,7 +34,7 @@ class SeanceControllerTest extends TestCase
                 'fin_a',
                 'cours'      => ['id', 'nom'],
                 'enseignant' => ['id', 'nom', 'prenom'],
-                'groupe'     => ['id'],
+                'groupe'     => ['id', 'nom'],
             ])
             ->assertJsonFragment(['id' => $seance->id]);
     }
@@ -63,8 +63,9 @@ class SeanceControllerTest extends TestCase
 
         $response = $this->getJson("/api/seances/{$seance->id}");
 
-        $response->assertStatus(200)
-            ->assertJsonPath('debut_a', fn($val) => str_contains($val, '2026-03-10'))
-            ->assertJsonPath('fin_a', fn($val) => str_contains($val, '2026-03-10'));
+        $response->assertStatus(200);
+
+        $this->assertStringContainsString('2026-03-10', $response->json('debut_a'));
+        $this->assertStringContainsString('2026-03-10', $response->json('fin_a'));
     }
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import './SessionQR.css';
 
 const SessionQR = () => { 
@@ -149,8 +150,8 @@ const SessionQR = () => {
         <div className="session-qr-container">
             <header className="session-header">
                 <h1>Session d'Émargement en cours</h1>
-                <p>Cours : {seance?.cours || 'Non spécifié'}</p>
-                <p>Groupe : {seance?.groupe || 'Non spécifié'}</p>
+                <p>Cours : {seance?.cours?.nom || 'Non spécifié'}</p>
+                <p>Groupe : {seance?.groupe?.nom || 'Non spécifié'}</p>
             </header>
 
             <main className="session-main">

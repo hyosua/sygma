@@ -13,6 +13,8 @@ class SeanceController extends Controller
     }
 
     public function getSeance(Seance $seance){
-        return response()->json($seance->load(['cours', 'enseignant', 'groupe']));
+        $seance->load(['cours', 'enseignant', 'groupe.users']);
+        $seance->nombre_inscrits = $seance->groupe?->users->count() ?? 0;
+        return response()->json($seance);
     }
 }
