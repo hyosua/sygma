@@ -9,13 +9,14 @@ function App() {
     <Router>
       <Routes>
         {/* Route par défaut redirigeant vers la session QR pour le moment */}
-        <Route path="/" element={<Navigate to="/professeur/session" replace />} />
+        <Route path="/" element={<Navigate to="/professeur/session/1" replace />} />
         
         {/* Route Professeur */}
-        <Route path="/professeur/session" element={<SessionQR />} />
+        <Route path="/professeur/session/:seanceId" element={<SessionQR />} />
 
         {/* Route Étudiant */}
         <Route path="/etudiant/scan" element={<ScanPresence />} />
+
 
         {/* Fallback route */}
         <Route path="*" element={

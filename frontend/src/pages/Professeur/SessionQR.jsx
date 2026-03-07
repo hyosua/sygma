@@ -1,17 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import './SessionQR.css';
 
-const SessionQR = ({ seance_id = 10 }) => { // ID par défaut pour test
+const SessionQR = () => { 
+    const { seanceId } = useParams();
+    const [seance, setSeance] = useState(null);
     const [session, setSession] = useState(null);
     const [jeton, setJeton] = useState('');
     const [expireA, setExpireA] = useState(null);
     const [tempsRestant, setTempsRestant] = useState(0);
     const [nombrePresents, setNombrePresents] = useState(0);
-    const [nombreInscrits, setNombreInscrits] = useState(0);
     const [erreur, setErreur] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const token = localStorage.getItem('token'); 
+
+    // Récupérer les détails de la séance à partir de l'ID
+    useEffect(() => {
+        const fetchSeance = async () => {
+            try {
+                const reponse = await fetch(`http://localhost:8000/api/seances/${seanceId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json',
+                    },
+                });
+                const donnees = await reponse.json();
+                if (reponse.ok) {
+                    setSeance(donnees);
+                } else {
+                    setErreur(donnees.message || "Erreur lors de la récupération de la séance.");
+                }
+            } catch (err) {
+                console.error("Erreur lors de la récupération de la séance:", err);
+                setErreur("Impossible de contacter le serveur.");
+            }
+        };
+
+        fetchSeance();
+    }, [seanceId, token]);
 
     // Calculer le temps restant chaque seconde
     useEffect(() => {
@@ -66,7 +92,7 @@ const SessionQR = ({ seance_id = 10 }) => { // ID par défaut pour test
                     'Accept': 'application/json',
                 },
                 body: JSON.stringify({
-                    seance_id: seance_id,
+                    seance_id: seanceId,
                     methode: 'qr',
                 }),
             });
@@ -123,8 +149,8 @@ const SessionQR = ({ seance_id = 10 }) => { // ID par défaut pour test
         <div className="session-qr-container">
             <header className="session-header">
                 <h1>Session d'Émargement en cours</h1>
-                <p>Cours : Architecture Logicielle</p>
-                <p>Groupe : M1 INFO G1</p>
+                <p>Cours : {seance?.cours || 'Non spécifié'}</p>
+                <p>Groupe : {seance?.groupe || 'Non spécifié'}</p>
             </header>
 
             <main className="session-main">
@@ -162,7 +188,7 @@ const SessionQR = ({ seance_id = 10 }) => { // ID par défaut pour test
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">Inscrits :</span>
-                                <span className="stat-value">25</span>
+                                <span className="stat-value">{seance?.nombre_inscrits || 0}</span>
                             </div>
                             <button onClick={handleStopSession} className="stop-button">Terminer la session</button>
                         </aside>
