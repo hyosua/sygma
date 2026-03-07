@@ -1,86 +1,107 @@
 services:
+
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: sygma-backend
     restart: unless-stopped
     user: "${SYGMA_UID:-1000}:${SYGMA_GID:-1000}"
+
     volumes:
       - ./backend:/var/www/html
-      - /var/www/html/vendor
-      - /var/www/html/node_modules
+      - backend_vendor:/var/www/html/vendor
+      - backend_node_modules:/var/www/html/node_modules
+
     ports:
       - "8000:8000"
+
     env_file:
-    - ./backend/.env
+      - ./backend/.env
+
     environment:
-      - DB_CONNECTION=pgsql
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_DATABASE=sygma
-      - DB_USERNAME=sygma
-      - DB_PASSWORD=sygma_pass
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: sygma
+      DB_USERNAME: sygma
+      DB_PASSWORD: sygma_pass
+
     depends_on:
       db:
         condition: service_healthy
+
     networks:
       - sygma-network
+
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
     container_name: sygma-frontend
     restart: unless-stopped
+    user: "${SYGMA_UID:-1000}:${SYGMA_GID:-1000}"
+
     volumes:
       - ./frontend:/app
-      - /app/node_modules
+      - frontend_node_modules:/app/node_modules
+
     ports:
       - "3000:3000"
+
     environment:
-      - VITE_API_URL=http://localhost:8000/api
+      VITE_API_URL: http://localhost:8000/api
+
     depends_on:
       - backend
+
     networks:
       - sygma-network
 
+
   db:
     image: postgres:16-alpine
+    container_name: sygma-db
     restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: sygma
+      POSTGRES_USER: sygma
+      POSTGRES_PASSWORD: sygma_pass
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U sygma -d sygma"]
       interval: 5s
       timeout: 5s
       retries: 5
-    container_name: sygma-db
-    environment:
-      POSTGRES_DB: sygma
-      POSTGRES_USER: sygma
-      POSTGRES_PASSWORD: sygma_pass
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+
     networks:
       - sygma-network
+
 
   adminer:
     image: adminer
     container_name: sygma-adminer
+
     ports:
       - "8080:8080"
+
     networks:
       - sygma-network
+
 
 networks:
   sygma-network:
     driver: bridge
 
+
 volumes:
   pgdata:
+  frontend_node_modules:
+  backend_vendor:
+  backend_node_modules:
