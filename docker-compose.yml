@@ -26,7 +26,9 @@ services:
       DB_USERNAME: sygma
       DB_PASSWORD: sygma_pass
 
-    command: sh -c "composer install --no-interaction --prefer-dist && php artisan serve --host=0.0.0.0 --port=8000"
+    # Lance composer install uniquement si vendor est absent (premier démarrage),
+    # puis démarre le serveur — évite de ralentir les redémarrages suivants
+    command: sh -c "[ -f vendor/autoload.php ] || composer install --no-interaction --prefer-dist && php artisan serve --host=0.0.0.0 --port=8000"
 
     depends_on:
       db:
