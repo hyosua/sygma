@@ -11,12 +11,16 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// Routes pour l'émargement (Auth temporairement retirée pour tests)
+// Emargement (Auth temporairement retirée pour tests)
 Route::post('/sessions-emargement', [EmargementController::class, 'demarrerSession']);
 Route::post('/sessions-emargement/{session}/refresh', [EmargementController::class, 'rafraichirJeton']);
 Route::post('/sessions-emargement/{session}/cloturer', [EmargementController::class, 'cloturerSession']);
 Route::get('/sessions-emargement/{session}/status', [EmargementController::class, 'status']);
 Route::post('/presences/valider', [EmargementController::class, 'validerPresence']);
+
+// Séances
+Route::get('/seances', [SeanceController::class, 'getSeances']);
+Route::get('/seances/{id}', [SeanceController::class, 'getSeance']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Autres routes protégées si nécessaire

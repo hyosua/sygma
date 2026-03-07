@@ -7,6 +7,7 @@ const SessionQR = ({ seance_id = 10 }) => { // ID par défaut pour test
     const [expireA, setExpireA] = useState(null);
     const [tempsRestant, setTempsRestant] = useState(0);
     const [nombrePresents, setNombrePresents] = useState(0);
+    const [nombreInscrits, setNombreInscrits] = useState(0);
     const [erreur, setErreur] = useState(null);
     const [loading, setLoading] = useState(false);
 
