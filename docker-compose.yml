@@ -3,6 +3,9 @@ services:
   backend:
     build:
       context: ./backend
+      args:
+        UID: "${SYGMA_UID:-1000}"
+        GID: "${SYGMA_GID:-1000}"
     container_name: sygma-backend
     restart: unless-stopped
     user: "${SYGMA_UID:-1000}:${SYGMA_GID:-1000}"

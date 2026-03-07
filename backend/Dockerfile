@@ -1,5 +1,8 @@
 FROM php:8.3-cli-alpine
 
+ARG UID=1000
+ARG GID=1000
+
 RUN apk add --no-cache \
     git curl bash \
     libpng-dev oniguruma-dev libxml2-dev \
@@ -14,7 +17,16 @@ RUN docker-php-ext-configure intl && \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+RUN addgroup -g ${GID} appuser 2>/dev/null || true && \
+    adduser -u ${UID} -G appuser -s /bin/sh -D appuser 2>/dev/null || true
+
 WORKDIR /var/www/html
+
+# Pré-crée vendor/ avec le bon propriétaire pour que le volume nommé Docker
+# hérite de ces droits à l'initialisation (premier démarrage sans volume existant).
+# Sans ça, Docker crée le répertoire en root et composer install échoue
+# quand le conteneur tourne avec un utilisateur non-root (user: UID:GID).
+RUN mkdir -p /var/www/html/vendor && chown ${UID}:${GID} /var/www/html/vendor
 
 EXPOSE 8000
 
