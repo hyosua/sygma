@@ -96,13 +96,7 @@ Les anciennes images ne sont pas compatibles avec les nouveaux Dockerfiles. Elle
 docker compose down --rmi local
 ```
 
-Cette commande supprime les images construites localement par Compose. Si vous préférez cibler les images manuellement :
-
-```bash
-docker rmi sygma-backend sygma-frontend
-```
-
-Si l'une des deux n'existe pas encore chez vous, ignorez l'erreur.
+Cette commande supprime les images construites localement par Compose. 
 
 ### 3. Reconstruire les images
 
