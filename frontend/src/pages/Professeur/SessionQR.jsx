@@ -45,9 +45,9 @@ const SessionQR = () => {
         if (!expireA || !session) return;
 
         const intervalleCompteur = setInterval(() => {
-            const maintenant = new Date();
+            const now = new Date();
             const expiration = new Date(expireA);
-            const diff = Math.max(0, Math.floor((expiration - maintenant) / 1000));
+            const diff = Math.max(0, Math.floor((expiration - now) / 1000));
             
             setTempsRestant(diff);
 
@@ -60,6 +60,7 @@ const SessionQR = () => {
         return () => clearInterval(intervalleCompteur);
     }, [expireA, session]);
 
+    // Fonction pour récupérer le statut de la session (nombre de présents, jeton, expiration)
     const fetchStatus = async () => {
         if (!session) return;
         try {
