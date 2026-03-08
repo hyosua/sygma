@@ -6,16 +6,15 @@ Ce guide s'applique si vous avez déjà une installation Sygma fonctionnelle et 
 
 ## Table des matières
 
-1. [Tester la PR sans l'appliquer](#tester-la-pr-sans-lapplliquer)
+1. [Récupérer la branche](#récupérer-la-branche)
 2. [Ce qui a changé](#ce-qui-a-changé)
 3. [Prérequis](#prérequis)
 4. [Procédure de mise à jour](#procédure-de-mise-à-jour)
-   - [1. Récupérer les changements](#1-récupérer-les-changements)
-   - [2. Arrêter et supprimer les anciens conteneurs](#2-arrêter-et-supprimer-les-anciens-conteneurs)
-   - [3. Supprimer les anciennes images](#3-supprimer-les-anciennes-images)
-   - [4. Reconstruire les images](#4-reconstruire-les-images)
-   - [5. Relancer les services](#5-relancer-les-services)
-   - [6. Vérifier que tout fonctionne](#6-vérifier-que-tout-fonctionne)
+   - [1. Arrêter et supprimer les anciens conteneurs](#1-arrêter-et-supprimer-les-anciens-conteneurs)
+   - [2. Supprimer les anciennes images](#2-supprimer-les-anciennes-images)
+   - [3. Reconstruire les images](#3-reconstruire-les-images)
+   - [4. Relancer les services](#4-relancer-les-services)
+   - [5. Vérifier que tout fonctionne](#5-vérifier-que-tout-fonctionne)
 5. [En cas de problème](#en-cas-de-problème)
    - [Permission denied au démarrage](#permission-denied-au-démarrage-du-backend)
    - [L'image ne se reconstruit pas](#limage-ne-se-reconstruit-pas-build-identique-à-avant)
@@ -25,20 +24,26 @@ Ce guide s'applique si vous avez déjà une installation Sygma fonctionnelle et 
 
 ---
 
-## Tester la PR sans l'appliquer
+## Récupérer la branche
+
+### La PR a été mergée
+
+```bash
+git pull
+```
+
+### La PR n'a pas encore été mergée (test)
 
 > Si vous avez des modifications en cours, sauvegardez-les d'abord avec un commit.
-
-Basculez temporairement sur la branche de la PR :
 
 ```bash
 git fetch origin
 git checkout fix/docker-permissions-makefile
 ```
 
-Suivez ensuite la procédure de mise à jour ci-dessous. Les dépendances n'ont pas à être retéléchargées : elles vivent dans les conteneurs Docker, pas dans votre dossier local.
+Les dépendances n'ont pas à être retéléchargées : elles vivent dans les conteneurs Docker, pas dans votre dossier local.
 
-Une fois votre test terminé, revenez sur votre branche :
+Une fois votre test terminé, revenez sur votre branche d'origine :
 
 ```bash
 git checkout -
@@ -75,13 +80,7 @@ Pour ouvrir un terminal WSL depuis VS Code : `Ctrl + ù` (le terminal s'ouvre d�
 
 ## Procédure de mise à jour
 
-### 1. Récupérer les changements
-
-```bash
-git pull
-```
-
-### 2. Arrêter et supprimer les anciens conteneurs
+### 1. Arrêter et supprimer les anciens conteneurs
 
 ```bash
 docker compose down
@@ -89,7 +88,7 @@ docker compose down
 
 > Vos données PostgreSQL sont conservées (`--volumes` n'est pas utilisé).
 
-### 3. Supprimer les anciennes images
+### 2. Supprimer les anciennes images
 
 Les anciennes images ne sont pas compatibles avec les nouveaux Dockerfiles. Elles doivent être supprimées pour forcer la reconstruction.
 
@@ -105,7 +104,7 @@ docker rmi sygma-backend sygma-frontend
 
 Si l'une des deux n'existe pas encore chez vous, ignorez l'erreur.
 
-### 4. Reconstruire les images
+### 3. Reconstruire les images
 
 ```bash
 docker compose build
@@ -113,7 +112,7 @@ docker compose build
 
 Le premier build prend quelques minutes (téléchargement de la nouvelle image de base). Les builds suivants seront significativement plus rapides grâce au cache Docker.
 
-### 5. Relancer les services
+### 4. Relancer les services
 
 ```bash
 make start
@@ -124,7 +123,7 @@ make start
 > SYGMA_UID=$(id -u) SYGMA_GID=$(id -g) docker compose up -d
 > ```
 
-### 6. Vérifier que tout fonctionne
+### 5. Vérifier que tout fonctionne
 
 ```bash
 docker compose ps
