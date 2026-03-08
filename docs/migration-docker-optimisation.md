@@ -97,7 +97,17 @@ make artisan ARGS="migrate:status"
 > docker compose exec -u $(id -u):$(id -g) backend php artisan migrate:status
 > ```
 
-Toutes les migrations doivent apparaître comme appliquées. Ouvrir http://localhost:3000 dans le navigateur.
+Toutes les migrations doivent apparaître comme appliquées.
+
+Tout est prêt. Vérifiez que les trois services répondent :
+
+| Service | URL |
+|---------|-----|
+| Front-end | http://localhost:3000 |
+| Back-end (API) | http://localhost:8000 |
+| Adminer (BDD) | http://localhost:8080 |
+
+Pour Adminer, connectez-vous avec : système `PostgreSQL`, serveur `db`, utilisateur `sygma`, mot de passe `sygma_pass`, base `sygma`.
 
 ---
 
