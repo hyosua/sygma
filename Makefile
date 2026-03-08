@@ -40,7 +40,7 @@ repair:
 	docker compose run --rm $(DOCKER_USER) backend composer install
 	docker compose run --rm $(DOCKER_USER) backend npm install
 	docker compose run --rm $(DOCKER_USER) frontend npm install
-	docker compose exec $(DOCKER_USER) backend php artisan migrate
+	docker compose run --rm $(DOCKER_USER) backend php artisan migrate
 	docker compose restart
 
 update:
@@ -48,7 +48,7 @@ update:
 	docker compose run --rm $(DOCKER_USER) backend composer install
 	docker compose run --rm $(DOCKER_USER) backend npm install
 	docker compose run --rm $(DOCKER_USER) frontend npm install
-	docker compose exec $(DOCKER_USER) backend php artisan migrate
+	docker compose run --rm $(DOCKER_USER) backend php artisan migrate
 	@echo "$(GREEN)Environnement a jour !$(NC)"
 
 fresh:
