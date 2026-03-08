@@ -4,6 +4,27 @@ Ce guide s'applique si vous avez déjà une installation Sygma fonctionnelle et 
 
 ---
 
+## Table des matières
+
+1. [Tester la PR sans l'appliquer](#tester-la-pr-sans-lapplliquer)
+2. [Ce qui a changé](#ce-qui-a-changé)
+3. [Prérequis](#prérequis)
+4. [Procédure de mise à jour](#procédure-de-mise-à-jour)
+   - [1. Récupérer les changements](#1-récupérer-les-changements)
+   - [2. Arrêter et supprimer les anciens conteneurs](#2-arrêter-et-supprimer-les-anciens-conteneurs)
+   - [3. Supprimer les anciennes images](#3-supprimer-les-anciennes-images)
+   - [4. Reconstruire les images](#4-reconstruire-les-images)
+   - [5. Relancer les services](#5-relancer-les-services)
+   - [6. Vérifier que tout fonctionne](#6-vérifier-que-tout-fonctionne)
+5. [En cas de problème](#en-cas-de-problème)
+   - [Permission denied au démarrage](#permission-denied-au-démarrage-du-backend)
+   - [L'image ne se reconstruit pas](#limage-ne-se-reconstruit-pas-build-identique-à-avant)
+   - [Erreur réseau sur le frontend](#les-conteneurs-démarrent-mais-le-frontend-affiche-une-erreur-réseau)
+   - [Frontend inaccessible](#le-frontend-est-inaccessible-httplocalhost3000-ne-répond-pas)
+   - [Backend inaccessible](#le-backend-est-inaccessible-httplocalhost8000-ne-répond-pas-ou-erreur-500)
+
+---
+
 ## Tester la PR sans l'appliquer
 
 > Si vous avez des modifications en cours, sauvegardez-les d'abord avec un commit.
