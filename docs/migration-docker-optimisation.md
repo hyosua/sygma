@@ -19,10 +19,10 @@ Ce guide s'applique si vous avez déjà une installation Sygma fonctionnelle et 
 
 Pour ouvrir un terminal WSL depuis VS Code : `Ctrl + ù` (le terminal s'ouvre déjà en WSL si vous êtes connecté via l'extension WSL).
 
-- **`make`** doit être installé. Vérifiez avec `make --version`. Si la commande est introuvable :
+- **`make`** doit être installé :
 
 ```bash
-sudo apt update && sudo apt install -y make
+   which make || sudo apt install make
 ```
 
 > Si vous ne souhaitez pas installer `make`, des équivalents `docker compose` sont indiqués à chaque étape concernée.
@@ -50,7 +50,13 @@ docker compose down
 Les anciennes images ne sont pas compatibles avec les nouveaux Dockerfiles. Elles doivent être supprimées pour forcer la reconstruction.
 
 ```bash
-docker rmi sygma-backend:latest sygma-frontend:latest
+docker compose down --rmi local
+```
+
+Cette commande supprime les images construites localement par Compose. Si vous préférez cibler les images manuellement :
+
+```bash
+docker rmi sygma-backend sygma-frontend
 ```
 
 Si l'une des deux n'existe pas encore chez vous, ignorez l'erreur.
@@ -116,9 +122,81 @@ make start
 Vérifiez que vous avez bien supprimé les anciennes images à l'étape 3. Si elles sont toujours listées dans `docker images`, forcez leur suppression :
 
 ```bash
-docker rmi -f sygma-backend:latest sygma-frontend:latest
+docker rmi -f sygma-backend sygma-frontend
 ```
 
 ### Les conteneurs démarrent mais le frontend affiche une erreur réseau
 
-Attendez quelques secondes que le backend soit complètement démarré, puis rafraîchissez la page. Le backend dispose maintenant d'un healthcheck — le frontend attend qu'il soit prêt avant de se connecter.
+Attendez quelques secondes que le backend soit complètement démarré, puis rafraîchissez la page. Le backend peut mettre quelques instants à être prêt après le démarrage des conteneurs.
+
+---
+
+### Le frontend est inaccessible (http://localhost:3000 ne répond pas)
+
+Vérifiez que le conteneur frontend est bien en cours d'exécution :
+
+```bash
+docker compose ps
+```
+
+Si le statut est `Exited` ou `Restarting`, consultez les logs :
+
+```bash
+docker compose logs frontend
+```
+
+Si vous voyez une erreur `EACCES` ou `permission denied` dans les logs :
+
+```bash
+sudo chown -R $USER:$USER ./frontend
+docker compose run --rm -u "$(id -u):$(id -g)" frontend npm install
+make start
+```
+
+---
+
+### Le backend est inaccessible (http://localhost:8000 ne répond pas ou erreur 500)
+
+Vérifiez que le conteneur backend est bien en cours d'exécution :
+
+```bash
+docker compose ps
+```
+
+Si le statut est `Exited` ou `Restarting`, consultez les logs :
+
+```bash
+docker compose logs backend
+```
+
+**Cas 1 — Erreur `EACCES` ou `permission denied` sur `vendor/` ou `storage/` :**
+
+```bash
+sudo chown -R $USER:$USER ./backend
+make repair
+```
+
+**Cas 2 — Erreur Laravel `No application encryption key` :**
+
+La clé d'application n'a pas été générée. Exécutez :
+
+```bash
+docker compose run --rm -u "$(id -u):$(id -g)" backend php artisan key:generate
+make start
+```
+
+**Cas 3 — Erreur de connexion à la base de données :**
+
+Vérifiez que le conteneur `db` est bien `Up` et healthy :
+
+```bash
+docker compose ps db
+```
+
+Si `db` est en erreur, relancez-le :
+
+```bash
+docker compose restart db
+# Attendez quelques secondes, puis :
+make start
+```
