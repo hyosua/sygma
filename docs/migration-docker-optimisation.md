@@ -2,6 +2,29 @@
 
 Ce guide s'applique si vous avez déjà une installation Sygma fonctionnelle et que vous venez de puller ce PR.
 
+---
+
+## Tester la PR sans l'appliquer
+
+> Si vous avez des modifications en cours, sauvegardez-les d'abord avec un commit.
+
+Basculez temporairement sur la branche de la PR :
+
+```bash
+git fetch origin
+git checkout fix/docker-permissions-makefile
+```
+
+Suivez ensuite la procédure de mise à jour ci-dessous. Les dépendances n'ont pas à être retéléchargées : elles vivent dans les conteneurs Docker, pas dans votre dossier local.
+
+Une fois votre test terminé, revenez sur votre branche :
+
+```bash
+git checkout -
+```
+
+---
+
 ## Ce qui a changé
 
 - L'image backend passe de `php:8.3-fpm` (Debian) à `php:8.3-cli-alpine` : build plus rapide, image plus légère.

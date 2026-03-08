@@ -14,7 +14,7 @@
 4. [🛠 Session de travail quotidienne](#4--session-de-travail-quotidienne)
 5. [🌿 Procédure Git & Collaboration](#5--procédure-git--collaboration)
 6. [🌐 Accès & Commandes](#6--accès--commandes)
-7. [🛠 Gestion des Librairies & Scripts](#7--gestion-des-librairies--scripts)
+7. [📦 Référence des commandes Make](#7--référence-des-commandes-make)
 8. [📊 Visualisation & Requêtes BDD](#8--visualisation--requêtes-bdd)
 9. [🧪 Tests & Données de démo](#9--tests--données-de-démo)
 
@@ -169,37 +169,72 @@ git push origin feat/ma-fonctionnalite
 
 ---
 
-## 7. 🛠 Gestion des Librairies & Scripts
+## 7. 📦 Référence des commandes Make
 
-Pour ajouter une librairie (ex: un package Composer ou un module NPM), vous ne devez pas l'installer sur votre Windows. Vous devez demander au conteneur de le faire.
-
-### 1. Les commandes Make
 Le projet utilise un `Makefile` pour simplifier les commandes courantes. Depuis la racine du projet :
 
-* **Installer tout** : `make install`
-* **Démarrer** : `make start`
-* **Arrêter** : `make stop`
-* **Mettre à jour (post-pull)** : `make update`
-* **Vider/Réinitialiser BDD** : `make fresh`
-* **Réparer** : `make repair`
+### Cycle de vie du projet
 
-### 2. Utilisation des outils (via make)
-Plus besoin de taper de longues commandes Docker :
-
-**Pour le Backend (PHP/Laravel) :**
+**Installer tout (build + dépendances + migrations + seed) :**
 ```bash
-make composer ARGS="require <package>"  # Installer un package
-make artisan ARGS="make:model <Nom>"    # Créer un modèle
-make artisan ARGS="migrate"             # Lancer les migrations
+make install
 ```
 
-**Pour le Frontend (React) :**
+**Démarrer les serveurs :**
 ```bash
-make npm-front ARGS="install <package>"  # Installer un package frontend
-make npm-back ARGS="install <package>"   # Installer un package backend
+make start
 ```
 
-*Note : Ces commandes s'exécutent directement à l'intérieur des conteneurs Docker.*
+**Arrêter les serveurs :**
+```bash
+make stop
+```
+
+**Mettre à jour après un `git pull` (nouvelles dépendances + migrations) :**
+```bash
+make update
+```
+
+**Réinitialiser la BDD et repeupler :**
+```bash
+make fresh
+```
+
+**Réparer les volumes / permissions :**
+```bash
+make repair
+```
+
+### Backend (PHP/Laravel)
+
+**Installer un package Composer :**
+```bash
+make composer ARGS="require <package>"
+```
+
+**Créer un modèle Artisan :**
+```bash
+make artisan ARGS="make:model <Nom>"
+```
+
+**Lancer les migrations :**
+```bash
+make artisan ARGS="migrate"
+```
+
+### Frontend (React)
+
+**Installer un package frontend :**
+```bash
+make npm-front ARGS="install <package>"
+```
+
+**Installer un package backend (Node) :**
+```bash
+make npm-back ARGS="install <package>"
+```
+
+*Note : Ces commandes s'exécutent directement à l'intérieur des conteneurs Docker. Pour ajouter une librairie, demandez toujours au conteneur de le faire — n'installez pas directement sur votre machine.*
 
 ---
 
