@@ -1,0 +1,120 @@
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+use App\Models\User;
+use App\Models\Seance;
+
+class SessionEmargementTest extends TestCase
+{
+    use RefreshDatabase, WithFaker;
+    /**
+     * Test pour vérifier que le professeur peut lancer une session d'émargement
+     */
+    public function test_enseignant_peut_lancer_session_emargement(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+
+        $response = $this->actingAs($enseignant)->postJson('/api/sessions-emargement', [
+            'seance_id' => $seance->id,
+            'methode'   => 'qr',
+        ]);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('sessions_emargement', [
+            'seance_id' => $seance->id,
+            'methode'   => 'qr',
+        ]);
+    }
+
+    public function test_session_emargement_possede_un_jeton_et_une_expiration(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+
+        $response = $this->actingAs($enseignant)->postJson('/api/sessions-emargement', [
+            'seance_id' => $seance->id,
+            'methode'   => 'qr',
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure(['id', 'jeton', 'expire_a', 'seance_id', 'methode']);
+
+        $this->assertNotNull($response->json('jeton'));
+        $this->assertNotNull($response->json('expire_a'));
+    }
+
+    public function test_retourne_erreur_si_seance_inexistante(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+
+        $response = $this->actingAs($enseignant)->postJson('/api/sessions-emargement', [
+            'seance_id' => 99999,
+            'methode'   => 'qr',
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_retourne_erreur_si_methode_invalide(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+
+        $response = $this->actingAs($enseignant)->postJson('/api/sessions-emargement', [
+            'seance_id' => $seance->id,
+            'methode'   => 'telepathie',
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_peut_cloturer_une_session(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+
+        $sessionEmargement = \App\Models\SessionEmargement::factory()->create([
+            'seance_id' => $seance->id,
+        ]);
+
+        $response = $this->actingAs($enseignant)
+            ->postJson("/api/sessions-emargement/{$sessionEmargement->id}/cloturer");
+
+        $response->assertStatus(200);
+
+        // expire_a doit être dans le passé (ou maintenant)
+        $this->assertTrue(
+            \Carbon\Carbon::parse($response->json('expire_a'))->isPast()
+        );
+    }
+
+    public function test_status_retourne_nombre_de_presents(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+
+        $sessionEmargement = \App\Models\SessionEmargement::factory()->create([
+            'seance_id' => $seance->id,
+        ]);
+
+        $etudiants = User::factory()->etudiant()->count(3)->create();
+        foreach ($etudiants as $etudiant) {
+            \App\Models\Presence::factory()->create([
+                'session_emargement_id' => $sessionEmargement->id,
+                'etudiant_id'           => $etudiant->id,
+            ]);
+        }
+
+        $response = $this->actingAs($enseignant)
+            ->getJson("/api/sessions-emargement/{$sessionEmargement->id}/status");
+
+        $response->assertStatus(200)
+            ->assertJsonFragment(['nombre_presents' => 3]);
+    }
+}

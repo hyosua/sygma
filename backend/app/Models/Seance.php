@@ -40,4 +40,15 @@ class Seance extends Model
     {
         return $this->hasMany(SessionEmargement::class, 'seance_id');
     }
+
+    /**
+     * Vérifie si la séance est actuellement en cours.
+     *
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        $now = now();
+        return $now->between($this->debut_a, $this->fin_a);
+    }
 }

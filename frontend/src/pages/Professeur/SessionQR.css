@@ -1,0 +1,236 @@
+.session-qr-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: 100vh;
+    background-color: var(--bg-main);
+}
+
+.session-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1.5rem;
+}
+
+.session-header h1 {
+    font-size: 2.5rem;
+    color: var(--text-main);
+    margin-bottom: 0.5rem;
+}
+
+.session-header p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin: 0.25rem 0;
+}
+
+.session-main {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* For when session is not started */
+.session-main:has(.start-session-card) {
+    grid-template-columns: 1fr;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.start-session-card, .qr-card, .status-card {
+    background: var(--bg-card);
+    padding: 2.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.start-session-card {
+    text-align: center;
+}
+
+.start-session-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+}
+
+.start-session-card p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.qr-card {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.qr-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    color: var(--text-main);
+}
+
+.qr-wrapper {
+    background: white; /* Always white so QR has good contrast */
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 300px;
+    min-height: 300px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.qr-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.qr-placeholder {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.qr-expiry {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    font-style: italic;
+}
+
+.countdown-container {
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+.countdown-container p {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+}
+
+.countdown-container.warning p {
+    color: var(--danger-color);
+    font-weight: bold;
+    animation: pulse 1s infinite;
+}
+
+.progress-bar {
+    height: 8px;
+    background-color: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    transition: width 1s linear, background-color 0.3s ease;
+}
+
+.countdown-container.warning .progress-fill {
+    background-color: var(--danger-color);
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.status-card h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.stat-label {
+    color: var(--text-muted);
+}
+
+.stat-value {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.error-message {
+    grid-column: 1 / -1;
+    padding: 1rem 1.5rem;
+    background-color: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid var(--danger-color);
+    color: var(--danger-hover);
+    border-radius: var(--radius-sm);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.start-button {
+    background-color: var(--primary-color);
+    color: white;
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+.start-button:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+}
+
+.start-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.stop-button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 2rem;
+    background-color: var(--danger-color);
+    color: white;
+    font-size: 1.1rem;
+}
+
+.stop-button:hover {
+    background-color: var(--danger-hover);
+}
+
+@media (max-width: 900px) {
+    .session-main {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .session-qr-container {
+        padding: 1rem;
+    }
+    
+    .session-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .start-session-card, .qr-card, .status-card {
+        padding: 1.5rem;
+    }
+}

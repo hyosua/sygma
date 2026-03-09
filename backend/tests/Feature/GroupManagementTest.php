@@ -13,7 +13,7 @@ class GroupManagementTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_can_create_groups_and_assign_users()
+    public function test_peut_creer_groupes_et_assigner_des_utilisateurs()
     {
         $groupe = Groupe::factory()->create(['nom' => 'LP Dawii']);
         $user = User::factory()->etudiant()->create(['groupe_id' => $groupe->id]);
@@ -22,7 +22,7 @@ class GroupManagementTest extends TestCase
         $this->assertNotNull($user->ine);
     }
 
-    public function test_seance_can_be_linked_to_group()
+    public function test_seance_peut_etre_liee_a_un_groupe()
     {
         $groupe = Groupe::factory()->create(['nom' => 'LP ASRI']);
         $seance = Seance::factory()->create(['groupe_id' => $groupe->id]);
