@@ -33,7 +33,7 @@ class CreerSeanceActiveTest extends Command
             $seance->update(['debut_a' => $debut, 'fin_a' => $fin]);
             $this->info("Séance #{$seance->id} mise à jour.");
         } else {
-            $enseignant = User::role('Professeur')->first()
+            $enseignant = User::role('Enseignant')->first()
                 ?? User::factory()->enseignant()->create();
 
             $cours = Cours::first() ?? Cours::factory()->create();
@@ -58,7 +58,7 @@ class CreerSeanceActiveTest extends Command
                 ['Début',     $seance->debut_a->format('H:i')],
                 ['Fin',       $seance->fin_a->format('H:i')],
                 ['Active ?',  $seance->isActive() ? 'OUI' : 'NON'],
-                ['URL',       "/professeur/session/{$seance->id}"],
+                ['URL',       "/enseignant/session/{$seance->id}"],
             ]
         );
 

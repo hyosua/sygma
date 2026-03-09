@@ -289,7 +289,7 @@ Après avoir exécuté l'une de ces commandes, vous aurez un utilisateur "gestio
 
 ### Créer une séance active pour tester l'émargement
 
-Pour tester le workflow QR Code (professeur → étudiant) sans passer par tinker, utilisez la commande dédiée. Elle affiche l'URL `/professeur/session/{id}` à ouvrir directement.
+Pour tester le workflow QR Code (professeur → étudiant) sans passer par tinker, utilisez la commande dédiée. Elle affiche l'URL `/enseignant/session/{id}` à ouvrir directement.
 
 **Créer une nouvelle séance active (durée 2h par défaut) :**
 ```bash

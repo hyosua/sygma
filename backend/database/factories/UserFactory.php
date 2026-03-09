@@ -64,7 +64,7 @@ class UserFactory extends Factory
      */
     public function etudiant(): static
     {
-        return $this->withRole('etudiant')->state(fn(array $attributes) => [
+        return $this->withRole('Etudiant')->state(fn(array $attributes) => [
             'ine' => fake()->unique()->numerify('###########'),
         ]);
     }
@@ -74,7 +74,7 @@ class UserFactory extends Factory
      */
     public function enseignant(): static
     {
-        return $this->withRole('enseignant')->state(fn (array $attributes) => [
+        return $this->withRole('Enseignant')->state(fn (array $attributes) => [
             'specialites' => fake()->randomElements(['PHP', 'Laravel', 'React', 'Javascript', 'SQL'], 2),
             'premiere_connexion' => false,
         ]);

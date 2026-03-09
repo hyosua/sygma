@@ -52,6 +52,6 @@ class GroupeSeeder extends Seeder
             'specialites' => ['PHP', 'Laravel', 'Architecture'],
             'premiere_connexion' => false,
         ]);
-        $prof->assignRole('Professeur');
+        $prof->assignRole('Enseignant');
     }
 }
