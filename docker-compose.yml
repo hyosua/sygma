@@ -61,6 +61,10 @@ services:
     environment:
       VITE_API_URL: http://localhost:8000/api
 
+    # Lance npm install uniquement si vite est absent (premier démarrage),
+    # puis démarre le serveur — évite de ralentir les redémarrages suivants
+    command: sh -c "[ -f node_modules/.bin/vite ] || npm install && npm run dev -- --host 0.0.0.0"
+
     depends_on:
       - backend
 
