@@ -8,7 +8,7 @@ DOCKER_USER := -u $(SYGMA_UID):$(SYGMA_GID)
 GREEN := \033[0;32m
 NC    := \033[0m
 
-.PHONY: install start stop repair update fresh composer artisan npm-back npm-front help
+.PHONY: install start stop repair update fresh composer artisan npm-back npm-front help %
 
 install:
 	@echo "$(GREEN)1. Construction des images...$(NC)"
@@ -56,16 +56,19 @@ fresh:
 	@echo "$(GREEN)Base de donnees reinitialisee !$(NC)"
 
 composer:
-	docker compose exec $(DOCKER_USER) backend composer $(ARGS)
+	docker compose exec $(DOCKER_USER) backend composer $(filter-out $@,$(MAKECMDGOALS))
 
 artisan:
-	docker compose exec $(DOCKER_USER) backend php artisan $(ARGS)
+	docker compose exec $(DOCKER_USER) backend php artisan $(filter-out $@,$(MAKECMDGOALS))
 
 npm-back:
-	docker compose exec $(DOCKER_USER) backend npm $(ARGS)
+	docker compose exec $(DOCKER_USER) backend npm $(filter-out $@,$(MAKECMDGOALS))
 
 npm-front:
-	docker compose exec $(DOCKER_USER) frontend npm $(ARGS)
+	docker compose exec $(DOCKER_USER) frontend npm $(filter-out $@,$(MAKECMDGOALS))
+
+%:
+	@:
 
 help:
 	@echo "Usage: make <commande> [ARGS=\"...\"]"
@@ -77,7 +80,7 @@ help:
 	@echo "  repair       Reinstaller les dependances et redemarrer"
 	@echo "  fresh        Reinitialiser la base de donnees"
 	@echo ""
-	@echo "  make composer ARGS=\"require package\""
-	@echo "  make artisan  ARGS=\"migrate --seed\""
-	@echo "  make npm-back ARGS=\"run build\""
-	@echo "  make npm-front ARGS=\"run build\""
+	@echo "  make composer require package"
+	@echo "  make artisan  migrate --seed"
+	@echo "  make npm-back run build"
+	@echo "  make npm-front run build"

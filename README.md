@@ -209,29 +209,29 @@ make repair
 
 **Installer un package Composer :**
 ```bash
-make composer ARGS="require <package>"
+make composer require <package>
 ```
 
 **Créer un modèle Artisan :**
 ```bash
-make artisan ARGS="make:model <Nom>"
+make artisan make:model <Nom>
 ```
 
 **Lancer les migrations :**
 ```bash
-make artisan ARGS="migrate"
+make artisan migrate
 ```
 
 ### Frontend (React)
 
 **Installer un package frontend :**
 ```bash
-make npm-front ARGS="install <package>"
+make npm-front install <package>
 ```
 
 **Installer un package backend (Node) :**
 ```bash
-make npm-back ARGS="install <package>"
+make npm-back install <package>
 ```
 
 *Note : Ces commandes s'exécutent directement à l'intérieur des conteneurs Docker. Pour ajouter une librairie, demandez toujours au conteneur de le faire — n'installez pas directement sur votre machine.*
@@ -313,10 +313,10 @@ Les tests permettent de vérifier que les fonctionnalités (comme la gestion des
 
 **Lancer tous les tests :**
 ```bash
-make artisan ARGS="test"
+make artisan test
 ```
 
 **Lancer uniquement les tests liés aux groupes :**
 ```bash
-make artisan ARGS="test --filter GroupManagementTest"
+make artisan test --filter GroupManagementTest
 ```

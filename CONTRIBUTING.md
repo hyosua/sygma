@@ -79,7 +79,7 @@ git checkout -b "feat/ma-super-idee"
 
 1.  **Teste ton code** avant de `push` pour être sûr de ne rien casser :
     ```bash
-    make artisan ARGS="test"
+    make artisan test
     ```
 2.  **Fais une PR claire** vers `main` : un bon titre et une description simple de "quoi" et "pourquoi".
 
@@ -100,23 +100,23 @@ Toutes les commandes se lancent via `make ...` (version courte) ou `docker compo
 #### Backend (PHP/Laravel)
 - **Installer un package :**
   ```bash
-  make composer ARGS="require <nom-du-package>"
+  make composer require <nom-du-package>
   ```
 
 - **Commandes Artisan :**
   ```bash
-  make artisan ARGS="<ta-commande>"
+  make artisan <ta-commande>
   ```
 
 #### Frontend (React)
 - **Installer un package :**
   ```bash
-  make npm-front ARGS="install <nom-du-package>"
+  make npm-front install <nom-du-package>
   ```
 
 - **Lancer un script (lint, etc.) :**
    ```bash
-   make npm-front ARGS="run <nom-du-script>"
+   make npm-front run <nom-du-script>
    ```
 
 ### Les Interdits
