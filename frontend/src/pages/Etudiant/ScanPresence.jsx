@@ -102,7 +102,7 @@ const ScanPresence = () => {
         <div className="scan-container">
             <header className="scan-header">
                 <h1>Émargement Étudiant</h1>
-                <p>Scannez le QR Code affiché par le professeur</p>
+                <p>Scannez le QR Code affiché par l'enseignant</p>
             </header>
 
             <main className="scan-main">

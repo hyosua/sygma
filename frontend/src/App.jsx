@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import SessionQR from './pages/Professeur/SessionQR';
+import SessionQR from './pages/Enseignant/SessionQR';
 import ScanPresence from './pages/Etudiant/ScanPresence';
 import './App.css';
 
@@ -9,10 +9,10 @@ function App() {
     <Router>
       <Routes>
         {/* Route par défaut redirigeant vers la session QR pour le moment */}
-        <Route path="/" element={<Navigate to="/professeur/session/1" replace />} />
+        <Route path="/" element={<Navigate to="/enseignant/session/1" replace />} />
         
-        {/* Route Professeur */}
-        <Route path="/professeur/session/:seanceId" element={<SessionQR />} />
+        {/* Route Enseignant */}
+        <Route path="/enseignant/session/:seanceId" element={<SessionQR />} />
 
         {/* Route Étudiant */}
         <Route path="/etudiant/scan" element={<ScanPresence />} />

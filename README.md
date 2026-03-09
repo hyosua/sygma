@@ -287,6 +287,27 @@ Après avoir exécuté l'une de ces commandes, vous aurez un utilisateur "gestio
 
 ---
 
+### Créer une séance active pour tester l'émargement
+
+Pour tester le workflow QR Code (professeur → étudiant) sans passer par tinker, utilisez la commande dédiée. Elle affiche l'URL `/enseignant/session/{id}` à ouvrir directement.
+
+**Créer une nouvelle séance active (durée 2h par défaut) :**
+```bash
+docker compose exec -u 1000:1000 backend php artisan test:seance-active
+```
+
+**Remettre à jour la dernière séance existante (évite de créer des doublons) :**
+```bash
+docker compose exec -u 1000:1000 backend php artisan test:seance-active --reset
+```
+
+**Durée personnalisée (en minutes) :**
+```bash
+docker compose exec -u 1000:1000 backend php artisan test:seance-active --duree=30
+```
+
+---
+
 ### Exécuter les tests
 Les tests permettent de vérifier que les fonctionnalités (comme la gestion des groupes) fonctionnent correctement.
 

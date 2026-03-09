@@ -74,7 +74,7 @@ class UserFactory extends Factory
      */
     public function enseignant(): static
     {
-        return $this->withRole('enseignant')->state(fn (array $attributes) => [
+        return $this->withRole('Enseignant')->state(fn (array $attributes) => [
             'specialites' => fake()->randomElements(['PHP', 'Laravel', 'React', 'Javascript', 'SQL'], 2),
             'premiere_connexion' => false,
         ]);
