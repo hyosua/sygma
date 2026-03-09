@@ -2,18 +2,18 @@
 
 Pour que le projet reste propre et qu'on s'y retrouve, voici quelques règles du jeu.
 
-## 📋 En bref
-1. [⚙️ Config Git (une seule fois)](#-config-git-une-seule-fois)
-2. [🔄 Workflow au quotidien](#-workflow-au-quotidien)
-3. [🌿 Tes Branches](#-tes-branches)
-4. [✅ Qualité & Pull Request](#-qualité--pull-request)
-5. [🐳 Le Workflow Docker](#-le-workflow-docker--la-règle-dor)
-    - [🚀 Commandes à connaître](#-commandes-à-connaître)
-    - [⛔ Les Interdits](#-les-interdits)
+## En bref
+1. [Config Git (une seule fois)](#config-git-une-seule-fois)
+2. [Workflow au quotidien](#workflow-au-quotidien)
+3. [Tes Branches](#tes-branches)
+4. [Qualite & Pull Request](#qualite--pull-request)
+5. [Le Workflow Docker](#le-workflow-docker--la-regle-dor)
+    - [Commandes a connaitre](#commandes-a-connaitre)
+    - [Les Interdits](#les-interdits)
 
 ---
 
-## ⚙️ Config Git (une seule fois)
+## Config Git (une seule fois)
 
 Configure Git une fois pour toutes pour éviter les merges parasites :
 
@@ -24,7 +24,7 @@ git config --global rebase.autoStash true  # stash auto si fichiers non commité
 
 ---
 
-## 🔄 Workflow au quotidien
+## Workflow au quotidien
 
 ### Démarrer une nouvelle fonctionnalité
 
@@ -58,7 +58,7 @@ git push --force-with-lease     # force push safe (nécessaire après rebase)
 
 ---
 
-## 🌿 Tes Branches
+## Tes Branches
 
 Une idée, une branche ! Pars toujours de `main` et utilise le bon préfixe :
 - `feat/` : pour une nouvelle fonctionnalité.
@@ -75,17 +75,17 @@ git checkout -b "feat/ma-super-idee"
 
 ---
 
-## ✅ Qualité & Pull Request
+## Qualite & Pull Request
 
 1.  **Teste ton code** avant de `push` pour être sûr de ne rien casser :
     ```bash
-    docker compose exec backend php artisan test
+    make artisan ARGS="test"
     ```
 2.  **Fais une PR claire** vers `main` : un bon titre et une description simple de "quoi" et "pourquoi".
 
 ---
 
-## 🐳 Le Workflow Docker : La Règle d'Or
+## Le Workflow Docker : La Regle d'Or
 
 C'est super simple :
 - **Ton PC = Ton éditeur de code (VS Code).**
@@ -93,35 +93,35 @@ C'est super simple :
 
 Tu écris ton code sur ton PC, et il apparaît magiquement dans Docker. Tu ne touches à rien d'autre !
 
-### 🚀 Commandes à connaître
+### Commandes a connaitre
 
-Toutes les commandes se lancent via `sygma ...` (version courte) ou `docker compose exec ...` (version longue).
+Toutes les commandes se lancent via `make ...` (version courte) ou `docker compose exec ...` (version longue).
 
 #### Backend (PHP/Laravel)
 - **Installer un package :**
   ```bash
-  docker compose exec backend composer require <nom-du-package>
+  make composer ARGS="require <nom-du-package>"
   ```
 
 - **Commandes Artisan :**
   ```bash
-  docker compose exec backend php artisan <ta-commande>
+  make artisan ARGS="<ta-commande>"
   ```
 
 #### Frontend (React)
 - **Installer un package :**
   ```bash
-  docker compose exec frontend npm install <nom-du-package>
+  make npm-front ARGS="install <nom-du-package>"
   ```
 
 - **Lancer un script (lint, etc.) :**
    ```bash
-   docker compose exec frontend npm run <nom-du-script>
+   make npm-front ARGS="run <nom-du-script>"
    ```
 
-### ⛔ Les Interdits
+### Les Interdits
 
-À ne **JAMAIS** faire :
+A ne **JAMAIS** faire :
 1.  **Lancer un serveur de dev à la main** (`npm run dev`, `artisan serve`). (Docker le fait déjà avec `docker compose up`).
-2.  **Installer PHP, Composer,Node ou une autre dépendance sur ton PC.** (Inutile, tout est déjà dans Docker).
+2.  **Installer PHP, Composer, Node ou une autre dépendance sur ton PC.** (Inutile, tout est déjà dans Docker).
 3.  **Modifier du code en dehors de ton éditeur** (pas de `docker exec` pour éditer des fichiers, c'est risqué et pas nécessaire).
