@@ -64,7 +64,7 @@ class UserFactory extends Factory
      */
     public function etudiant(): static
     {
-        return $this->withRole('etudiant')->state(fn(array $attributes) => [
+        return $this->withRole('Etudiant')->state(fn(array $attributes) => [
             'ine' => fake()->unique()->numerify('###########'),
         ]);
     }
