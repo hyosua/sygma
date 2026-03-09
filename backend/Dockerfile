@@ -9,9 +9,8 @@ RUN apk add --no-cache \
     zip unzip \
     postgresql-dev libzip-dev \
     icu-dev icu-libs \
-    nodejs npm
-
-RUN docker-php-ext-configure intl && \
+    nodejs npm \
+    docker-php-ext-configure intl && \
     docker-php-ext-install \
     pdo_pgsql mbstring exif pcntl bcmath gd intl zip
 
