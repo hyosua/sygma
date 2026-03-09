@@ -3,11 +3,58 @@
 Pour que le projet reste propre et qu'on s'y retrouve, voici quelques règles du jeu.
 
 ## 📋 En bref
-1. [🌿 Tes Branches](#-tes-branches)
-2. [✅ Qualité & Pull Request](#-qualité--pull-request)
-3. [🐳 Le Workflow Docker](#-le-workflow-docker--la-règle-dor)
+1. [⚙️ Config Git (une seule fois)](#-config-git-une-seule-fois)
+2. [🔄 Workflow au quotidien](#-workflow-au-quotidien)
+3. [🌿 Tes Branches](#-tes-branches)
+4. [✅ Qualité & Pull Request](#-qualité--pull-request)
+5. [🐳 Le Workflow Docker](#-le-workflow-docker--la-règle-dor)
     - [🚀 Commandes à connaître](#-commandes-à-connaître)
     - [⛔ Les Interdits](#-les-interdits)
+
+---
+
+## ⚙️ Config Git (une seule fois)
+
+Configure Git une fois pour toutes pour éviter les merges parasites :
+
+```bash
+git config --global pull.rebase true   # pull = rebase, pas merge
+git config --global rebase.autoStash true  # stash auto si fichiers non commités
+```
+
+---
+
+## 🔄 Workflow au quotidien
+
+### Démarrer une nouvelle fonctionnalité
+
+```bash
+git checkout main
+git pull                        # récupère main à jour (rebase, pas merge)
+git checkout -b feat/ma-feature
+```
+
+### Avant de faire une PR (ta branche est en retard sur main)
+
+```bash
+git fetch origin
+git rebase origin/main          # rejoue tes commits par-dessus main à jour
+# En cas de conflit : résous > git add . > git rebase --continue
+git push --force-with-lease     # force push safe (nécessaire après rebase)
+```
+
+> **Pourquoi `rebase` plutôt que `merge` ?**
+> `merge` crée un commit parasite "Merge branch..." qui pollue l'historique.
+> `rebase` rejoue tes commits proprement au bout de main. L'historique reste linéaire.
+
+### Les règles d'or
+
+| Interdit | A la place |
+|---|---|
+| `git pull` (merge par défaut) | `git pull` (après config rebase, c'est bon) |
+| `git merge main` depuis ta branche | `git rebase origin/main` |
+| Push direct sur `main` | PR obligatoire |
+| `git push --force` | `git push --force-with-lease` (plus sûr) |
 
 ---
 
