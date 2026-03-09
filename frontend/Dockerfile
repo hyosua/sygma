@@ -1,18 +1,21 @@
 FROM node:20-alpine
 
+ARG UID=1000
+ARG GID=1000
+
+RUN deluser --remove-home node 2>/dev/null || true && \
+    delgroup node 2>/dev/null || true && \
+    addgroup -g ${GID} appgroup 2>/dev/null || true && \
+    adduser -u ${UID} -G appgroup -s /bin/sh -D appuser
+
 WORKDIR /app
 
-# On copie les fichiers de dépendances
-COPY package*.json ./
+RUN mkdir -p /app/node_modules && chown ${UID}:${GID} /app /app/node_modules
 
-# Installation propre (plus rapide et déterministe)
-RUN npm install
+COPY --chown=${UID}:${GID} package*.json ./
 
-# Copie du reste des fichiers
-COPY . .
+USER appuser
 
-# On expose le port
 EXPOSE 3000
 
-# On utilise CMD avec le format tableau (meilleure gestion des signaux d'arrêt)
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
