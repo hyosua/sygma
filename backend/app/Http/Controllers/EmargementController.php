@@ -7,6 +7,7 @@ use App\Models\Seance;
 use App\Models\SessionEmargement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use App\Exceptions\JetonInvalideException;
 use App\Exceptions\JetonExpireException;
 use App\Exceptions\SeanceNonActiveException;
@@ -70,7 +71,7 @@ class EmargementController extends Controller
     /**
      * Valide la présence d'un étudiant via un jeton.
      */
-    public function validerPresence(Request $request)
+    public function validerPresenceParQR(Request $request)
     {
         $request->validate([
             'jeton' => 'required|string',
@@ -119,6 +120,33 @@ class EmargementController extends Controller
         }
 
         return response()->json($response, $statusCode);
+    }
+
+    /**
+     * Valide la présence d'un étudiant manuellement.
+     */
+    public function validerPresenceManuellement(Request $request)
+    {
+        $data = $request->validate([
+            'session_emargement_id' => 'required|exists:sessions_emargement,id',
+            'etudiant_id' => 'required|exists:users,id',
+        ]);
+
+        try {
+            $session = SessionEmargement::findOrFail($data['session_emargement_id']);
+            $etudiant = User::findOrFail($data['etudiant_id']);
+
+            $presence = $this->emargementService->enregistrerPresence($session, $etudiant);
+
+            return response()->json([
+                'message' => 'Présence validée avec succès',
+                'presence' => $presence
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la validation'
+            ], 500);
+        }
     }
 
     /**

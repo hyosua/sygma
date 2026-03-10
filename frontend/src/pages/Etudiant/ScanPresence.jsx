@@ -41,7 +41,7 @@ const ScanPresence = () => {
 
         const onErreurScan = (error) => {
             // Ignorer les erreurs de scan continu
-            console.warn("Erreur de scan (ignorée):", error);
+            //console.warn("Erreur de scan (ignorée):", error);
         };
 
         lecteur.render(onSuccesScan, onErreurScan);
@@ -68,7 +68,7 @@ const ScanPresence = () => {
 
         try {
             const token = localStorage.getItem('token'); // On suppose que le token est stocké ici
-            const reponse = await fetch('http://localhost:8000/api/presences/valider', {
+            const reponse = await fetch('http://localhost:8000/api/presences/valider-qr', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -60,11 +60,21 @@ class EmargementService
             throw new JetonExpireException();
         }
 
-        // Vérification que la session d'émargement est bien associée à une séance active
         $seance = $session->seance;
-        if (!$seance || !$seance->isActive()) {
+        if (!$seance->isActive()) {
             throw new SeanceNonActiveException();
         }
+
+        // à faire plus tard : Logique de vérification de distance si $session->latitude est défini
+
+        return $this->enregistrerPresence($session, $etudiant, $coordonneesEtudiant);
+    }
+
+    /**
+     * Enregistrer la présence
+     */
+    public function enregistrerPresence(SessionEmargement $session, User $etudiant, array $coordonneesEtudiant = []): Presence
+    {
 
         // Vérification si l'étudiant a déjà émargé pour cette session
         $dejaPresent = Presence::where('session_emargement_id', $session->id)
@@ -74,8 +84,6 @@ class EmargementService
         if ($dejaPresent) {
             throw new DejaEmargeException();
         }
-
-        // à faire plus tard : Logique de vérification de distance si $session->latitude est défini
 
         return Presence::create([
             'session_emargement_id' => $session->id,

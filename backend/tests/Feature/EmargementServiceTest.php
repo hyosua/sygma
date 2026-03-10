@@ -130,4 +130,6 @@ class EmargementServiceTest extends TestCase
         $this->assertNotEquals($ancienJeton, $sessionUpdated->jeton);
         $this->assertTrue($sessionUpdated->expire_a->isFuture());
     }
+
+    
 }
