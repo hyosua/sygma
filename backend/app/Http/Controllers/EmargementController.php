@@ -142,7 +142,11 @@ class EmargementController extends Controller
                 'message' => 'Présence validée avec succès',
                 'presence' => $presence
             ]);
-        } catch (\Throwable $e) {
+        }catch (DejaEmargeException){
+            return response()->json([
+                'message' => 'L\'étudiant a déjà émargé pour cette session'
+            ], 400);
+        } catch (Exception $e) {
             return response()->json([
                 'message' => 'Une erreur est survenue lors de la validation'
             ], 500);

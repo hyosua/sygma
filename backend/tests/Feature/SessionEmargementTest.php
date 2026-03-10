@@ -12,6 +12,7 @@ class SessionEmargementTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
     const API_URL = '/api/sessions-emargement';
+    const API_VALIDER_M = '/api/presences/valider-manuel';
     /**
      * Test pour vérifier que le professeur peut lancer une session d'émargement
      */
@@ -135,7 +136,7 @@ class SessionEmargementTest extends TestCase
         ]);
         $etudiant = User::factory()->etudiant()->create();
 
-        $response = $this->actingAs($enseignant)->postJson('/api/presences/valider-manuel', [
+        $response = $this->actingAs($enseignant)->postJson(self::API_VALIDER_M, [
             'session_emargement_id' => $session->id,
             'etudiant_id'  => $etudiant->id,
         ]);
@@ -160,16 +161,16 @@ class SessionEmargementTest extends TestCase
         ]);
         $etudiant = User::factory()->etudiant()->create();
 
-        $this->actingAs($enseignant)->postJson('/api/presences/valider-manuel', [
+        $this->actingAs($enseignant)->postJson(self::API_VALIDER_M, [
             'session_emargement_id' => $session->id,
             'etudiant_id' => $etudiant->id,
         ]);
 
-        $response = $this->actingAs($enseignant)->postJson('/api/presences/valider-manuel', [
+        $response = $this->actingAs($enseignant)->postJson(self::API_VALIDER_M, [
             'session_emargement_id' => $session->id,
             'etudiant_id' => $etudiant->id,
         ]);
 
-        $response->assertStatus(500);
+        $response->assertStatus(400);
     }
 }
