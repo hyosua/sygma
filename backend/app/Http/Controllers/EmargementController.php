@@ -29,7 +29,7 @@ class EmargementController extends Controller
     {
         $request->validate([
             'seance_id' => 'required|exists:seances,id',
-            'methode' => 'required|string|in:qr,manual',
+            'is_methode_qr' => 'required|boolean',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
         ]);
@@ -47,7 +47,7 @@ class EmargementController extends Controller
         ];
 
         try {
-            $session = $this->emargementService->demarrerSession($seance, $request->methode, $coordonnees);
+            $session = $this->emargementService->demarrerSession($seance, (bool) $request->is_methode_qr, $coordonnees);
             return response()->json($session, 201);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
@@ -141,7 +141,7 @@ class EmargementController extends Controller
     public function status(SessionEmargement $session)
     {
         // Si le jeton est expiré, on le rafraîchit automatiquement
-        if ($session->methode === 'qr' && $session->expire_a && $session->expire_a->isPast()) {
+        if ($session->is_methode_qr && $session->expire_a && $session->expire_a->isPast()) {
             $this->emargementService->rafraichirJeton($session);
         }
 

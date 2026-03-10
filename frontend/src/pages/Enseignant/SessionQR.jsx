@@ -95,7 +95,7 @@ const SessionQR = () => {
                 },
                 body: JSON.stringify({
                     seance_id: seanceId,
-                    methode: 'qr',
+                    is_methode_qr: true,
                 }),
             });
             const donnees = await reponse.json();

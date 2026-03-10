@@ -31,7 +31,7 @@ class EmargementServiceTest extends TestCase
     {
         $seance = Seance::factory()->create();
 
-        $session = $this->service->demarrerSession($seance, 'qr');
+        $session = $this->service->demarrerSession($seance);
 
         $this->assertInstanceOf(SessionEmargement::class, $session);
         $this->assertEquals($seance->id, $session->seance_id);
@@ -47,7 +47,7 @@ class EmargementServiceTest extends TestCase
             'fin_a' => $now->copy()->addHour(),
         ]);
         
-        $session = $this->service->demarrerSession($seance, 'qr');
+        $session = $this->service->demarrerSession($seance);
         $etudiant = User::factory()->create();
 
         $presence = $this->service->validerPresenceParJeton($session->jeton, $etudiant);
@@ -69,7 +69,7 @@ class EmargementServiceTest extends TestCase
     public function test_leve_exception_si_jeton_expire()
     {
         $seance = Seance::factory()->create();
-        $session = SessionEmargement::factory()->create([
+        SessionEmargement::factory()->create([
             'seance_id' => $seance->id,
             'jeton' => 'expire-token',
             'expire_a' => Carbon::now()->subMinute(),
@@ -88,7 +88,7 @@ class EmargementServiceTest extends TestCase
             'fin_a' => $now->copy()->subHours(3), // Séance terminée
         ]);
         
-        $session = SessionEmargement::factory()->create([
+        SessionEmargement::factory()->create([
             'seance_id' => $seance->id,
             'jeton' => 'token-seance-finie',
             'expire_a' => Carbon::now()->addMinutes(10),
@@ -107,7 +107,7 @@ class EmargementServiceTest extends TestCase
             'fin_a' => $now->copy()->addHour(),
         ]);
         
-        $session = $this->service->demarrerSession($seance, 'qr');
+        $session = $this->service->demarrerSession($seance);
         $etudiant = User::factory()->create();
 
         // Premier émargement
@@ -121,7 +121,7 @@ class EmargementServiceTest extends TestCase
     public function test_peut_rafraichir_un_jeton()
     {
         $seance = Seance::factory()->create();
-        $session = $this->service->demarrerSession($seance, 'qr');
+        $session = $this->service->demarrerSession($seance);
         $ancienJeton = $session->jeton;
 
         sleep(1); // Pour s'assurer que l'expiration change
