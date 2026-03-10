@@ -124,4 +124,52 @@ class SessionEmargementTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonFragment(['nombre_presents' => 3]);
     }
+
+    public function test_enseignant_peut_valider_presence_manuellement(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+        $session = \App\Models\SessionEmargement::factory()->create([
+            'seance_id' => $seance->id,
+            'is_methode_qr' => false,
+        ]);
+        $etudiant = User::factory()->etudiant()->create();
+
+        $response = $this->actingAs($enseignant)->postJson('/api/presences/valider-manuel', [
+            'session_emargement_id' => $session->id,
+            'etudiant_id'  => $etudiant->id,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonFragment(['message' => 'Présence validée avec succès']);
+
+        $this->assertDatabaseHas('presences', [
+            'session_emargement_id' => $session->id,
+            'etudiant_id' => $etudiant->id,
+            'statut' => 'present',
+        ]);
+    }
+
+    public function test_retourne_erreur_si_etudiant_deja_emarge_manuellement(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+        $session = \App\Models\SessionEmargement::factory()->create([
+            'seance_id' => $seance->id,
+            'is_methode_qr' => false,
+        ]);
+        $etudiant = User::factory()->etudiant()->create();
+
+        $this->actingAs($enseignant)->postJson('/api/presences/valider-manuel', [
+            'session_emargement_id' => $session->id,
+            'etudiant_id' => $etudiant->id,
+        ]);
+
+        $response = $this->actingAs($enseignant)->postJson('/api/presences/valider-manuel', [
+            'session_emargement_id' => $session->id,
+            'etudiant_id' => $etudiant->id,
+        ]);
+
+        $response->assertStatus(500);
+    }
 }
