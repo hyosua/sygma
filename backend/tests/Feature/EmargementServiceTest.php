@@ -2,18 +2,18 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\DejaEmargeException;
+use App\Exceptions\JetonExpireException;
+use App\Exceptions\JetonInvalideException;
+use App\Exceptions\SeanceNonActiveException;
+use App\Models\Presence;
+use App\Models\Seance;
+use App\Models\SessionEmargement;
+use App\Models\User;
+use App\Services\EmargementService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\Seance;
-use App\Models\User;
-use App\Models\SessionEmargement;
-use App\Models\Presence;
-use App\Services\EmargementService;
-use App\Exceptions\JetonInvalideException;
-use App\Exceptions\JetonExpireException;
-use App\Exceptions\SeanceNonActiveException;
-use App\Exceptions\DejaEmargeException;
-use Carbon\Carbon;
 
 class EmargementServiceTest extends TestCase
 {
@@ -46,7 +46,7 @@ class EmargementServiceTest extends TestCase
             'debut_a' => $now->copy()->subHour(),
             'fin_a' => $now->copy()->addHour(),
         ]);
-        
+
         $session = $this->service->demarrerSession($seance);
         $etudiant = User::factory()->create();
 
@@ -87,7 +87,7 @@ class EmargementServiceTest extends TestCase
             'debut_a' => $now->copy()->subHours(5),
             'fin_a' => $now->copy()->subHours(3), // Séance terminée
         ]);
-        
+
         SessionEmargement::factory()->create([
             'seance_id' => $seance->id,
             'jeton' => 'token-seance-finie',
@@ -106,7 +106,7 @@ class EmargementServiceTest extends TestCase
             'debut_a' => $now->copy()->subHour(),
             'fin_a' => $now->copy()->addHour(),
         ]);
-        
+
         $session = $this->service->demarrerSession($seance);
         $etudiant = User::factory()->create();
 
@@ -130,6 +130,4 @@ class EmargementServiceTest extends TestCase
         $this->assertNotEquals($ancienJeton, $sessionUpdated->jeton);
         $this->assertTrue($sessionUpdated->expire_a->isFuture());
     }
-
-    
 }

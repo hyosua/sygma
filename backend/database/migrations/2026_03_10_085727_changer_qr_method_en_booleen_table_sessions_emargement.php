@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('sessions_emargement', function(Blueprint $table){
+        Schema::table('sessions_emargement', function (Blueprint $table) {
             $table->dropColumn('methode');
             $table->boolean('is_methode_qr')->default(true)->after('seance_id');
         });
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('sessions_emargement', function(Blueprint $table){
+        Schema::table('sessions_emargement', function (Blueprint $table) {
             $table->dropColumn('is_methode_qr');
             $table->string('methode')->after('seance_id');
         });

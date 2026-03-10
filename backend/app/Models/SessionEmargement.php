@@ -22,7 +22,7 @@ class SessionEmargement extends Model
 
     protected $casts = [
         'expire_a' => 'datetime',
-        'is_methode_qr' => 'boolean'
+        'is_methode_qr' => 'boolean',
     ];
 
     public function seance()

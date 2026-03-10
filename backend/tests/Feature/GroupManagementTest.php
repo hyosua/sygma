@@ -3,9 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Groupe;
-use App\Models\User;
 use App\Models\Seance;
-use App\Models\Cours;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

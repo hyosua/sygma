@@ -13,7 +13,7 @@ class CoursFactory extends Factory
     {
         $courseNames = [
             'SQL', 'Wordpress', 'Java', 'PHP', 'Joomla', 'HTML',
-            'Anglais', 'OGE', 'GP', 'Bash', 'Javascript', 'Python'
+            'Anglais', 'OGE', 'GP', 'Bash', 'Javascript', 'Python',
         ];
 
         return [

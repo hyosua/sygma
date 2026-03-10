@@ -6,5 +6,5 @@ use Exception;
 
 class JetonExpireException extends Exception
 {
-    protected $message = "QR Code expiré, veuillez scanner le nouveau.";
+    protected $message = 'QR Code expiré, veuillez scanner le nouveau.';
 }

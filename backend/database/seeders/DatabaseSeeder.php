@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
                 $etudiants = User::factory(20)
                     ->etudiant()
                     ->create(['groupe_id' => $groupe->id]);
-                $this->command->getOutput()->writeln("    <comment>-> 20 étudiants créés.</comment>");
+                $this->command->getOutput()->writeln('    <comment>-> 20 étudiants créés.</comment>');
 
                 // Inscrire le groupe à 4 cours au hasard
                 $coursPourLeGroupe = $cours->random(4);
@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
                         ]);
                     }
                 }
-                $this->command->getOutput()->writeln("    <comment>-> Inscription des étudiants à 4 cours.</comment>");
+                $this->command->getOutput()->writeln('    <comment>-> Inscription des étudiants à 4 cours.</comment>');
 
                 // Pour chaque cours du groupe, créer 5 séances
                 foreach ($coursPourLeGroupe as $c) {
@@ -77,7 +77,7 @@ class DatabaseSeeder extends Seeder
                         'groupe_id' => $groupe->id,
                         'enseignant_id' => $enseignants->random()->id,
                     ]);
-                    $this->command->getOutput()->writeln("      <comment>-> 5 séances créées.</comment>");
+                    $this->command->getOutput()->writeln('      <comment>-> 5 séances créées.</comment>');
 
                     // Pour les 3 premières séances (passées), créer l'émargement
                     foreach ($seances->take(3) as $seance) {
@@ -93,7 +93,7 @@ class DatabaseSeeder extends Seeder
                             ]);
                         }
                     }
-                    $this->command->getOutput()->writeln("      <comment>-> Émargement créé pour 3 séances.</comment>");
+                    $this->command->getOutput()->writeln('      <comment>-> Émargement créé pour 3 séances.</comment>');
                 }
             });
 

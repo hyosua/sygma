@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Seance extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'cours_id',
         'enseignant_id',
@@ -48,12 +49,11 @@ class Seance extends Model
 
     /**
      * Vérifie si la séance est actuellement en cours.
-     *
-     * @return bool
      */
     public function isActive(): bool
     {
         $now = now();
+
         return $now->between($this->debut_a, $this->fin_a);
     }
 }

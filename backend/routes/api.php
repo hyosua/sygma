@@ -1,12 +1,11 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/user/{id}', [UserController::class, 'getUser']);
 
@@ -14,9 +13,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('users/AddUser',[UserController::class, 'addUser']);
-Route::patch('users/UpdateUser/{id}',[UserController::class, 'updateUser']);
-Route::delete('users/DeleteUser/{id}',[UserController::class , 'deleteUser']);
+Route::post('users/AddUser', [UserController::class, 'addUser']);
+Route::patch('users/UpdateUser/{id}', [UserController::class, 'updateUser']);
+Route::delete('users/DeleteUser/{id}', [UserController::class, 'deleteUser']);
 
 // Emargement (Auth temporairement retirée pour tests)
 Route::post('/sessions-emargement', [EmargementController::class, 'demarrerSession']);
@@ -35,7 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Cours
-Route::get('/Cours',[ControllerCours::class ,'getCours']);
-Route::post('/Cours/Ajouter',[ControllerCours::class ,'createCours']);
-Route::patch('/Cours/Modifier/{id}',[ControllerCours::class ,'updateCours']);
-Route::delete('/Cours/Supprimer/{id}',[ControllerCours::class ,'deleteCours']);
+Route::get('/Cours', [ControllerCours::class, 'getCours']);
+Route::post('/Cours/Ajouter', [ControllerCours::class, 'createCours']);
+Route::patch('/Cours/Modifier/{id}', [ControllerCours::class, 'updateCours']);
+Route::delete('/Cours/Supprimer/{id}', [ControllerCours::class, 'deleteCours']);

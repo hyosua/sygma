@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
-use App\Models\SessionEmargement;
-use App\Models\Seance;
-use App\Models\User;
-use App\Models\Presence;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
-use App\Exceptions\JetonInvalideException;
-use App\Exceptions\JetonExpireException;
-use App\Exceptions\SeanceNonActiveException;
 use App\Exceptions\DejaEmargeException;
 use App\Exceptions\EtudiantNonInscritException;
+use App\Exceptions\JetonExpireException;
+use App\Exceptions\JetonInvalideException;
+use App\Exceptions\SeanceNonActiveException;
+use App\Models\Presence;
+use App\Models\Seance;
+use App\Models\SessionEmargement;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class EmargementService
 {
@@ -21,10 +21,8 @@ class EmargementService
     /**
      * Initialise une nouvelle session d'émargement pour une séance donnée.
      *
-     * @param Seance $seance
-     * @param string $methode 'qr' ou 'manual'
-     * @param array $coordonnees ['latitude' => x, 'longitude' => y] optionnel
-     * @return SessionEmargement
+     * @param  string  $methode  'qr' ou 'manual'
+     * @param  array  $coordonnees  ['latitude' => x, 'longitude' => y] optionnel
      */
     public function demarrerSession(Seance $seance, bool $isMethodeQr = true, array $coordonnees = []): SessionEmargement
     {
@@ -41,10 +39,8 @@ class EmargementService
     /**
      * Valide un jeton QR Code et enregistre la présence de l'étudiant.
      *
-     * @param string $jeton
-     * @param User $etudiant
-     * @param array $coordonneesEtudiant ['latitude' => x, 'longitude' => y] optionnel
-     * @return Presence
+     * @param  array  $coordonneesEtudiant  ['latitude' => x, 'longitude' => y] optionnel
+     *
      * @throws Exception
      */
     public function validerPresenceParJeton(string $jeton, User $etudiant, array $coordonneesEtudiant = []): Presence
@@ -52,7 +48,7 @@ class EmargementService
         // On récupère la session d'émargement associée au jeton
         $session = SessionEmargement::where('jeton', $jeton)->first();
 
-        if (!$session) {
+        if (! $session) {
             throw new JetonInvalideException();
         }
 
@@ -61,7 +57,7 @@ class EmargementService
         }
 
         $seance = $session->seance;
-        if (!$seance->isActive()) {
+        if (! $seance->isActive()) {
             throw new SeanceNonActiveException();
         }
 
@@ -86,8 +82,8 @@ class EmargementService
         }
 
         $etudiantInscrit = $session->seance->etudiants()->where('users.id', $etudiant->id)->exists();
-        
-        if (!$etudiantInscrit) {
+
+        if (! $etudiantInscrit) {
             throw new EtudiantNonInscritException();
         }
 
@@ -101,13 +97,8 @@ class EmargementService
         ]);
     }
 
-
-
     /**
      * Génère un nouveau jeton pour une session active (Rotation du jeton).
-     *
-     * @param SessionEmargement $session
-     * @return SessionEmargement
      */
     public function rafraichirJeton(SessionEmargement $session): SessionEmargement
     {
