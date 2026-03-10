@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# --- Backend (PHP) ---
+PHP_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep '\.php$' || true)
+if [ -n "$PHP_FILES" ]; then
+  echo "[pre-commit] Pint fix..."
+  ./backend/vendor/bin/pint $PHP_FILES
+  ./backend/vendor/bin/phpcbf --standard=backend/phpcs.xml $PHP_FILES || true
+  git add $PHP_FILES
+fi
+
+# --- Frontend (JS/TS) ---
+JS_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(js|jsx|ts|tsx)$' || true)
+if [ -n "$JS_FILES" ]; then
+  echo "[pre-commit] ESLint --fix..."
+  ./frontend/node_modules/.bin/eslint --fix $JS_FILES
+  git add $JS_FILES
+fi
