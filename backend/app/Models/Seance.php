@@ -41,6 +41,11 @@ class Seance extends Model
         return $this->hasMany(SessionEmargement::class, 'seance_id');
     }
 
+    public function etudiants()
+    {
+        return $this->hasMany(User::class, 'groupe_id', 'groupe_id');
+    }
+
     /**
      * Vérifie si la séance est actuellement en cours.
      *
