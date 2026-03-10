@@ -26,13 +26,13 @@ class EmargementService
      * @param array $coordonnees ['latitude' => x, 'longitude' => y] optionnel
      * @return SessionEmargement
      */
-    public function demarrerSession(Seance $seance, string $methode = 'qr', array $coordonnees = []): SessionEmargement
+    public function demarrerSession(Seance $seance, bool $isMethodeQr = true, array $coordonnees = []): SessionEmargement
     {
         return SessionEmargement::create([
             'seance_id' => $seance->id,
-            'methode' => $methode,
-            'jeton' => ($methode === 'qr') ? $this->genererJeton() : null,
-            'expire_a' => ($methode === 'qr') ? Carbon::now()->addSeconds(self::DUREE_VALIDITE_JETON) : null,
+            'is_methode_qr' => $isMethodeQr,
+            'jeton' => $isMethodeQr ? $this->genererJeton() : null,
+            'expire_a' => $isMethodeQr ? Carbon::now()->addSeconds(self::DUREE_VALIDITE_JETON) : null,
             'latitude' => $coordonnees['latitude'] ?? null,
             'longitude' => $coordonnees['longitude'] ?? null,
         ]);
@@ -86,6 +86,8 @@ class EmargementService
             'longitude' => $coordonneesEtudiant['longitude'] ?? null,
         ]);
     }
+
+
 
     /**
      * Génère un nouveau jeton pour une session active (Rotation du jeton).

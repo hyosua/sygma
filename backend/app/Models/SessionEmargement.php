@@ -13,7 +13,7 @@ class SessionEmargement extends Model
 
     protected $fillable = [
         'seance_id',
-        'methode',
+        'is_methode_qr',
         'jeton',
         'expire_a',
         'latitude',
@@ -22,6 +22,7 @@ class SessionEmargement extends Model
 
     protected $casts = [
         'expire_a' => 'datetime',
+        'is_methode_qr' => 'boolean'
     ];
 
     public function seance()

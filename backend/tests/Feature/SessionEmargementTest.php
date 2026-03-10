@@ -11,6 +11,7 @@ use App\Models\Seance;
 class SessionEmargementTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
+    const API_URL = '/api/sessions-emargement';
     /**
      * Test pour vérifier que le professeur peut lancer une session d'émargement
      */
@@ -19,16 +20,16 @@ class SessionEmargementTest extends TestCase
         $enseignant = User::factory()->enseignant()->create();
         $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
 
-        $response = $this->actingAs($enseignant)->postJson('/api/sessions-emargement', [
+        $response = $this->actingAs($enseignant)->postJson(self::API_URL, [
             'seance_id' => $seance->id,
-            'methode'   => 'qr',
+            'is_methode_qr'   => true,
         ]);
 
         $response->assertStatus(201);
 
         $this->assertDatabaseHas('sessions_emargement', [
             'seance_id' => $seance->id,
-            'methode'   => 'qr',
+            'is_methode_qr'   => true,
         ]);
     }
 
@@ -37,42 +38,48 @@ class SessionEmargementTest extends TestCase
         $enseignant = User::factory()->enseignant()->create();
         $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
 
-        $response = $this->actingAs($enseignant)->postJson('/api/sessions-emargement', [
+        $response = $this->actingAs($enseignant)->postJson(self::API_URL, [
             'seance_id' => $seance->id,
-            'methode'   => 'qr',
+            'is_methode_qr'   => true,
         ]);
 
         $response->assertStatus(201)
-            ->assertJsonStructure(['id', 'jeton', 'expire_a', 'seance_id', 'methode']);
+            ->assertJsonStructure(['id', 'jeton', 'expire_a', 'seance_id', 'is_methode_qr']);
 
         $this->assertNotNull($response->json('jeton'));
         $this->assertNotNull($response->json('expire_a'));
+    }
+
+    public function test_enseignant_peut_lancer_session_emargement_sans_qr(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+
+        $response = $this->actingAs($enseignant)->postJson(self::API_URL, [
+            'seance_id' => $seance->id,
+            'is_methode_qr'   => false,
+        ]);
+
+        $response->assertStatus(201);
+
+        $this->assertDatabaseHas('sessions_emargement', [
+            'seance_id' => $seance->id,
+            'is_methode_qr'   => false,
+        ]);
     }
 
     public function test_retourne_erreur_si_seance_inexistante(): void
     {
         $enseignant = User::factory()->enseignant()->create();
 
-        $response = $this->actingAs($enseignant)->postJson('/api/sessions-emargement', [
+        $response = $this->actingAs($enseignant)->postJson(self::API_URL, [
             'seance_id' => 99999,
-            'methode'   => 'qr',
+            'is_methode_qr'   => true,
         ]);
 
         $response->assertStatus(422);
     }
 
-    public function test_retourne_erreur_si_methode_invalide(): void
-    {
-        $enseignant = User::factory()->enseignant()->create();
-        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
-
-        $response = $this->actingAs($enseignant)->postJson('/api/sessions-emargement', [
-            'seance_id' => $seance->id,
-            'methode'   => 'telepathie',
-        ]);
-
-        $response->assertStatus(422);
-    }
 
     public function test_peut_cloturer_une_session(): void
     {
