@@ -12,7 +12,7 @@ use App\Exceptions\JetonInvalideException;
 use App\Exceptions\JetonExpireException;
 use App\Exceptions\SeanceNonActiveException;
 use App\Exceptions\DejaEmargeException;
-use Exception;
+use App\Exceptions\EtudiantNonInscritException;
 
 class EmargementService
 {
@@ -83,6 +83,12 @@ class EmargementService
 
         if ($dejaPresent) {
             throw new DejaEmargeException();
+        }
+
+        $etudiantInscrit = $session->seance->etudiants()->where('users.id', $etudiant->id)->exists();
+        
+        if (!$etudiantInscrit) {
+            throw new EtudiantNonInscritException();
         }
 
         return Presence::create([

@@ -12,6 +12,7 @@ use App\Exceptions\JetonInvalideException;
 use App\Exceptions\JetonExpireException;
 use App\Exceptions\SeanceNonActiveException;
 use App\Exceptions\DejaEmargeException;
+use App\Exceptions\EtudiantNonInscritException;
 use Exception;
 
 class EmargementController extends Controller
@@ -146,7 +147,11 @@ class EmargementController extends Controller
             return response()->json([
                 'message' => 'L\'étudiant a déjà émargé pour cette session'
             ], 400);
-        } catch (Exception $e) {
+        }catch (EtudiantNonInscritException){
+            return response()->json([
+                'message' => 'L\'étudiant n\'est pas inscrit à cette séance'
+            ], 400);
+        }catch (Exception $e) {
             return response()->json([
                 'message' => 'Une erreur est survenue lors de la validation'
             ], 500);
