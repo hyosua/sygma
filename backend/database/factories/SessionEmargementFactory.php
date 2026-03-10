@@ -21,7 +21,7 @@ class SessionEmargementFactory extends Factory
             // seance_id sera fourni à la création
             'is_methode_qr' => true,
             'jeton' => Str::random(32),
-            'expire_a' => now()->addHours(4),
+            'expire_a' => now()->addSeconds(20),
             'latitude' => null,
             'longitude' => null,
         ];
