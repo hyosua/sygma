@@ -1,0 +1,168 @@
+name: CI Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci-backend.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci-backend.yml'
+
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: sygma
+          POSTGRES_USER: sygma
+          POSTGRES_PASSWORD: sygma_pass
+        options: >-
+          --health-cmd "pg_isready -U sygma -d sygma"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: sygma
+      DB_USERNAME: sygma
+      DB_PASSWORD: sygma_pass
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_pgsql, mbstring, exif, pcntl, bcmath, gd, intl, zip
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: backend/vendor
+          key: composer-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Configure environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      # Lint non-bloquant : les erreurs de style ne bloquent pas le CI.
+      # Corriger avec : make lint-fix  ou  ./vendor/bin/pint  dans backend/
+      - name: Lint — Pint
+        id: pint
+        continue-on-error: true
+        run: ./vendor/bin/pint --test 2>&1 | tee /tmp/pint.log
+
+      - name: Lint — PHPCS
+        id: phpcs
+        continue-on-error: true
+        run: ./vendor/bin/phpcs --standard=phpcs.xml 2>&1 | tee /tmp/phpcs.log
+
+      # Tests bloquants : un echec ici empeche le merge.
+      - name: Tests — PHPUnit
+        id: phpunit
+        run: ./vendor/bin/phpunit --testdox 2>&1 | tee /tmp/phpunit.log
+
+      - name: CI Summary
+        if: always()
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          s_pint="${{ steps.pint.outcome }}"
+          s_phpcs="${{ steps.phpcs.outcome }}"
+          s_phpunit="${{ steps.phpunit.outcome }}"
+
+          lint_label() {
+            [ "$1" = "success" ] && echo "**OK**" || echo "**WARNING**"
+          }
+          test_label() {
+            case "$1" in
+              success) echo "**OK**"   ;;
+              failure) echo "**FAIL**" ;;
+              *)       echo "**SKIP**" ;;
+            esac
+          }
+
+          {
+            echo "## Backend CI"
+            echo ""
+            echo "Logs complets : [Voir le job Actions]($RUN_URL)"
+            echo ""
+            echo "| Verification | Statut | Bloquant |"
+            echo "|---|---|---|"
+            echo "| Lint Pint | $(lint_label $s_pint) | Non |"
+            echo "| Lint PHPCS | $(lint_label $s_phpcs) | Non |"
+            echo "| Tests PHPUnit | $(test_label $s_phpunit) | Oui |"
+            echo ""
+
+            # --- Lint warnings ---
+            if [ "$s_pint" = "failure" ] || [ "$s_phpcs" = "failure" ]; then
+              echo "### Lint — Avertissements de style"
+              echo ""
+              echo "> Des problemes de formatage ont ete detectes. Le CI n'est pas bloque."
+              echo "> **Pour corriger automatiquement :** \`make lint-fix\`"
+              echo "> Ou manuellement dans \`backend/\` : \`./vendor/bin/pint\` puis \`./vendor/bin/phpcbf --standard=phpcs.xml\`"
+              echo ""
+              if [ "$s_pint" = "failure" ]; then
+                echo "<details><summary>Pint — fichiers a reformatter</summary>"
+                echo ""
+                echo "\`\`\`"
+                cat /tmp/pint.log 2>/dev/null || echo "(log non disponible)"
+                echo "\`\`\`"
+                echo "</details>"
+                echo ""
+              fi
+              if [ "$s_phpcs" = "failure" ]; then
+                echo "<details><summary>PHPCS — violations detectees</summary>"
+                echo ""
+                echo "\`\`\`"
+                cat /tmp/phpcs.log 2>/dev/null || echo "(log non disponible)"
+                echo "\`\`\`"
+                echo "</details>"
+                echo ""
+              fi
+            fi
+
+            # --- Test failures ---
+            if [ "$s_phpunit" = "failure" ]; then
+              echo "### Tests — Echecs"
+              echo ""
+              echo "> Un ou plusieurs tests ont echoue. Consultez le detail ci-dessous (fichier:ligne) ou [les logs du job]($RUN_URL)."
+              echo ""
+              echo "<details><summary>PHPUnit — tests en echec</summary>"
+              echo ""
+              echo "\`\`\`"
+              # Extrait les lignes utiles : fichier:ligne, message d'echec, compteur
+              grep -E "(\.php:[0-9]+|FAIL|ERROR|Failures?:|Errors?:)" /tmp/phpunit.log 2>/dev/null \
+                || cat /tmp/phpunit.log 2>/dev/null \
+                || echo "(log non disponible)"
+              echo "\`\`\`"
+              echo "</details>"
+            fi
+
+          } >> "$GITHUB_STEP_SUMMARY"

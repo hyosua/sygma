@@ -1,0 +1,111 @@
+name: CI Frontend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/ci-frontend.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/ci-frontend.yml'
+
+jobs:
+  frontend:
+    runs-on: ubuntu-24.04
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Lint non-bloquant : les erreurs de style ne bloquent pas le CI.
+      # Corriger avec : make lint-fix  ou  npm run lint:fix  dans frontend/
+      - name: Lint — ESLint
+        id: lint
+        continue-on-error: true
+        run: npm run lint 2>&1 | tee /tmp/eslint.log
+
+      # Build bloquant : un echec empeche le merge.
+      - name: Build — Vite
+        id: build
+        run: npm run build 2>&1 | tee /tmp/build.log
+
+      - name: CI Summary
+        if: always()
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          s_lint="${{ steps.lint.outcome }}"
+          s_build="${{ steps.build.outcome }}"
+
+          build_label() {
+            case "$1" in
+              success) echo "**OK**"   ;;
+              failure) echo "**FAIL**" ;;
+              *)       echo "**SKIP**" ;;
+            esac
+          }
+
+          {
+            echo "## Frontend CI"
+            echo ""
+            echo "Logs complets : [Voir le job Actions]($RUN_URL)"
+            echo ""
+            echo "| Verification | Statut | Bloquant |"
+            echo "|---|---|---|"
+            if [ "$s_lint" = "success" ]; then
+              echo "| Lint ESLint | **OK** | Non |"
+            else
+              echo "| Lint ESLint | **WARNING** | Non |"
+            fi
+            echo "| Build Vite | $(build_label $s_build) | Oui |"
+            echo ""
+
+            # --- Lint warnings ---
+            if [ "$s_lint" = "failure" ]; then
+              echo "### Lint — Avertissements de style"
+              echo ""
+              echo "> Des problemes ESLint ont ete detectes. Le CI n'est pas bloque."
+              echo "> **Pour corriger automatiquement :** \`make lint-fix\`"
+              echo "> Ou manuellement dans \`frontend/\` : \`npm run lint:fix\`"
+              echo ""
+              echo "<details><summary>ESLint — fichiers et lignes concernees</summary>"
+              echo ""
+              echo "\`\`\`"
+              cat /tmp/eslint.log 2>/dev/null || echo "(log non disponible)"
+              echo "\`\`\`"
+              echo "</details>"
+              echo ""
+            fi
+
+            # --- Build failure ---
+            if [ "$s_build" = "failure" ]; then
+              echo "### Build — Echec"
+              echo ""
+              echo "> Le build Vite a echoue. Recherchez les lignes \`error\` ou \`Error\` dans les logs."
+              echo "> Causes frequentes : import manquant, erreur TypeScript, variable non definie."
+              echo "> Logs complets : [Voir le job]($RUN_URL)"
+              echo ""
+              echo "<details><summary>Vite — sortie d'erreur</summary>"
+              echo ""
+              echo "\`\`\`"
+              cat /tmp/build.log 2>/dev/null || echo "(log non disponible)"
+              echo "\`\`\`"
+              echo "</details>"
+            fi
+
+          } >> "$GITHUB_STEP_SUMMARY"

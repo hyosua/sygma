@@ -8,7 +8,7 @@ DOCKER_USER := -u $(SYGMA_UID):$(SYGMA_GID)
 GREEN := \033[0;32m
 NC    := \033[0m
 
-.PHONY: install start stop repair update fresh composer artisan npm-back npm-front help %
+.PHONY: install start stop repair update fresh lint-check lint-fix composer artisan npm-back npm-front help %
 
 install:
 	@echo "$(GREEN)1. Construction des images...$(NC)"
@@ -26,6 +26,7 @@ install:
 	@echo "$(GREEN)Installation terminee !$(NC)"
 	@echo "Front-end : http://localhost:3000"
 	@echo "Back-end  : http://localhost:8000"
+	git config core.hooksPath .githooks
 
 start:
 	docker compose up -d
@@ -55,6 +56,16 @@ fresh:
 	docker compose exec $(DOCKER_USER) backend php artisan migrate:fresh --seed
 	@echo "$(GREEN)Base de donnees reinitialisee !$(NC)"
 
+lint-check:
+	docker compose exec $(DOCKER_USER) backend ./vendor/bin/pint --test
+	docker compose exec $(DOCKER_USER) backend ./vendor/bin/phpcs --standard=phpcs.xml
+	docker compose exec $(DOCKER_USER) frontend npm run lint
+
+lint-fix:
+	docker compose exec $(DOCKER_USER) backend ./vendor/bin/pint
+	docker compose exec $(DOCKER_USER) backend ./vendor/bin/phpcbf --standard=phpcs.xml || true
+	docker compose exec $(DOCKER_USER) frontend npm run lint:fix
+
 composer:
 	docker compose exec $(DOCKER_USER) backend composer $(filter-out $@,$(MAKECMDGOALS))
 
@@ -79,6 +90,8 @@ help:
 	@echo "  update       Mettre a jour apres un git pull"
 	@echo "  repair       Reinstaller les dependances et redemarrer"
 	@echo "  fresh        Reinitialiser la base de donnees"
+	@echo "  lint-check   Verifier le lint (PHP + JS)"
+	@echo "  lint-fix     Corriger le lint automatiquement (PHP + JS)"
 	@echo ""
 	@echo "  make composer require package"
 	@echo "  make artisan  migrate --seed"
