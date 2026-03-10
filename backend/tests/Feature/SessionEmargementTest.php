@@ -134,7 +134,7 @@ class SessionEmargementTest extends TestCase
             'seance_id' => $seance->id,
             'is_methode_qr' => false,
         ]);
-        $etudiant = User::factory()->etudiant()->create();
+        $etudiant = User::factory()->etudiant()->create(['groupe_id' => $seance->groupe_id]);
 
         $response = $this->actingAs($enseignant)->postJson(self::API_VALIDER_M, [
             'session_emargement_id' => $session->id,
@@ -149,6 +149,24 @@ class SessionEmargementTest extends TestCase
             'etudiant_id' => $etudiant->id,
             'statut' => 'present',
         ]);
+    }
+
+    public function test_retourne_erreur_si_etudiant_non_inscrit_a_la_seance(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+        $session = \App\Models\SessionEmargement::factory()->create([
+            'seance_id' => $seance->id,
+            'is_methode_qr' => false,
+        ]);
+        $etudiantNonInscrit = User::factory()->etudiant()->create(); // groupe_id différent
+
+        $response = $this->actingAs($enseignant)->postJson(self::API_VALIDER_M, [
+            'session_emargement_id' => $session->id,
+            'etudiant_id' => $etudiantNonInscrit->id,
+        ]);
+
+        $response->assertStatus(400);
     }
 
     public function test_retourne_erreur_si_etudiant_deja_emarge_manuellement(): void
