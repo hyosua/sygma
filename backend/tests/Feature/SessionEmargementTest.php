@@ -2,17 +2,21 @@
 
 namespace Tests\Feature;
 
+use App\Models\Seance;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\Seance;
 
 class SessionEmargementTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase;
+    use WithFaker;
+
     const API_URL = '/api/sessions-emargement';
+
     const API_VALIDER_M = '/api/presences/valider-manuel';
+
     /**
      * Test pour vérifier que le professeur peut lancer une session d'émargement
      */
@@ -23,14 +27,14 @@ class SessionEmargementTest extends TestCase
 
         $response = $this->actingAs($enseignant)->postJson(self::API_URL, [
             'seance_id' => $seance->id,
-            'is_methode_qr'   => true,
+            'is_methode_qr' => true,
         ]);
 
         $response->assertStatus(201);
 
         $this->assertDatabaseHas('sessions_emargement', [
             'seance_id' => $seance->id,
-            'is_methode_qr'   => true,
+            'is_methode_qr' => true,
         ]);
     }
 
@@ -41,7 +45,7 @@ class SessionEmargementTest extends TestCase
 
         $response = $this->actingAs($enseignant)->postJson(self::API_URL, [
             'seance_id' => $seance->id,
-            'is_methode_qr'   => true,
+            'is_methode_qr' => true,
         ]);
 
         $response->assertStatus(201)
@@ -58,14 +62,14 @@ class SessionEmargementTest extends TestCase
 
         $response = $this->actingAs($enseignant)->postJson(self::API_URL, [
             'seance_id' => $seance->id,
-            'is_methode_qr'   => false,
+            'is_methode_qr' => false,
         ]);
 
         $response->assertStatus(201);
 
         $this->assertDatabaseHas('sessions_emargement', [
             'seance_id' => $seance->id,
-            'is_methode_qr'   => false,
+            'is_methode_qr' => false,
         ]);
     }
 
@@ -75,12 +79,11 @@ class SessionEmargementTest extends TestCase
 
         $response = $this->actingAs($enseignant)->postJson(self::API_URL, [
             'seance_id' => 99999,
-            'is_methode_qr'   => true,
+            'is_methode_qr' => true,
         ]);
 
         $response->assertStatus(422);
     }
-
 
     public function test_peut_cloturer_une_session(): void
     {
@@ -115,7 +118,7 @@ class SessionEmargementTest extends TestCase
         foreach ($etudiants as $etudiant) {
             \App\Models\Presence::factory()->create([
                 'session_emargement_id' => $sessionEmargement->id,
-                'etudiant_id'           => $etudiant->id,
+                'etudiant_id' => $etudiant->id,
             ]);
         }
 
@@ -138,7 +141,7 @@ class SessionEmargementTest extends TestCase
 
         $response = $this->actingAs($enseignant)->postJson(self::API_VALIDER_M, [
             'session_emargement_id' => $session->id,
-            'etudiant_id'  => $etudiant->id,
+            'etudiant_id' => $etudiant->id,
         ]);
 
         $response->assertStatus(200)

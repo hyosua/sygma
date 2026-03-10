@@ -20,13 +20,14 @@ class CreerSeanceActiveTest extends Command
     {
         $duree = (int) $this->option('duree');
         $debut = now()->subMinutes(5);
-        $fin   = now()->addMinutes($duree);
+        $fin = now()->addMinutes($duree);
 
         if ($this->option('reset')) {
             $seance = Seance::latest()->first();
 
             if (! $seance) {
                 $this->error('Aucune séance en base. Relancez sans --reset.');
+
                 return Command::FAILURE;
             }
 
@@ -40,11 +41,11 @@ class CreerSeanceActiveTest extends Command
             $groupe = Groupe::first() ?? Groupe::factory()->create();
 
             $seance = Seance::create([
-                'cours_id'      => $cours->id,
+                'cours_id' => $cours->id,
                 'enseignant_id' => $enseignant->id,
-                'groupe_id'     => $groupe->id,
-                'debut_a'       => $debut,
-                'fin_a'         => $fin,
+                'groupe_id' => $groupe->id,
+                'debut_a' => $debut,
+                'fin_a' => $fin,
             ]);
 
             $this->info("Séance #{$seance->id} créée.");

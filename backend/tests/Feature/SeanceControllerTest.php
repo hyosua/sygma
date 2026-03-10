@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Seance;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\Seance;
-use App\Models\User;
 
 class SeanceControllerTest extends TestCase
 {
@@ -32,9 +31,9 @@ class SeanceControllerTest extends TestCase
                 'id',
                 'debut_a',
                 'fin_a',
-                'cours'      => ['id', 'nom'],
+                'cours' => ['id', 'nom'],
                 'enseignant' => ['id', 'nom', 'prenom'],
-                'groupe'     => ['id', 'nom'],
+                'groupe' => ['id', 'nom'],
             ])
             ->assertJsonFragment(['id' => $seance->id]);
     }
@@ -58,7 +57,7 @@ class SeanceControllerTest extends TestCase
     {
         $seance = Seance::factory()->create([
             'debut_a' => '2026-03-10 08:00:00',
-            'fin_a'   => '2026-03-10 10:00:00',
+            'fin_a' => '2026-03-10 10:00:00',
         ]);
 
         $response = $this->getJson("/api/seances/{$seance->id}");

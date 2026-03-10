@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\EmargementService;
-use App\Models\Seance;
-use App\Models\SessionEmargement;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use App\Exceptions\JetonInvalideException;
-use App\Exceptions\JetonExpireException;
-use App\Exceptions\SeanceNonActiveException;
 use App\Exceptions\DejaEmargeException;
 use App\Exceptions\EtudiantNonInscritException;
+use App\Exceptions\JetonExpireException;
+use App\Exceptions\JetonInvalideException;
+use App\Exceptions\SeanceNonActiveException;
+use App\Models\Seance;
+use App\Models\SessionEmargement;
+use App\Models\User;
+use App\Services\EmargementService;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EmargementController extends Controller
 {
@@ -50,6 +50,7 @@ class EmargementController extends Controller
 
         try {
             $session = $this->emargementService->demarrerSession($seance, (bool) $request->is_methode_qr, $coordonnees);
+
             return response()->json($session, 201);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
@@ -63,6 +64,7 @@ class EmargementController extends Controller
     {
         try {
             $sessionUpdated = $this->emargementService->rafraichirJeton($session);
+
             return response()->json($sessionUpdated);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
@@ -81,14 +83,14 @@ class EmargementController extends Controller
         ]);
 
         $etudiant = Auth::user();
-        
+
         // Temporaire : Si pas d'utilisateur authentifié (test), on prend le premier utilisateur
-        if (!$etudiant) {
+        if (! $etudiant) {
             $etudiant = \App\Models\User::first();
         }
 
-        if (!$etudiant) {
-             return response()->json(['message' => 'Aucun utilisateur trouvé en base pour le test'], 404);
+        if (! $etudiant) {
+            return response()->json(['message' => 'Aucun utilisateur trouvé en base pour le test'], 404);
         }
 
         $coordonnees = [
@@ -101,7 +103,7 @@ class EmargementController extends Controller
             $statusCode = 200;
             $response = [
                 'message' => 'Présence validée avec succès',
-                'presence' => $presence
+                'presence' => $presence,
             ];
         } catch (JetonInvalideException $e) {
             $statusCode = 400;
@@ -141,19 +143,19 @@ class EmargementController extends Controller
 
             return response()->json([
                 'message' => 'Présence validée avec succès',
-                'presence' => $presence
+                'presence' => $presence,
             ]);
-        }catch (DejaEmargeException){
+        } catch (DejaEmargeException) {
             return response()->json([
-                'message' => 'L\'étudiant a déjà émargé pour cette session'
+                'message' => 'L\'étudiant a déjà émargé pour cette session',
             ], 400);
-        }catch (EtudiantNonInscritException){
+        } catch (EtudiantNonInscritException) {
             return response()->json([
-                'message' => 'L\'étudiant n\'est pas inscrit à cette séance'
+                'message' => 'L\'étudiant n\'est pas inscrit à cette séance',
             ], 400);
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
-                'message' => 'Une erreur est survenue lors de la validation'
+                'message' => 'Une erreur est survenue lors de la validation',
             ], 500);
         }
     }
@@ -165,6 +167,7 @@ class EmargementController extends Controller
     {
         try {
             $sessionUpdated = $this->emargementService->cloturerSession($session);
+
             return response()->json($sessionUpdated);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
@@ -183,6 +186,7 @@ class EmargementController extends Controller
         }
 
         $session->load('presences');
+
         return response()->json([
             'id' => $session->id,
             'jeton' => $session->jeton,

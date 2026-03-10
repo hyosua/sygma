@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Groupe;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -39,7 +38,7 @@ class UserFactory extends Factory
     public function configure()
     {
         return $this->afterCreating(function (\App\Models\User $user) {
-            if (!empty($this->role)) {
+            if (! empty($this->role)) {
                 $user->assignRole($this->role);
             }
         });
@@ -48,13 +47,13 @@ class UserFactory extends Factory
     /**
      * State pour un rôle spécifique.
      *
-     * @param string $roleName
      * @return $this
      */
     public function withRole(string $roleName): static
     {
         return $this->state(function (array $attributes) use ($roleName) {
             $this->role = $roleName;
+
             return [];
         });
     }
@@ -64,7 +63,7 @@ class UserFactory extends Factory
      */
     public function etudiant(): static
     {
-        return $this->withRole('Etudiant')->state(fn(array $attributes) => [
+        return $this->withRole('Etudiant')->state(fn (array $attributes) => [
             'ine' => fake()->unique()->numerify('###########'),
         ]);
     }
