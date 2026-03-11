@@ -22,7 +22,7 @@ Route::delete('users/DeleteUser/{id}', [UserController::class, 'deleteUser']);
 Route::post('/sessions-emargement', [EmargementController::class, 'demarrerSession']);
 Route::post('/sessions-emargement/{session}/refresh', [EmargementController::class, 'rafraichirJeton']);
 Route::post('/sessions-emargement/{session}/cloturer', [EmargementController::class, 'cloturerSession']);
-Route::get('/sessions-emargement/{session}/status', [EmargementController::class, 'status']);
+Route::get('/sessions-emargement/{session}/statut', [EmargementController::class, 'statut']);
 Route::post('/presences/valider-qr', [EmargementController::class, 'validerPresenceParQR']);
 Route::post('/presences/valider-manuel', [EmargementController::class, 'validerPresenceManuellement']);
 

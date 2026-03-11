@@ -3,21 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\Seance;
+use App\Services\SeanceService;
+use Illuminate\Http\Request;
 
 class SeanceController extends Controller
 {
-    public function getSeances()
+    public function __construct(private SeanceService $seanceService)
     {
-        $seances = Seance::all();
+    }
+
+    public function getSeances(Request $request)
+    {
+        $seances = $this->seanceService->getSeances($request->only(['enseignant_id', 'groupe_id', 'cours_id', 'date_debut', 'date_fin', 'statut']));
 
         return response()->json($seances);
     }
 
     public function getSeance(Seance $seance)
     {
-        $seance->load(['cours', 'enseignant', 'groupe.users']);
-        $seance->nombre_inscrits = $seance->groupe?->users->count() ?? 0;
+        $seance = $this->seanceService->getSeance($seance);
 
         return response()->json($seance);
+    }
+
+    public function creerSeance(Request $request)
+    {
+        $data = $request->validate([
+            'cours_id' => 'required|exists:cours,id',
+            'enseignant_id' => 'required|exists:users,id',
+            'groupe_id' => 'required|exists:groupes,id',
+            'debut_a' => 'required|date',
+            'fin_a' => 'required|date|after:debut_a',
+            'salle' => 'nullable|integer',
+        ]);
+
+        $result = $this->seanceService->creerSeance($data);
+
+        return response()->json($result, 201);
     }
 }

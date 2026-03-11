@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Exceptions\DejaEmargeException;
-use App\Exceptions\EtudiantNonInscritException;
-use App\Exceptions\JetonExpireException;
-use App\Exceptions\JetonInvalideException;
-use App\Exceptions\SeanceNonActiveException;
+use App\Exceptions\Emargement\DejaEmargeException;
+use App\Exceptions\Emargement\EtudiantNonInscritException;
+use App\Exceptions\Emargement\JetonExpireException;
+use App\Exceptions\Emargement\JetonInvalideException;
+use App\Exceptions\Seance\SeanceNonActiveException;
 use App\Models\Presence;
 use App\Models\Seance;
 use App\Models\SessionEmargement;
