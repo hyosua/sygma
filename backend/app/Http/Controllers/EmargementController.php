@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\DejaEmargeException;
-use App\Exceptions\EtudiantNonInscritException;
-use App\Exceptions\JetonExpireException;
-use App\Exceptions\JetonInvalideException;
-use App\Exceptions\SeanceNonActiveException;
+use App\Exceptions\Emargement\DejaEmargeException;
+use App\Exceptions\Emargement\EtudiantNonInscritException;
+use App\Exceptions\Emargement\JetonExpireException;
+use App\Exceptions\Emargement\JetonInvalideException;
+use App\Exceptions\Seance\SeanceNonActiveException;
 use App\Models\Seance;
 use App\Models\SessionEmargement;
 use App\Models\User;
@@ -17,16 +17,11 @@ use Illuminate\Support\Facades\Auth;
 
 class EmargementController extends Controller
 {
-    protected $emargementService;
-
-    public function __construct(EmargementService $emargementService)
+    public function __construct(private EmargementService $emargementService)
     {
-        $this->emargementService = $emargementService;
     }
 
-    /**
-     * Démarre une session d'émargement pour une séance.
-     */
+    // Démarre une session d'émargement pour une séance.
     public function demarrerSession(Request $request)
     {
         $request->validate([
@@ -57,9 +52,8 @@ class EmargementController extends Controller
         }
     }
 
-    /**
-     * Rafraîchit le jeton d'une session d'émargement.
-     */
+    // Rafraîchit le jeton d'une session d'émargement.
+
     public function rafraichirJeton(SessionEmargement $session)
     {
         try {
@@ -71,9 +65,8 @@ class EmargementController extends Controller
         }
     }
 
-    /**
-     * Valide la présence d'un étudiant via un jeton.
-     */
+    // Valide la présence d'un étudiant via un jeton.
+
     public function validerPresenceParQR(Request $request)
     {
         $request->validate([
@@ -125,9 +118,7 @@ class EmargementController extends Controller
         return response()->json($response, $statusCode);
     }
 
-    /**
-     * Valide la présence d'un étudiant manuellement.
-     */
+    // Valide la présence d'un étudiant manuellement.
     public function validerPresenceManuellement(Request $request)
     {
         $data = $request->validate([
@@ -135,34 +126,32 @@ class EmargementController extends Controller
             'etudiant_id' => 'required|exists:users,id',
         ]);
 
+        $statusCode = 500;
+        $response = ['message' => 'Une erreur est survenue lors de la validation'];
+
         try {
             $session = SessionEmargement::findOrFail($data['session_emargement_id']);
             $etudiant = User::findOrFail($data['etudiant_id']);
 
             $presence = $this->emargementService->enregistrerPresence($session, $etudiant);
 
-            return response()->json([
+            $statusCode = 200;
+            $response = [
                 'message' => 'Présence validée avec succès',
                 'presence' => $presence,
-            ]);
+            ];
         } catch (DejaEmargeException) {
-            return response()->json([
-                'message' => 'L\'étudiant a déjà émargé pour cette session',
-            ], 400);
+            $statusCode = 400;
+            $response = ['message' => 'L\'étudiant a déjà émargé pour cette session'];
         } catch (EtudiantNonInscritException) {
-            return response()->json([
-                'message' => 'L\'étudiant n\'est pas inscrit à cette séance',
-            ], 400);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Une erreur est survenue lors de la validation',
-            ], 500);
+            $statusCode = 400;
+            $response = ['message' => 'L\'étudiant n\'est pas inscrit à cette séance'];
         }
+
+        return response()->json($response, $statusCode);
     }
 
-    /**
-     * Clôture une session d'émargement.
-     */
+    // Clôture une session d'émargement.
     public function cloturerSession(SessionEmargement $session)
     {
         try {
@@ -174,11 +163,9 @@ class EmargementController extends Controller
         }
     }
 
-    /**
-     * Récupère le statut d'une session (nombre de présents, etc.)
-     * Rafraîchit automatiquement le jeton si celui-ci est expiré.
-     */
-    public function status(SessionEmargement $session)
+    // Récupère le statut d'une session (nombre de présents, etc.)
+    // Rafraîchit automatiquement le jeton si celui-ci est expiré.
+    public function statut(SessionEmargement $session)
     {
         // Si le jeton est expiré, on le rafraîchit automatiquement
         if ($session->is_methode_qr && $session->expire_a && $session->expire_a->isPast()) {

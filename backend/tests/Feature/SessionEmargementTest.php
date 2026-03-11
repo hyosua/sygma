@@ -123,7 +123,7 @@ class SessionEmargementTest extends TestCase
         }
 
         $response = $this->actingAs($enseignant)
-            ->getJson("/api/sessions-emargement/{$sessionEmargement->id}/status");
+            ->getJson("/api/sessions-emargement/{$sessionEmargement->id}/statut");
 
         $response->assertStatus(200)
             ->assertJsonFragment(['nombre_presents' => 3]);
