@@ -6,6 +6,7 @@ use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
 
 
 Route::get('/user/{id}', [UserController::class, 'getUser']);
@@ -38,3 +39,12 @@ Route::get('/Cours',[ControllerCours::class ,'getCours']);
 Route::post('/Cours/Ajouter',[ControllerCours::class ,'createCours']);
 Route::patch('/Cours/Modifier/{id}',[ControllerCours::class ,'updateCours']);
 Route::delete('/Cours/Supprimer/{id}',[ControllerCours::class ,'deleteCours']);
+
+
+//Connexion
+Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout']);
+// Route::midlleware('auth:sanctum')->get('/logout', function (Request $request){
+//     return $request->user();
+// });
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
