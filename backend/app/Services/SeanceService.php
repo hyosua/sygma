@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
-use App\Exceptions\ConflitSeanceException;
+use App\Exceptions\Seance\ConflitSeanceException;
+use App\Exceptions\Seance\SalleOccupeeException;
+use App\Exceptions\Seance\SessionEmargementActiveException;
 use App\Models\Seance;
 use Illuminate\Support\Collection;
 
@@ -59,6 +61,9 @@ class SeanceService
     public function creerSeance(array $data): Seance
     {
         $this->verifierConflitSeance($data);
+        if (isset($data['salle'])) {
+            $this->verifierConflitSalle($data);
+        }
 
         $seance = Seance::create($data);
         $seance->load(['cours', 'enseignant', 'groupe.users']);
@@ -66,16 +71,60 @@ class SeanceService
         return $seance;
     }
 
-    // Vérifier si une séance existe déjà dans ce créneau
-    private function verifierConflitSeance(array $data): void
+    // Modifier une séance
+    public function modifierSeance(Seance $seance, array $data): Seance
     {
-        $conflit = Seance::where('enseignant_id', $data['enseignant_id'])
-            ->where('debut_a', '<', $data['fin_a'])
-            ->where('fin_a', '>', $data['debut_a'])
-            ->exists();
+        $this->verifierSessionEmargementActive($seance);
+        $this->verifierConflitSeance($data, $seance->id);
+        if (isset($data['salle'])) {
+            $this->verifierConflitSalle($data, $seance->id);
+        }
 
-        if ($conflit) {
+        $seance->update($data);
+        $seance->load(['cours', 'groupe.users', 'enseignant']);
+
+        return $seance;
+    }
+
+    // Vérifier si une séance existe déjà dans ce créneau
+    private function verifierConflitSeance(array $data, ?int $selfId = null): void
+    {
+        $requete = Seance::where('enseignant_id', $data['enseignant_id'])
+            ->where('debut_a', '<', $data['fin_a'])
+            ->where('fin_a', '>', $data['debut_a']);
+
+        // Ne pas inclure sa propre séance si l'on souhaite la modifier
+        if ($selfId) {
+            $requete->where('id', '!=', $selfId);
+        }
+
+        if ($requete->exists()) {
             throw new ConflitSeanceException();
+        }
+    }
+
+    private function verifierConflitSalle(array $data, ?int $selfId = null): void
+    {
+
+        $requete = Seance::where('salle', $data['salle'])
+            ->where('debut_a', '<', $data['fin_a'])
+            ->where('fin_a', '>', $data['debut_a']);
+
+        if ($selfId) {
+            $requete->where('id', '!=', $selfId);
+        }
+
+        if ($requete->exists()) {
+            throw new SalleOccupeeException();
+        }
+    }
+
+    private function verifierSessionEmargementActive(Seance $seance): void
+    {
+        $sessionEmargementActive = $seance->sessionEmargement()->where('expire_a', '>', now())->exists();
+
+        if ($sessionEmargementActive) {
+            throw new SessionEmargementActiveException();
         }
     }
 }
