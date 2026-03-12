@@ -366,6 +366,109 @@ DELETE /Cours/Supprimer/{id}
 
 ---
 
+## Exemples d'utilisation
+
+### Récupérer les séances en cours
+
+```js
+const response = await fetch('http://localhost:8000/api/seances?statut=en_cours')
+const data = await response.json()
+console.log(data.data) // tableau de séances
+```
+
+### Naviguer entre les pages (onglet "passées")
+
+```js
+let page = 1
+
+async function chargerSeancesPassees() {
+  const response = await fetch(`http://localhost:8000/api/seances?statut=terminee&per_page=10&page=${page}`)
+  const data = await response.json()
+
+  console.log(data.data)        // séances de la page courante
+  console.log(data.total)       // nombre total de séances passées
+  console.log(data.last_page)   // nombre de pages disponibles
+
+  // Bouton "Voir plus" : incrémenter page et rappeler la fonction
+}
+```
+
+### Démarrer une session d'émargement (QR Code)
+
+```js
+const response = await fetch('http://localhost:8000/api/sessions-emargement', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    seance_id: 61,
+    is_methode_qr: true,
+  }),
+})
+const session = await response.json()
+console.log(session.jeton)     // chaîne à encoder en QR Code
+console.log(session.expire_a)  // date d'expiration du jeton
+```
+
+### Afficher le QR Code à jour (polling)
+
+```js
+async function rafraichirStatut(sessionId) {
+  const response = await fetch(`http://localhost:8000/api/sessions-emargement/${sessionId}/statut`)
+  const data = await response.json()
+
+  console.log(data.jeton)           // nouveau jeton si expiré
+  console.log(data.nombre_presents) // nb d'étudiants présents
+}
+
+// Appeler toutes les 20 secondes
+setInterval(() => rafraichirStatut(5), 20000)
+```
+
+### Scanner un QR Code (côté étudiant)
+
+```js
+const response = await fetch('http://localhost:8000/api/presences/valider-qr', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ jeton: 'aB3xKq...' }),
+})
+
+if (!response.ok) {
+  const erreur = await response.json()
+  console.error(erreur.message) // ex: "Le QR Code a expiré..."
+} else {
+  const data = await response.json()
+  console.log(data.message) // "Présence validée avec succès"
+}
+```
+
+### Valider manuellement un étudiant (côté enseignant)
+
+```js
+const response = await fetch('http://localhost:8000/api/presences/valider-manuel', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    session_emargement_id: 5,
+    etudiant_id: 3,
+  }),
+})
+const data = await response.json()
+console.log(data.message)
+```
+
+### Clôturer une session
+
+```js
+const response = await fetch('http://localhost:8000/api/sessions-emargement/5/cloturer', {
+  method: 'POST',
+})
+const session = await response.json()
+console.log(session.expire_a) // = maintenant
+```
+
+---
+
 ## Notes
 
 - L'authentification Sanctum est **temporairement désactivée** sur les routes d'émargement et de séances pour faciliter les tests. Elle sera réactivée avant la mise en production.
