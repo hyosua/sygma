@@ -52,7 +52,7 @@ GET /seances
 | `cours_id` | integer | Filtre par cours |
 | `date_debut` | datetime | Séances commençant après cette date |
 | `date_fin` | datetime | Séances finissant avant cette date |
-| `per_page` | integer | Nombre de résultats par page (défaut : 15, max : 50) |
+| `par_page` | integer | Nombre de résultats par page (défaut : 15, max : 50) |
 | `page` | integer | Numéro de page (défaut : 1) |
 
 **Réponse 200**
@@ -72,7 +72,7 @@ GET /seances
   ],
   "current_page": 1,
   "last_page": 3,
-  "per_page": 15,
+  "par_page": 15,
   "total": 42,
   "next_page_url": "http://localhost:8000/api/seances?page=2",
   "prev_page_url": null
@@ -384,7 +384,7 @@ console.log(data.data) // tableau de séances
 let page = 1
 
 async function chargerSeancesPassees() {
-  const response = await fetch(`http://localhost:8000/api/seances?statut=terminee&per_page=10&page=${page}`)
+  const response = await fetch(`http://localhost:8000/api/seances?statut=terminee&par_page=10&page=${page}`)
   const data = await response.json()
 
   console.log(data.data)        // séances de la page courante
