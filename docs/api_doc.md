@@ -1,8 +1,10 @@
 # Documentation API — Sygma
 
-**Base URL** : `http://localhost:8000/api`
-**Format** : JSON
-**Authentification** : Sanctum (temporairement désactivée sur la plupart des routes — à réactiver)
+Ce document est destiné aux développeurs frontend. Il décrit les endpoints disponibles, les paramètres attendus, les réponses retournées et les erreurs possibles. Des exemples JavaScript (`fetch`) sont fournis en fin de document.
+
+> **Base URL** : `http://localhost:8000/api`
+> **Format** : JSON
+> **Authentification** : Sanctum — temporairement désactivée sur la plupart des routes pour faciliter les tests, à réactiver avant mise en production.
 
 ---
 
