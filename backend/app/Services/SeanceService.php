@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 class SeanceService
 {
     // / Récupère les séances en fonction des filtres fournis
-    public function getSeances(array $filtres = []): Collection
+    public function getSeances(array $filtres = []): \Illuminate\Pagination\LengthAwarePaginator|Collection
     {
         $query = Seance::query();
 
@@ -45,7 +45,9 @@ class SeanceService
             };
         }
 
-        return $query->get();
+        $parPage = min((int) ($filtres['par_page'] ?? 15), 50);
+
+        return $query->orderBy('debut_a', 'desc')->paginate($parPage);
     }
 
     // Récupère une séance spécifique avec ses relations et le nombre d'inscrits
