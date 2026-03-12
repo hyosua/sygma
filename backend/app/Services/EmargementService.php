@@ -26,6 +26,10 @@ class EmargementService
      */
     public function demarrerSession(Seance $seance, bool $isMethodeQr = true, array $coordonnees = []): SessionEmargement
     {
+        if (! $seance->isActive()) {
+            throw new SeanceNonActiveException();
+        }
+
         return SessionEmargement::create([
             'seance_id' => $seance->id,
             'is_methode_qr' => $isMethodeQr,
@@ -133,7 +137,6 @@ class EmargementService
     /* Prochaines méthodes à implémenter:
     * -fonction de calcul de distance entre les coordonnées de la session et celles de l'étudiant
     * -fonction qui vérifie qu'un étudiant est bien inscrit à la séance
-    * - fonction pour cloturer une session d'émargement
     * -...
     */
 }
