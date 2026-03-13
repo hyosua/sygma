@@ -13,6 +13,7 @@ use App\Exceptions\Seance\SeancePasseeException;
 use App\Exceptions\Seance\SessionEmargementActiveException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+// use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -55,6 +56,11 @@ class Handler extends ExceptionHandler
                     return response()->json(['message' => $e->getMessage()], 422);
                 }
             }
+
+            // TODO (mise en prod) : catch-all OWASP — masquer les détails d'erreur au client
+            // Décommenter avant déploiement (APP_DEBUG=false dans .env.production)
+            // Log::error($e);
+            // return response()->json(['message' => 'Une erreur inattendue est survenue.'], 500);
         });
     }
 }

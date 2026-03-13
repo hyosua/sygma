@@ -151,9 +151,9 @@ POST /sessions-emargement
 
 **Erreurs possibles**
 
-| Code | Message                        | Cause                                  |
-| ---- | ------------------------------ | -------------------------------------- |
-| 500  | `La séance n'est pas en cours` | La séance n'a pas le statut `en_cours` |
+| Code | Message                                     | Cause                                  |
+| ---- | ------------------------------------------- | -------------------------------------- |
+| 422  | `La séance associée n'est pas active.`      | La séance n'a pas le statut `en_cours` |
 
 ---
 
@@ -239,10 +239,10 @@ POST /presences/valider-qr
 
 | Code | Message                                            | Cause                         |
 | ---- | -------------------------------------------------- | ----------------------------- |
-| 400  | `Jeton invalide`                                   | Le jeton n'existe pas         |
-| 400  | `Le QR Code a expiré, veuillez scanner le nouveau` | Le jeton a expiré             |
-| 400  | `La séance n'est pas active`                       | La séance n'est plus en cours |
-| 400  | `Vous avez déjà émargé pour cette séance`          | Doublon                       |
+| 422  | `Jeton d'émargement invalide.`                     | Le jeton n'existe pas         |
+| 422  | `QR Code expiré, veuillez scanner le nouveau.`     | Le jeton a expiré             |
+| 422  | `La séance associée n'est pas active.`             | La séance n'est plus en cours |
+| 409  | `Vous avez déjà émargé pour cette séance.`         | Doublon                       |
 
 ---
 
@@ -272,10 +272,10 @@ Réservé à l'enseignant pour marquer un étudiant présent sans QR Code.
 
 **Erreurs possibles**
 
-| Code | Message                                       | Cause                |
-| ---- | --------------------------------------------- | -------------------- |
-| 400  | `L'étudiant a déjà émargé pour cette session` | Doublon              |
-| 400  | `L'étudiant n'est pas inscrit à cette séance` | Étudiant hors groupe |
+| Code | Message                                          | Cause                |
+| ---- | ------------------------------------------------ | -------------------- |
+| 409  | `Vous avez déjà émargé pour cette séance.`       | Doublon              |
+| 422  | `L'étudiant n'est pas inscrit à cette séance.`   | Étudiant hors groupe |
 
 ---
 
@@ -309,8 +309,8 @@ POST /users/AddUser
 | `specialites` | string  | Spécialité               |
 | `groupe_id`   | integer | Groupe de l'étudiant     |
 
-**Réponse 200** — retourne l'utilisateur créé.
-**Réponse 401** — `"Le compte existe déjà"`
+**Réponse 201** — retourne l'utilisateur créé.
+**Réponse 409** — `{"message": "Le compte existe déjà"}`
 
 ---
 
@@ -323,7 +323,7 @@ PATCH /users/UpdateUser/{id}
 **Corps (JSON)** : `nom`, `prenom`, `email`, `ine`
 
 **Réponse 200** — retourne l'utilisateur mis à jour.
-**Réponse 400** — `"Utilisateur non trouvé"`
+**Réponse 404** — `{"message": "Utilisateur non trouvé"}`
 
 ---
 
@@ -333,8 +333,8 @@ PATCH /users/UpdateUser/{id}
 DELETE /users/DeleteUser/{id}
 ```
 
-**Réponse 200** — `"L'utilisateur a bien été supprimé"`
-**Réponse 400** — `"L'utilisateur n'a pas été trouvé"`
+**Réponse 200** — `{"message": "L'utilisateur a bien été supprimé"}`
+**Réponse 404** — `{"message": "L'utilisateur n'a pas été trouvé"}`
 
 ---
 
@@ -362,8 +362,8 @@ POST /Cours/Ajouter
 | ----- | ------ | ------ |
 | `nom` | string | oui    |
 
-**Réponse 200** — cours créé.
-**Réponse 401** — `"Le cours existe déjà"`
+**Réponse 201** — cours créé.
+**Réponse 409** — `{"message": "Le cours existe déjà"}`
 
 ---
 
@@ -376,8 +376,8 @@ PATCH /Cours/Modifier/{id}
 **Corps (JSON)** : `nom`
 
 **Réponse 200** — cours mis à jour.
-**Réponse 401** — `"Le cours existe déjà"` (nom déjà pris)
-**Réponse 404** — `"cours introuvable"`
+**Réponse 404** — `{"message": "cours introuvable"}`
+**Réponse 409** — `{"message": "Le cours existe déjà"}` (nom déjà pris)
 
 ---
 
