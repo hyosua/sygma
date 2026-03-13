@@ -14,7 +14,9 @@ class SeanceController extends Controller
 
     public function getSeances(Request $request)
     {
-        $seances = $this->seanceService->getSeances($request->only(['enseignant_id', 'groupe_id', 'cours_id', 'date_debut', 'date_fin', 'statut', 'par_page']));
+        $seances = $this->seanceService->getSeances($request->only(
+            ['enseignant_id', 'groupe_id', 'cours_id', 'date_debut', 'date_fin', 'statut', 'par_page']
+        ));
 
         return response()->json($seances);
     }
@@ -24,6 +26,13 @@ class SeanceController extends Controller
         $seance = $this->seanceService->getSeance($seance);
 
         return response()->json($seance);
+    }
+
+    public function supprimer(Seance $seance)
+    {
+        $this->seanceService->supprimerSeance($seance);
+
+        return response()->json(null, 204);
     }
 
     public function creerSeance(Request $request)

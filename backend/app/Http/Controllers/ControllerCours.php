@@ -23,7 +23,7 @@ class ControllerCours extends Controller
 
         foreach ($verif as $v) {
             if ($v->nom) {
-                return response()->json('Le cours existe déja', 401);
+                return response()->json(['message' => 'Le cours existe déjà'], 409);
             }
         }
 
@@ -31,7 +31,7 @@ class ControllerCours extends Controller
             'nom' => $lib,
         ]);
 
-        return response()->json($cours, 200);
+        return response()->json($cours, 201);
     }
 
     public function updateCours(Request $req, $id)
@@ -46,7 +46,7 @@ class ControllerCours extends Controller
 
                 foreach ($verif2 as $v2) {
                     if ($v2->nom) {
-                        return response()->json('Le cours existe déja', 401);
+                        return response()->json(['message' => 'Le cours existe déjà'], 409);
                     }
                 }
 

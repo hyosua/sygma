@@ -2,16 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\Emargement\DejaEmargeException;
-use App\Exceptions\Emargement\EtudiantNonInscritException;
-use App\Exceptions\Emargement\JetonExpireException;
-use App\Exceptions\Emargement\JetonInvalideException;
-use App\Exceptions\Seance\SeanceNonActiveException;
 use App\Models\Seance;
 use App\Models\SessionEmargement;
 use App\Models\User;
 use App\Services\EmargementService;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,26 +37,18 @@ class EmargementController extends Controller
             'longitude' => $request->longitude,
         ];
 
-        try {
-            $session = $this->emargementService->demarrerSession($seance, (bool) $request->is_methode_qr, $coordonnees);
+        $session = $this->emargementService->demarrerSession($seance, (bool) $request->is_methode_qr, $coordonnees);
 
-            return response()->json($session, 201);
-        } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
-        }
+        return response()->json($session, 201);
     }
 
     // Rafraîchit le jeton d'une session d'émargement.
 
     public function rafraichirJeton(SessionEmargement $session)
     {
-        try {
-            $sessionUpdated = $this->emargementService->rafraichirJeton($session);
+        $sessionUpdated = $this->emargementService->rafraichirJeton($session);
 
-            return response()->json($sessionUpdated);
-        } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
-        }
+        return response()->json($sessionUpdated);
     }
 
     // Valide la présence d'un étudiant via un jeton.
@@ -91,31 +77,12 @@ class EmargementController extends Controller
             'longitude' => $request->longitude,
         ];
 
-        try {
-            $presence = $this->emargementService->validerPresenceParJeton($request->jeton, $etudiant, $coordonnees);
-            $statusCode = 200;
-            $response = [
-                'message' => 'Présence validée avec succès',
-                'presence' => $presence,
-            ];
-        } catch (JetonInvalideException $e) {
-            $statusCode = 400;
-            $response = ['message' => 'Jeton invalide'];
-        } catch (JetonExpireException $e) {
-            $statusCode = 400;
-            $response = ['message' => 'Le QR Code a expiré, veuillez scanner le nouveau'];
-        } catch (SeanceNonActiveException $e) {
-            $statusCode = 400;
-            $response = ['message' => 'La séance n\'est pas active'];
-        } catch (DejaEmargeException $e) {
-            $statusCode = 400;
-            $response = ['message' => 'Vous avez déjà émargé pour cette séance'];
-        } catch (Exception $e) {
-            $statusCode = 500;
-            $response = ['message' => 'Une erreur est survenue lors de la validation'];
-        }
+        $presence = $this->emargementService->validerPresenceParJeton($request->jeton, $etudiant, $coordonnees);
 
-        return response()->json($response, $statusCode);
+        return response()->json([
+            'message' => 'Présence validée avec succès',
+            'presence' => $presence,
+        ]);
     }
 
     // Valide la présence d'un étudiant manuellement.
@@ -126,41 +93,23 @@ class EmargementController extends Controller
             'etudiant_id' => 'required|exists:users,id',
         ]);
 
-        $statusCode = 500;
-        $response = ['message' => 'Une erreur est survenue lors de la validation'];
+        $session = SessionEmargement::findOrFail($data['session_emargement_id']);
+        $etudiant = User::findOrFail($data['etudiant_id']);
 
-        try {
-            $session = SessionEmargement::findOrFail($data['session_emargement_id']);
-            $etudiant = User::findOrFail($data['etudiant_id']);
+        $presence = $this->emargementService->enregistrerPresence($session, $etudiant);
 
-            $presence = $this->emargementService->enregistrerPresence($session, $etudiant);
-
-            $statusCode = 200;
-            $response = [
-                'message' => 'Présence validée avec succès',
-                'presence' => $presence,
-            ];
-        } catch (DejaEmargeException) {
-            $statusCode = 400;
-            $response = ['message' => 'L\'étudiant a déjà émargé pour cette session'];
-        } catch (EtudiantNonInscritException) {
-            $statusCode = 400;
-            $response = ['message' => 'L\'étudiant n\'est pas inscrit à cette séance'];
-        }
-
-        return response()->json($response, $statusCode);
+        return response()->json([
+            'message' => 'Présence validée avec succès',
+            'presence' => $presence,
+        ]);
     }
 
     // Clôture une session d'émargement.
     public function cloturerSession(SessionEmargement $session)
     {
-        try {
-            $sessionUpdated = $this->emargementService->cloturerSession($session);
+        $sessionUpdated = $this->emargementService->cloturerSession($session);
 
-            return response()->json($sessionUpdated);
-        } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
-        }
+        return response()->json($sessionUpdated);
     }
 
     // Récupère le statut d'une session (nombre de présents, etc.)

@@ -27,7 +27,7 @@ class UserController extends Controller
         $verify = User::where('email', $email)->get();
         foreach ($verify as $v) {
             if ($v->email) {
-                return response()->json('Le compte existe déja', 401);
+                return response()->json(['message' => 'Le compte existe déjà'], 409);
             }
         }
         $User = User::create([
@@ -40,7 +40,7 @@ class UserController extends Controller
             'groupe_id' => $groupe_id,
         ]);
 
-        return response()->json($User, 200);
+        return response()->json($User, 201);
     }
 
     public function updateUser(Request $req, $id)
@@ -59,7 +59,7 @@ class UserController extends Controller
             return response()->json($User, 200);
         }
 
-        return response()->json('Utilisateur non trouvé', 400);
+        return response()->json(['message' => 'Utilisateur non trouvé'], 404);
     }
 
     public function deleteUser($id)
@@ -72,6 +72,6 @@ class UserController extends Controller
             return response()->json("L'utilisateur à bien été supprimé", 200);
         }
 
-        return response()->json("L'utilisateur n'a pas été trouver", 400);
+        return response()->json(['message' => "L'utilisateur n'a pas été trouvé"], 404);
     }
 }

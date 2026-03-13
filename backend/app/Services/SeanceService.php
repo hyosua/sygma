@@ -73,6 +73,13 @@ class SeanceService
         return $seance;
     }
 
+    // Supprimer une séance
+    public function supprimerSeance(Seance $seance): void
+    {
+        $this->verifierSessionEmargementActive($seance);
+        $seance->delete();
+    }
+
     // Modifier une séance
     public function modifierSeance(Seance $seance, array $data): Seance
     {

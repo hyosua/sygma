@@ -1,10 +1,10 @@
 <?php
 
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
-return Application::configure(basePath: dirname(__DIR__))
+$app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
         api: __DIR__ . '/../routes/api.php',
@@ -17,14 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'api/*',
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (Throwable $e, $request) {
-            if ($request->is('api/*')) {
-                if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException || $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
-                    return response()->json([
-                        'message' => 'Resource not found.',
-                    ], 404);
-                }
-            }
-        });
-    })->create();
+    ->create();
+
+$app->singleton(ExceptionHandler::class, \App\Exceptions\Handler::class);
+
+return $app;
