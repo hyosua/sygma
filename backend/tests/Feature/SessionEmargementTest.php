@@ -169,7 +169,7 @@ class SessionEmargementTest extends TestCase
             'etudiant_id' => $etudiantNonInscrit->id,
         ]);
 
-        $response->assertStatus(400);
+        $response->assertStatus(422);
     }
 
     public function test_retourne_erreur_si_etudiant_deja_emarge_manuellement(): void
@@ -192,6 +192,6 @@ class SessionEmargementTest extends TestCase
             'etudiant_id' => $etudiant->id,
         ]);
 
-        $response->assertStatus(400);
+        $response->assertStatus(422);
     }
 }
