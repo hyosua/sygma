@@ -1,8 +1,6 @@
 # Conventions — Sygma
 
-Ce document centralise les règles de développement du projet. Il s'applique à tous les membres de l'équipe.
-
----
+## Ce document centralise les règles de développement du projet.
 
 ## Table des matières
 
@@ -19,15 +17,15 @@ Ce document centralise les règles de développement du projet. Il s'applique à
 
 Ces termes sont utilisés de manière cohérente dans le code, les commits, et la documentation.
 
-| Terme correct | À éviter |
-|---|---|
-| `enseignant` | `professeur`, `prof` |
-| `étudiant` | `eleve`, `apprenant` |
-| `séance` | `session` (réservé aux sessions d'émargement) |
-| `session d'émargement` | `session de présence`, `cours` |
-| `groupe` | `promotion`, `classe` |
-| `présence` | `attendance` |
-| `émargement` | `pointage` |
+| Terme correct          | À éviter                                      |
+| ---------------------- | --------------------------------------------- |
+| `enseignant`           | `professeur`, `prof`                          |
+| `étudiant`             | `eleve`, `apprenant`                          |
+| `séance`               | `session` (réservé aux sessions d'émargement) |
+| `session d'émargement` | `session de présence`, `cours`                |
+| `groupe`               | `promotion`, `classe`                         |
+| `présence`             | `attendance`                                  |
+| `émargement`           | `pointage`                                    |
 
 ---
 
@@ -37,14 +35,14 @@ Ces termes sont utilisés de manière cohérente dans le code, les commits, et l
 
 Format : `type/description-courte`
 
-| Type | Usage |
-|---|---|
-| `feat/` | Nouvelle fonctionnalité |
-| `fix/` | Correction de bug |
+| Type        | Usage                                       |
+| ----------- | ------------------------------------------- |
+| `feat/`     | Nouvelle fonctionnalité                     |
+| `fix/`      | Correction de bug                           |
 | `refactor/` | Refactoring sans changement de comportement |
-| `docs/` | Documentation uniquement |
-| `tests/` | Ajout ou correction de tests |
-| `style/` | Formatage, lint (pas de changement logique) |
+| `docs/`     | Documentation uniquement                    |
+| `tests/`    | Ajout ou correction de tests                |
+| `style/`    | Formatage, lint (pas de changement logique) |
 
 Exemples : `feat/gestion-seances-back`, `fix/jeton-expiration`, `docs/api-emargement`
 
@@ -62,7 +60,7 @@ style/ correction lint PHP
 ```
 
 **Règles :**
-- Message en **français**
+
 - Description courte et concrète (ce que ça fait, pas comment)
 - Un commit = une unité logique de travail
 - Ne jamais committer sur `main` directement — toujours passer par une PR
@@ -70,7 +68,7 @@ style/ correction lint PHP
 ### Pull Requests
 
 - Toute PR vers `main` doit passer le CI (tests PHPUnit + build Vite)
-- Faire relire par au moins un autre membre avant de merger
+- Si vous avez des doutes, faire relire par un autre membre avant de merger
 
 ---
 
@@ -79,7 +77,6 @@ style/ correction lint PHP
 ### Style de code
 
 - Standard **PSR-12**, appliqué automatiquement par **Laravel Pint** (hook pre-commit + CI)
-- Ne pas désactiver le hook pre-commit sauf cas exceptionnel
 - Activer le hook au premier clone : `git config core.hooksPath .githooks`
 
 ### Architecture
@@ -117,13 +114,13 @@ public function supprimer(Seance $seance)
 
 ### Nommage
 
-| Élément | Convention | Exemple |
-|---|---|---|
-| Classes | PascalCase | `SeanceService`, `EmargementController` |
-| Méthodes | camelCase | `creerSeance()`, `validerPresenceParJeton()` |
-| Variables | camelCase | `$seanceActive`, `$parPage` |
-| Colonnes BDD | snake_case | `debut_a`, `enseignant_id` |
-| Routes API | kebab-case | `/sessions-emargement`, `/valider-qr` |
+| Élément      | Convention | Exemple                                      |
+| ------------ | ---------- | -------------------------------------------- |
+| Classes      | PascalCase | `SeanceService`, `EmargementController`      |
+| Méthodes     | camelCase  | `creerSeance()`, `validerPresenceParJeton()` |
+| Variables    | camelCase  | `$seanceActive`, `$parPage`                  |
+| Colonnes BDD | snake_case | `debut_a`, `enseignant_id`                   |
+| Routes API   | kebab-case | `/sessions-emargement`, `/valider-qr`        |
 
 ---
 
@@ -131,15 +128,15 @@ public function supprimer(Seance $seance)
 
 ### Codes HTTP
 
-| Code | Quand l'utiliser |
-|---|---|
-| `200` | Succès d'une lecture ou d'une action sans création |
-| `201` | Ressource créée avec succès |
-| `204` | Succès sans contenu retourné (suppression) |
-| `404` | Ressource introuvable |
-| `409` | Conflit métier (doublon, créneau occupé, session active) |
+| Code  | Quand l'utiliser                                                                   |
+| ----- | ---------------------------------------------------------------------------------- |
+| `200` | Succès d'une lecture ou d'une action sans création                                 |
+| `201` | Ressource créée avec succès                                                        |
+| `204` | Succès sans contenu retourné (suppression)                                         |
+| `404` | Ressource introuvable                                                              |
+| `409` | Conflit métier (doublon, créneau occupé, session active)                           |
 | `422` | Règle métier non respectée (jeton invalide, séance inactive, étudiant non inscrit) |
-| `500` | Erreur interne non prévue |
+| `500` | Erreur interne non prévue                                                          |
 
 ### Format des réponses d'erreur
 
@@ -173,4 +170,4 @@ return response()->json('Ressource introuvable.', 404);
 
 ## Frontend Vue.js
 
-> Section à compléter par l'équipe frontend.
+> à compléter plus tard...
