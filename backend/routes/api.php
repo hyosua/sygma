@@ -28,7 +28,9 @@ Route::post('/presences/valider-manuel', [EmargementController::class, 'validerP
 
 // Séances
 Route::get('/seances', [SeanceController::class, 'getSeances']);
+Route::post('/seances', [SeanceController::class, 'creerSeance']);
 Route::get('/seances/{seance}', [SeanceController::class, 'getSeance']);
+Route::delete('/seances/{seance}', [SeanceController::class, 'supprimer']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // Autres routes protégées si nécessaire

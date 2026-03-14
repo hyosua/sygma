@@ -1,10 +1,12 @@
 <?php
 
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-$app = Application::configure(basePath: dirname(__DIR__))
+return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
         api: __DIR__ . '/../routes/api.php',
@@ -17,8 +19,11 @@ $app = Application::configure(basePath: dirname(__DIR__))
             'api/*',
         ]);
     })
+    ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json(['message' => 'Ressource introuvable.'], 404);
+            }
+        });
+    })
     ->create();
-
-$app->singleton(ExceptionHandler::class, \App\Exceptions\Handler::class);
-
-return $app;

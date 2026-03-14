@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Seance;
+use App\Models\SessionEmargement;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -66,5 +67,35 @@ class SeanceControllerTest extends TestCase
 
         $this->assertStringContainsString('2026-03-10', $response->json('debut_a'));
         $this->assertStringContainsString('2026-03-10', $response->json('fin_a'));
+    }
+
+    public function test_supprime_seance_sans_session_active(): void
+    {
+        $seance = Seance::factory()->create();
+
+        $response = $this->deleteJson("/api/seances/{$seance->id}");
+
+        $response->assertNoContent();
+        $this->assertSoftDeleted($seance); // ou assertDatabaseMissing si hard delete
+    }
+
+    public function test_refuse_suppression_si_session_emargement_active(): void
+    {
+        $seance = Seance::factory()->create();
+        SessionEmargement::factory()->create([
+            'seance_id' => $seance->id,
+            'expire_a' => now()->addMinutes(5),
+        ]);
+
+        $response = $this->deleteJson("/api/seances/{$seance->id}");
+
+        $response->assertStatus(422); // ou 409 selon ton handler
+    }
+
+    public function test_retourne_404_si_seance_inexistante(): void
+    {
+        $response = $this->deleteJson('/api/seances/9999');
+
+        $response->assertNotFound();
     }
 }
