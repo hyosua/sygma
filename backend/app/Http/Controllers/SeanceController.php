@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SeanceResource;
 use App\Models\Seance;
 use App\Services\SeanceService;
 use Illuminate\Http\Request;
@@ -18,14 +19,14 @@ class SeanceController extends Controller
             ['enseignant_id', 'groupe_id', 'cours_id', 'date_debut', 'date_fin', 'statut', 'par_page']
         ));
 
-        return response()->json($seances);
+        return SeanceResource::collection($seances);
     }
 
     public function getSeance(Seance $seance)
     {
         $seance = $this->seanceService->getSeance($seance);
 
-        return response()->json($seance);
+        return new SeanceResource($seance);
     }
 
     public function supprimer(Seance $seance)
