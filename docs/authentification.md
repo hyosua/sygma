@@ -11,6 +11,7 @@ Les deux mécanismes coexistent : Sanctum vérifie d'abord le cookie de session,
 ## Ce qui est déjà en place
 
 ### `User` model — `HasApiTokens`
+
 ```php
 // app/Models/User.php
 use Laravel\Sanctum\HasApiTokens;
@@ -22,6 +23,7 @@ class User extends Authenticatable
 ```
 
 ### `bootstrap/app.php` — middleware SPA activé
+
 ```php
 ->withMiddleware(function (Middleware $middleware) {
     $middleware->statefulApi();         // active l'auth cookie pour le SPA
@@ -32,6 +34,7 @@ class User extends Authenticatable
 `statefulApi()` active automatiquement les middlewares nécessaires à l'auth par cookie (encrypt cookies, session, CSRF) pour les domaines déclarés comme stateful.
 
 ### `config/sanctum.php` — domaines stateful
+
 ```php
 'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
     '%s%s',
@@ -46,31 +49,64 @@ Le frontend React tourne sur `localhost:3000` — il est bien inclus. Pour ajout
 
 ## Flux de connexion (SPA React)
 
-### 1. Initialiser la protection CSRF
-Avant toute requête de login, le frontend doit appeler :
+Le frontend utilise le **`fetch` natif** (pas de dépendance Axios).
+
+### Utilitaire : lire le cookie CSRF
+
 ```js
-axios.get('/sanctum/csrf-cookie')
+function getCsrfToken() {
+  return document.cookie
+    .split('; ')
+    .find(row => row.startsWith('XSRF-TOKEN='))
+    ?.split('=')[1]
+}
 ```
-Laravel pose un cookie `XSRF-TOKEN`. Axios le relit automatiquement et l'envoie dans `X-XSRF-TOKEN` sur les requêtes suivantes.
+
+Laravel URL-encode le cookie, d'où le `decodeURIComponent` lors de l'envoi.
+
+### 1. Initialiser la protection CSRF
+
+Avant toute requête de login, le frontend doit appeler :
+
+```js
+await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
+```
+
+Laravel pose un cookie `XSRF-TOKEN`. Il faut ensuite le relire et l'envoyer manuellement dans le header `X-XSRF-TOKEN` sur les requêtes suivantes.
 
 ### 2. Se connecter
+
 ```js
-await axios.get('/sanctum/csrf-cookie')
-await axios.post('/login', { email, password })
+await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
+
+await fetch('/login', {
+  method: 'POST',
+  credentials: 'include',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-XSRF-TOKEN': decodeURIComponent(getCsrfToken()),
+  },
+  body: JSON.stringify({ email, password }),
+})
 ```
+
 Laravel crée une session et pose un cookie de session. Toutes les requêtes suivantes sont automatiquement authentifiées via ce cookie.
 
-### 3. Configurer Axios globalement
-```js
-// src/api/axios.js ou équivalent
-axios.defaults.withCredentials = true
-axios.defaults.withXSRFToken = true
-```
+### 3. Règles à appliquer sur chaque requête
+
+- `credentials: 'include'` — envoie et reçoit les cookies (équivalent de `withCredentials`)
+- Header `X-XSRF-TOKEN: decodeURIComponent(getCsrfToken())` — protection CSRF
 
 ### 4. Se déconnecter
+
 ```js
-await axios.post('/logout')
+await fetch('/logout', {
+  method: 'POST',
+  credentials: 'include',
+  headers: { 'X-XSRF-TOKEN': decodeURIComponent(getCsrfToken()) },
+})
 ```
+
 Sanctum invalide la session côté serveur.
 
 ---
@@ -103,6 +139,7 @@ $token = $user->createToken('postman')->plainTextToken;
 Ensuite dans Postman : header `Authorization: Bearer 1|abc123...`
 
 Les tokens n'ont pas de date d'expiration par défaut (`'expiration' => null` dans `config/sanctum.php`). Pour en définir une :
+
 ```php
 // config/sanctum.php
 'expiration' => 60 * 24 * 7, // 7 jours en minutes
@@ -112,7 +149,7 @@ Les tokens n'ont pas de date d'expiration par défaut (`'expiration' => null` da
 
 ## Rôles (Spatie Permissions)
 
-Deux rôles sont définis : `enseignant` et `étudiant`. Les vérifier dans une route ou un controller :
+Trois rôles sont définis : `enseignant` , `gestionnaire` et `étudiant`. Les vérifier dans une route ou un controller :
 
 ```php
 // Vérifier le rôle dans une route
@@ -151,12 +188,12 @@ $response->assertStatus(201);
 
 ## État actuel et TODO
 
-| Route | Auth actuelle | Attendu |
-|---|---|---|
-| `GET /user` | `auth:sanctum` | OK |
-| Routes émargement | **aucune** (désactivée pour tests) | `auth:sanctum` |
-| Routes séances | aucune | `auth:sanctum` |
-| CRUD cours | aucune | `auth:sanctum` + `role:enseignant` |
-| CRUD users | aucune | `auth:sanctum` + role admin |
+| Route             | Auth actuelle                      | Attendu                            |
+| ----------------- | ---------------------------------- | ---------------------------------- |
+| `GET /user`       | `auth:sanctum`                     | OK                                 |
+| Routes émargement | **aucune** (désactivée pour tests) | `auth:sanctum`                     |
+| Routes séances    | aucune                             | `auth:sanctum`                     |
+| CRUD cours        | aucune                             | `auth:sanctum` + `role:enseignant` |
+| CRUD users        | aucune                             | `auth:sanctum` + role admin        |
 
 **À faire** : réactiver `auth:sanctum` sur les routes d'émargement une fois les tests stabilisés, puis étendre progressivement aux autres routes.
