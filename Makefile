@@ -8,7 +8,7 @@ DOCKER_USER := -u $(SYGMA_UID):$(SYGMA_GID)
 GREEN := \033[0;32m
 NC    := \033[0m
 
-.PHONY: install start stop repair update fresh lint-check lint-fix composer artisan npm-back npm-front help %
+.PHONY: install start stop repair update fresh test lint-check lint-fix composer artisan npm-back npm-front help %
 
 install:
 	@echo "$(GREEN)1. Construction des images...$(NC)"
@@ -56,6 +56,12 @@ fresh:
 	docker compose exec $(DOCKER_USER) backend php artisan migrate:fresh --seed
 	@echo "$(GREEN)Base de donnees reinitialisee !$(NC)"
 
+test:
+	@docker compose exec db psql -U sygma -tc "SELECT 1 FROM pg_database WHERE datname = 'sygma_test'" | grep -q 1 || \
+		docker compose exec db psql -U sygma -c "CREATE DATABASE sygma_test WITH OWNER sygma;"
+	docker compose exec $(DOCKER_USER) backend php artisan test
+	@echo "$(GREEN)Tests termines !$(NC)"
+
 lint-check:
 	docker compose exec $(DOCKER_USER) backend ./vendor/bin/pint --test
 	docker compose exec $(DOCKER_USER) backend ./vendor/bin/phpcs --standard=phpcs.xml
@@ -90,6 +96,7 @@ help:
 	@echo "  update       Mettre a jour apres un git pull"
 	@echo "  repair       Reinstaller les dependances et redemarrer"
 	@echo "  fresh        Reinitialiser la base de donnees"
+	@echo "  test         Lancer les tests (base sygma_test isolee)"
 	@echo "  lint-check   Verifier le lint (PHP + JS)"
 	@echo "  lint-fix     Corriger le lint automatiquement (PHP + JS)"
 	@echo ""
