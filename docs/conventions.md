@@ -164,6 +164,7 @@ return response()->json('Ressource introuvable.', 404);
 - Nommer les tests en français, de façon lisible : `test_retourne_erreur_si_etudiant_non_inscrit`
 - Utiliser `RefreshDatabase` pour isoler chaque test
 - Vérifier les codes HTTP **et** le contenu de la réponse quand c'est pertinent
+- Les tests tournent sur la base `sygma_test` (PostgreSQL), isolée de la base de dev — utiliser `make test`
 - Les tests doivent passer en CI avant tout merge
 
 ---

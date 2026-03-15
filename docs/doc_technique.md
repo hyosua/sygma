@@ -36,7 +36,7 @@ Sygma est une application web de gestion de présence numérique destinée aux �
 | Backend | Laravel 11 (PHP 8.3), API REST |
 | Frontend | Vue.js 3 / Vite |
 | Base de données (prod) | MySQL (via Docker) |
-| Base de données (tests) | SQLite in-memory |
+| Base de données (tests) | PostgreSQL (`sygma_test`, isolée de la base de dev) |
 | Authentification | Laravel Sanctum |
 | Gestion des rôles | Spatie Laravel Permission |
 | Conteneurisation | Docker / Docker Compose |
@@ -206,23 +206,21 @@ Les rôles (`étudiant`, `enseignant`) sont gérés par **Spatie Laravel Permiss
 
 ## Tests
 
-Les tests sont situés dans `backend/tests/` et utilisent **PHPUnit** avec une base de données SQLite in-memory (`RefreshDatabase`).
+Les tests sont situés dans `backend/tests/` et utilisent **PHPUnit** avec `RefreshDatabase`.
+
+Ils tournent sur une base PostgreSQL dédiée (`sygma_test`), isolée de la base de dev (`sygma`). La base est créée automatiquement au premier `make test`. La variable `DB_DATABASE` est forcée dans `tests/bootstrap.php` pour contourner les variables d'environnement docker-compose.
 
 | Fichier | Couverture |
 |---|---|
 | `EmargementServiceTest.php` | Tests unitaires du service (démarrage session, scan QR valide/invalide/expiré, doublon, séance inactive, étudiant non inscrit) |
-| `SeanceControllerTest.php` | Tests des routes séances (liste, détail, 404) |
+| `SeanceControllerTest.php` | Tests des routes séances (liste, détail, suppression, 404) |
 | `SessionEmargementTest.php` | Tests des routes d'émargement (démarrage, clôture, statut, présence manuelle) |
 | `GroupManagementTest.php` | Tests de gestion des groupes |
 
 **Lancer les tests :**
 
 ```bash
-# Via Docker
-docker compose exec backend php artisan test
-
-# En local (nécessite le driver SQLite activé dans phpunit.xml)
-cd backend && php artisan test
+make test
 ```
 
 ---
