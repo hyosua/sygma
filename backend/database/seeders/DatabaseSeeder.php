@@ -97,6 +97,42 @@ class DatabaseSeeder extends Seeder
                 }
             });
 
+        // 6. Créer des séances actives avec sessions d'émargement en cours
+        $this->command->info('Création des séances actives avec sessions d\'émargement en cours...');
+
+        $groupes = Groupe::all();
+        $nbSessionsActives = 0;
+
+        foreach ($groupes as $groupe) {
+            if ($nbSessionsActives >= 5) {
+                break;
+            }
+
+            $coursGroupe = $cours->random(2);
+
+            foreach ($coursGroupe as $c) {
+                if ($nbSessionsActives >= 5) {
+                    break;
+                }
+
+                $seanceActive = Seance::factory()->create([
+                    'cours_id' => $c->id,
+                    'groupe_id' => $groupe->id,
+                    'enseignant_id' => $enseignants->random()->id,
+                    'debut_a' => now()->subMinutes(30),
+                    'fin_a' => now()->addMinutes(90),
+                ]);
+
+                SessionEmargement::factory()->create([
+                    'seance_id' => $seanceActive->id,
+                    'expire_a' => now()->addMinutes(10),
+                ]);
+
+                $nbSessionsActives++;
+                $this->command->getOutput()->writeln("  <comment>-> Session active #{$nbSessionsActives} créée (groupe : {$groupe->libelle}, cours : {$c->libelle}).</comment>");
+            }
+        }
+
         $this->command->info('Terminé !');
     }
 }

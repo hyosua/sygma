@@ -48,7 +48,7 @@ class EmargementServiceTest extends TestCase
         ]);
 
         $session = $this->service->demarrerSession($seance);
-        $etudiant = User::factory()->create();
+        $etudiant = User::factory()->create(['groupe_id' => $seance->groupe_id]);
 
         $presence = $this->service->validerPresenceParJeton($session->jeton, $etudiant);
 
@@ -108,7 +108,7 @@ class EmargementServiceTest extends TestCase
         ]);
 
         $session = $this->service->demarrerSession($seance);
-        $etudiant = User::factory()->create();
+        $etudiant = User::factory()->create(['groupe_id' => $seance->groupe_id]);
 
         // Premier émargement
         $this->service->validerPresenceParJeton($session->jeton, $etudiant);

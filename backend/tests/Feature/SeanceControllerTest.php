@@ -76,7 +76,7 @@ class SeanceControllerTest extends TestCase
         $response = $this->deleteJson("/api/seances/{$seance->id}");
 
         $response->assertNoContent();
-        $this->assertSoftDeleted($seance); // ou assertDatabaseMissing si hard delete
+        $this->assertDatabaseMissing('seances', ['id' => $seance->id]);
     }
 
     public function test_refuse_suppression_si_session_emargement_active(): void
@@ -89,7 +89,7 @@ class SeanceControllerTest extends TestCase
 
         $response = $this->deleteJson("/api/seances/{$seance->id}");
 
-        $response->assertStatus(422); // ou 409 selon ton handler
+        $response->assertStatus(409);
     }
 
     public function test_retourne_404_si_seance_inexistante(): void
