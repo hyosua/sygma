@@ -2,58 +2,56 @@
 
 **Sygma** est une application web dédiée à la dématérialisation de l'émargement. Elle permet aux étudiants de s'émarger via QR Code, aux enseignants de piloter les séances, et aux gestionnaires de suivre les absences.
 
-## 👥 Auteurs
+## Auteurs
 - Emmanuelle Nsossani
 - Yahaya Coulibaly
 - Hyosua Colleter
 
-## 📋 Table des matières
-1. [💻 Configuration de l'environnement](#1-configuration-de-lenvironnement)
-2. [📥 Mise en place du dépôt (Clonage)](#2--mise-en-place-du-dépôt-clonage)
-3. [⚡️ Premier Setup (Installation)](#3-premier-setup-installation)
-4. [🛠 Session de travail quotidienne](#4--session-de-travail-quotidienne)
-5. [🌿 Procédure Git & Collaboration](#5--procédure-git--collaboration)
-6. [🌐 Accès & Commandes](#6--accès--commandes)
-7. [📦 Référence des commandes Make](#7--référence-des-commandes-make)
-8. [📊 Visualisation & Requêtes BDD](#8--visualisation--requêtes-bdd)
-9. [🧪 Tests & Données de démo](#9--tests--données-de-démo)
+## Table des matières
+1. [Configuration de l'environnement](#1-configuration-de-lenvironnement)
+2. [Clonage du dépôt](#2-clonage-du-dépôt)
+3. [Installation](#3-installation)
+4. [Session de travail quotidienne](#4-session-de-travail-quotidienne)
+5. [Procédure Git & Collaboration](#5-procédure-git--collaboration)
+6. [Accès & Commandes](#6-accès--commandes)
+7. [Référence des commandes Make](#7-référence-des-commandes-make)
+8. [Visualisation de la BDD](#8-visualisation-de-la-bdd)
+9. [Tests & Données de démo](#9-tests--données-de-démo)
+10. [Problèmes courants](#10-problèmes-courants)
 
 ---
 
 ## 1. Configuration de l'environnement
 
-### 🪟 Si vous êtes sur Windows (Recommandé)
+### Sur Windows (Recommandé)
 - **Docker Desktop** : [Installez-le](https://www.docker.com/products/docker-desktop) et activez le moteur WSL2.
 - **VS Code** : Installez l'extension officielle **WSL** de Microsoft.
 - **Connexion** : Cliquez sur le bouton bleu "><" en bas à gauche de VS Code → **Connect to WSL**.
 
-### 🐧 Si vous êtes sur Linux (Natif) ou WSL sans Docker Desktop
+### Sur Linux (natif) ou WSL sans Docker Desktop
 - **Docker** : Installez Docker et Docker Compose V2.
 - **Permissions** : Par défaut, Docker nécessite `sudo`. Pour éviter cela, ajoutez votre utilisateur au groupe `docker` :
   ```bash
   sudo usermod -aG docker $USER
   ```
-  **⚠️ IMPORTANT** : Vous devez fermer et réouvrir votre terminal (ou redémarrer WSL avec `wsl --shutdown` dans un PowerShell Windows) pour que cela soit pris en compte.
+  Fermez et réouvrez votre terminal (ou redémarrez WSL avec `wsl --shutdown`) pour que cela soit pris en compte.
 
 ---
 
-## 2. 📥 Mise en place du dépôt (Clonage)
+## 2. Clonage du dépôt
 
-### 🪟 Sur Windows (via WSL)
-**⚠️ IMPORTANT :** Ne clonez pas le projet dans vos dossiers Windows habituels (C:\Users...). Pour que Docker soit rapide, le code doit résider dans le système de fichiers Linux.
+### Sur Windows (via WSL)
+**Ne clonez pas le projet dans vos dossiers Windows (C:\Users...).** Le code doit résider dans le système de fichiers Linux pour que Docker soit performant.
 
-1. Ouvrez VS Code connecté à WSL (Ubuntu).
-2. Dans le terminal (`Ctrl + ù`), créez votre dossier de travail :
-   ```bash
-   cd ~
-   mkdir -p projects && cd projects
-   git clone https://github.com/hyosua/sygma.git
-   cd sygma
-   code .
-   ```
+```bash
+cd ~
+mkdir -p projects && cd projects
+git clone https://github.com/hyosua/sygma.git
+cd sygma
+code .
+```
 
-### 🐧 Sur Linux
-Clonez simplement le dépôt dans votre dossier de projets habituel :
+### Sur Linux
 ```bash
 git clone https://github.com/hyosua/sygma.git
 cd sygma
@@ -62,103 +60,75 @@ code .
 
 ---
 
-## 3. Premier Setup (Installation)
+## 3. Installation
 
-### ⚠️ Problème de permissions (Sudo) ?
-Si vous devez taper `sudo` avant chaque commande Docker ou si vous avez des erreurs "Permission Denied", lancez ces commandes :
-
-1. **Récupérer la propriété des fichiers** :
-   ```bash
-   sudo chown -R $USER:$USER .
-   ```
-2. **S'assurer que make est installé** :
-   ```bash
-   which make || sudo apt install make
-   ```
-
----
-
-### Configuration d'environnement
-
+### 1. Copier le fichier d'environnement
 ```bash
 cp backend/.env.example backend/.env
 ```
-(Demandez les accès pour les variables env si je ne vous les ai pas déjà donnés).
+Demandez les variables d'environnement si elles ne vous ont pas été communiquées.
 
-### Lancement du projet
-
-Vous avez deux méthodes pour installer les dépendances et démarrer le projet :
-
-#### Option A : La méthode rapide (Recommandé)
-Utilisez le Makefile qui s'occupe de tout (build, install, migrations, seed) :
-
+### 2. Lancer l'installation
 ```bash
 make install
 ```
+Cette commande s'occupe de tout : build des images, installation des dépendances, génération de la clé applicative, migrations et seed.
 
-#### Option B : La méthode manuelle
-Si vous préférez exécuter les commandes étape par étape :
+### Méthode manuelle (si nécessaire)
+Si vous ne pouvez pas utiliser `make`, exécutez les étapes à la main :
 
-1. **Installation des dépendances** (une seule fois) :
 ```bash
+# Build et dépendances
 docker compose build
 docker compose run --rm -u "$(id -u):$(id -g)" backend composer install
 docker compose run --rm -u "$(id -u):$(id -g)" backend npm install
 docker compose run --rm -u "$(id -u):$(id -g)" frontend npm install
-```
 
-2. **Démarrage des serveurs** :
-```bash
+# Démarrage
 docker compose up -d
-```
 
-3. **Initialisation de la BDD** :
-```bash
+# Initialisation de la BDD
 docker compose exec backend php artisan key:generate
 docker compose exec backend php artisan migrate --seed
 ```
----
-
-## 4. 🛠 Session de travail quotidienne
-
-Plus besoin de tout réinstaller ! À chaque nouvelle session :
-
-- **Récupérer le travail** : `git pull origin main`
-- **Mettre à jour** : `make update` (Installe les nouvelles dépendances et applique les migrations)
-- **Démarrer les serveurs** : `make start`
-- **Travailler** : Les modifications de code sont visibles en temps réel.
-- **Quitter** : `make stop` (libère la RAM de votre PC).
 
 ---
 
-## 5. 🌿 Procédure Git & Collaboration
+## 4. Session de travail quotidienne
 
-Pour un historique propre et éviter les conflits :
+```bash
+git pull origin main   # Récupérer le travail des autres
+make update            # Installer les nouvelles dépendances et appliquer les migrations
+make start             # Démarrer les serveurs
+```
+
+Les modifications de code sont visibles en temps réel. Pour arrêter : `make stop`.
+
+---
+
+## 5. Procédure Git & Collaboration
 
 ### Nouvelle tâche
-
-Créez toujours une branche :
+Créez toujours une branche dédiée :
 ```bash
 git checkout -b "feat/ma-fonctionnalite"
 ```
 
-### Avant de Push
-
+### Avant de push
 ```bash
 git add .
 git commit -m "Message clair et concis"
-git pull origin main  # pour fusionner le travail récent des autres
+git pull origin main  # Fusionner le travail récent des autres
 ```
 
 ### Envoyer
-
 ```bash
 git push origin feat/ma-fonctionnalite
 ```
 
 ---
 
-## 6. 🌐 Accès & Commandes
+## 6. Accès & Commandes
 
 | Service | URL / Port |
 |---------|-----------|
@@ -169,119 +139,73 @@ git push origin feat/ma-fonctionnalite
 
 ---
 
-## 7. 📦 Référence des commandes Make
-
-Le projet utilise un `Makefile` pour simplifier les commandes courantes. Depuis la racine du projet :
+## 7. Référence des commandes Make
 
 ### Cycle de vie du projet
 
-**Installer tout (build + dépendances + migrations + seed) :**
-```bash
-make install
-```
-
-**Démarrer les serveurs :**
-```bash
-make start
-```
-
-**Arrêter les serveurs :**
-```bash
-make stop
-```
-
-**Mettre à jour après un `git pull` (nouvelles dépendances + migrations) :**
-```bash
-make update
-```
-
-**Réinitialiser la BDD et repeupler :**
-```bash
-make fresh
-```
-
-**Réparer les volumes / permissions :**
-```bash
-make repair
-```
+| Commande | Description |
+|----------|-------------|
+| `make install` | Premier lancement complet (build + dépendances + migrations + seed) |
+| `make start` | Démarrer les serveurs |
+| `make stop` | Arrêter les serveurs |
+| `make update` | Mettre à jour après un `git pull` (dépendances + migrations) |
+| `make fresh` | Réinitialiser la BDD et repeupler |
+| `make repair` | Réinstaller les dépendances et redémarrer les conteneurs |
+| `make test` | Lancer les tests (base `sygma_test` isolée) |
+| `make lint-check` | Vérifier le lint (PHP + JS) |
+| `make lint-fix` | Corriger le lint automatiquement |
 
 ### Backend (PHP/Laravel)
 
-**Installer un package Composer :**
 ```bash
-make composer require <package>
-```
-
-**Créer un modèle Artisan :**
-```bash
-make artisan make:model <Nom>
-```
-
-**Lancer les migrations :**
-```bash
-make artisan migrate
+make composer require <package>   # Installer un package Composer
+make artisan make:model <Nom>     # Créer un modèle
+make artisan migrate              # Lancer les migrations
 ```
 
 ### Frontend (React)
 
-**Installer un package frontend :**
 ```bash
-make npm-front install <package>
+make npm-front install <package>  # Installer un package frontend
+make npm-back install <package>   # Installer un package Node (backend)
 ```
 
-**Installer un package backend (Node) :**
-```bash
-make npm-back install <package>
-```
-
-*Note : Ces commandes s'exécutent directement à l'intérieur des conteneurs Docker. Pour ajouter une librairie, demandez toujours au conteneur de le faire — n'installez pas directement sur votre machine.*
+Ces commandes s'exécutent à l'intérieur des conteneurs Docker. N'installez pas de paquets directement sur votre machine.
 
 ---
 
-## 8. 📊 Visualisation & Requêtes BDD
+## 8. Visualisation de la BDD
 
+Adminer est disponible sur [http://localhost:8080](http://localhost:8080). Connectez-vous avec :
 
-### Adminer (Simple - Sans installation)
-C'est une interface web déjà prête.
-1. Ouvrez [http://localhost:8080](http://localhost:8080) dans votre navigateur.
-2. Connectez-vous avec :
-   - **Système** : `PostgreSQL`
-   - **Serveur** : `db`
-   - **Utilisateur** : `sygma`
-   - **Mot de passe** : `sygma_pass`
-   - **Base de données** : `sygma`
----
-
-## 💡 Astuces de secours
-
-- **Logs en direct** : `docker compose logs -f`
-- **Réinitialiser un conteneur** : `docker compose restart backend`
-- **Récupérer les droits sur tout le projet** : `sudo chown -R $USER:$USER .`
+| Champ | Valeur |
+|-------|--------|
+| Système | `PostgreSQL` |
+| Serveur | `db` |
+| Utilisateur | `sygma` |
+| Mot de passe | `sygma_pass` |
+| Base de données | `sygma` |
 
 ---
 
-## 9. 🧪 Tests & Données de démo
+## 9. Tests & Données de démo
 
-### Peupler la base de données (Seeding)
-Pour obtenir un jeu de données de test complet et interconnecté (utilisateurs avec rôles variés, groupes, cours, inscriptions, séances et enregistrements de présence simulés), vous avez deux options :
+### Peupler la base de données
 
-**Option 1 (Recommandée - via make) :**
-Utilisez la commande simplifiée :
+Pour obtenir un jeu de données complet (utilisateurs, groupes, cours, séances, présences) :
+
 ```bash
 make fresh
 ```
 
-**Option 2 (Manuelle - via Docker Compose) :**
-Exécutez la commande Docker complète :
+Ou manuellement :
 ```bash
 docker compose exec backend php artisan migrate:fresh --seed
 ```
 
-Ces commandes sont les options recommandées pour une mise en place rapide d'un environnement de développement avec des données significatives et prêtes à l'emploi.
+> **Ces commandes suppriment toutes les données existantes.** À utiliser uniquement en développement.
 
-**⚠️ IMPORTANT :** Ces commandes vont **supprimer toutes les données existantes** de votre base de données avant de la reconstruire et de la remplir avec les données de démonstration. Utilisez-les avec précaution !
-
-Après avoir exécuté l'une de ces commandes, vous aurez un utilisateur "gestionnaire" avec les identifiants :
+Après le seed, un compte gestionnaire est disponible :
 - Email : `admin@sygma.com`
 - Mot de passe : `password`
 
@@ -289,34 +213,61 @@ Après avoir exécuté l'une de ces commandes, vous aurez un utilisateur "gestio
 
 ### Créer une séance active pour tester l'émargement
 
-Pour tester le workflow QR Code (professeur → étudiant) sans passer par tinker, utilisez la commande dédiée. Elle affiche l'URL `/enseignant/session/{id}` à ouvrir directement.
-
-**Créer une nouvelle séance active (durée 2h par défaut) :**
 ```bash
+# Créer une nouvelle séance active (2h par défaut)
 docker compose exec -u 1000:1000 backend php artisan test:seance-active
-```
 
-**Remettre à jour la dernière séance existante (évite de créer des doublons) :**
-```bash
+# Réinitialiser la dernière séance existante (évite les doublons)
 docker compose exec -u 1000:1000 backend php artisan test:seance-active --reset
-```
 
-**Durée personnalisée (en minutes) :**
-```bash
+# Durée personnalisée (en minutes)
 docker compose exec -u 1000:1000 backend php artisan test:seance-active --duree=30
 ```
+
+La commande affiche l'URL `/enseignant/session/{id}` à ouvrir directement.
 
 ---
 
 ### Exécuter les tests
-Les tests permettent de vérifier que les fonctionnalités (comme la gestion des groupes) fonctionnent correctement.
 
-**Lancer tous les tests :**
+Les tests tournent sur une base PostgreSQL dédiée (`sygma_test`), isolée de la base principale.
+
 ```bash
-make artisan test
+make test
 ```
 
-**Lancer uniquement les tests liés aux groupes :**
+Pour filtrer par suite :
 ```bash
+make artisan test --filter EmargementServiceTest
+make artisan test --filter SeanceControllerTest
+make artisan test --filter SessionEmargementTest
 make artisan test --filter GroupManagementTest
+```
+
+> `make artisan test` ne crée pas la base `sygma_test` automatiquement. Utiliser `make test` pour le premier lancement.
+
+---
+
+## 10. Problèmes courants
+
+### Erreurs "Permission Denied" ou obligation d'utiliser `sudo`
+
+1. Récupérer la propriété des fichiers :
+   ```bash
+   sudo chown -R $USER:$USER .
+   ```
+2. Vérifier que `make` est installé :
+   ```bash
+   which make || sudo apt install make
+   ```
+3. Réinstaller les dépendances et redémarrer :
+   ```bash
+   make repair
+   ```
+
+### Autres commandes utiles
+
+```bash
+docker compose logs -f              # Voir les logs en direct
+docker compose restart backend      # Redémarrer un conteneur
 ```
