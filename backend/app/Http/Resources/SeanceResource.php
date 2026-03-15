@@ -7,11 +7,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class SeanceResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
+    // Transforme la resource en un tableau.
+
     public function toArray(Request $request): array
     {
         return [

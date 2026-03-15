@@ -7,18 +7,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class EtudiantResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
+    // Transforme la resource en un tableau.
+
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'nom' => $this->nom,
             'prenom' => $this->prenom,
-            'ine' => $this->ine,
         ];
     }
 }
