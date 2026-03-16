@@ -59,6 +59,12 @@ class SeanceService
         return $seance;
     }
 
+    // Récupère les sessions d'une séance donnée
+    public function getSessions(Seance $seance): Collection
+    {
+        return $seance->sessionsEmargement;
+    }
+
     // Créer une séance
     public function creerSeance(array $data): Seance
     {

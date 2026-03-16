@@ -29,6 +29,13 @@ class SeanceController extends Controller
         return new SeanceResource($seance);
     }
 
+    public function getSessions(Seance $seance)
+    {
+        $result = $this->seanceService->getSessions($seance);
+
+        return response()->json($result, 200);
+    }
+
     public function supprimer(Seance $seance)
     {
         $this->seanceService->supprimerSeance($seance);

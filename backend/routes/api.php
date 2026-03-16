@@ -19,17 +19,18 @@ Route::patch('users/UpdateUser/{id}', [UserController::class, 'updateUser']);
 Route::delete('users/DeleteUser/{id}', [UserController::class, 'deleteUser']);
 
 // Emargement (Auth temporairement retirée pour tests)
+Route::get('/sessions-emargement/{session}/statut', [EmargementController::class, 'statut']);
 Route::post('/sessions-emargement', [EmargementController::class, 'demarrerSession']);
 Route::post('/sessions-emargement/{session}/refresh', [EmargementController::class, 'rafraichirJeton']);
 Route::post('/sessions-emargement/{session}/cloturer', [EmargementController::class, 'cloturerSession']);
-Route::get('/sessions-emargement/{session}/statut', [EmargementController::class, 'statut']);
 Route::post('/presences/valider-qr', [EmargementController::class, 'validerPresenceParQR']);
 Route::post('/presences/valider-manuel', [EmargementController::class, 'validerPresenceManuellement']);
 
 // Séances
 Route::get('/seances', [SeanceController::class, 'getSeances']);
-Route::post('/seances', [SeanceController::class, 'creerSeance']);
 Route::get('/seances/{seance}', [SeanceController::class, 'getSeance']);
+Route::get('/seances/{seance}/sessions-emargement', [SeanceController::class, 'getSessions']);
+Route::post('/seances', [SeanceController::class, 'creerSeance']);
 Route::delete('/seances/{seance}', [SeanceController::class, 'supprimer']);
 
 Route::middleware('auth:sanctum')->group(function () {
