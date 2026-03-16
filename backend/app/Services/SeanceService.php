@@ -130,7 +130,7 @@ class SeanceService
 
     private function verifierSessionEmargementActive(Seance $seance): void
     {
-        $sessionEmargementActive = $seance->sessionEmargement()->where('expire_a', '>', now())->exists();
+        $sessionEmargementActive = $seance->sessionsEmargement()->where('expire_a', '>', now())->exists();
 
         if ($sessionEmargementActive) {
             throw new SessionEmargementActiveException();

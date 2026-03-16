@@ -43,9 +43,9 @@ class Seance extends Model
         return $this->belongsTo(User::class, 'enseignant_id');
     }
 
-    public function sessionEmargement()
+    public function sessionsEmargement()
     {
-        return $this->hasOne(SessionEmargement::class, 'seance_id');
+        return $this->hasMany(SessionEmargement::class, 'seance_id');
     }
 
     public function etudiants()
