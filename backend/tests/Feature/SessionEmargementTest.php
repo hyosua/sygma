@@ -154,6 +154,37 @@ class SessionEmargementTest extends TestCase
         ]);
     }
 
+    public function test_statut_retourne_liste_etudiants_avec_statut_presence(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+        $session = \App\Models\SessionEmargement::factory()->create([
+            'seance_id' => $seance->id,
+            'is_methode_qr' => false,
+        ]);
+
+        $etudiantPresent = User::factory()->etudiant()->create(['groupe_id' => $seance->groupe_id]);
+        $etudiantAbsent = User::factory()->etudiant()->create(['groupe_id' => $seance->groupe_id]);
+
+        $this->actingAs($enseignant)->postJson(self::API_VALIDER_M, [
+            'session_emargement_id' => $session->id,
+            'etudiant_id' => $etudiantPresent->id,
+        ]);
+
+        $response = $this->actingAs($enseignant)
+            ->getJson("/api/sessions-emargement/{$session->id}/statut");
+
+        $response->assertStatus(200)
+            ->assertJsonFragment([
+                'etudiant_id' => $etudiantPresent->id,
+                'statut' => 'present',
+            ])
+            ->assertJsonFragment([
+                'etudiant_id' => $etudiantAbsent->id,
+                'statut' => null,
+            ]);
+    }
+
     public function test_retourne_erreur_si_etudiant_non_inscrit_a_la_seance(): void
     {
         $enseignant = User::factory()->enseignant()->create();
