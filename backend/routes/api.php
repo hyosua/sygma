@@ -30,6 +30,7 @@ Route::post('/presences/valider-manuel', [EmargementController::class, 'validerP
 Route::get('/seances', [SeanceController::class, 'getSeances']);
 Route::get('/seances/{seance}', [SeanceController::class, 'getSeance']);
 Route::get('/seances/{seance}/sessions-emargement', [SeanceController::class, 'getSessions']);
+Route::patch('/seances/{seance}', [SeanceController::class, 'modifierSeance']);
 Route::post('/seances', [SeanceController::class, 'creerSeance']);
 Route::delete('/seances/{seance}', [SeanceController::class, 'supprimer']);
 

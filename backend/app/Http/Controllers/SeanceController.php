@@ -56,6 +56,22 @@ class SeanceController extends Controller
 
         $result = $this->seanceService->creerSeance($data);
 
-        return response()->json($result, 201);
+        return new SeanceResource($result);
+    }
+
+    public function modifierSeance(Seance $seance, Request $request)
+    {
+        $data = $request->validate([
+            'cours_id' => 'required|exists:cours,id',
+            'enseignant_id' => 'required|exists:users,id',
+            'groupe_id' => 'required|exists:groupes,id',
+            'debut_a' => 'required|date',
+            'fin_a' => 'required|date|after:debut_a',
+            'salle' => 'nullable|integer',
+        ]);
+
+        $seance = $this->seanceService->modifierSeance($seance, $data);
+
+        return new SeanceResource($seance);
     }
 }

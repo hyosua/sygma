@@ -47,7 +47,7 @@ class SeanceService
 
         $parPage = min((int) ($filtres['par_page'] ?? 15), 50);
 
-        return $query->orderBy('debut_a', 'desc')->paginate($parPage);
+        return $query->orderBy('debut_a', 'asc')->paginate($parPage);
     }
 
     // Récupère une séance spécifique avec ses relations et le nombre d'inscrits
