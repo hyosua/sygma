@@ -27,10 +27,9 @@ class EmargementController extends Controller
 
         $seance = Seance::findOrFail($request->seance_id);
 
-        // Vérifier si l'utilisateur est l'enseignant de la séance
-        // if ($seance->enseignant_id !== Auth::id()) {
-        //     return response()->json(['message' => 'Non autorisé'], 403);
-        // }
+        if ($seance->enseignant_id !== Auth::id()) {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
 
         $coordonnees = [
             'latitude' => $request->latitude,
