@@ -40,7 +40,7 @@ class SeanceController extends Controller
     {
         $this->seanceService->supprimerSeance($seance);
 
-        return response()->json(['message' => "La séance $seance->id a bien été supprimée"], 204);
+        return response()->noContent();
     }
 
     public function creerSeance(Request $request)
