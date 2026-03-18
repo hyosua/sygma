@@ -7,11 +7,9 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function getUser()
+    public function getUser(User $user)
     {
-        $User = User::all();
-
-        return $User;
+        return response()->json($user);
     }
 
     public function addUser(Request $request)
