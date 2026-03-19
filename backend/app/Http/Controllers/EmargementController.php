@@ -119,6 +119,7 @@ class EmargementController extends Controller
             $this->emargementService->rafraichirJeton($session);
         }
 
+        $session->load(['seance.groupe.users', 'presences']);
         $etudiants = $session->seance->groupe->users;
         $presences = $session->presences->keyBy('etudiant_id');
 
@@ -134,7 +135,7 @@ class EmargementController extends Controller
             'id' => $session->id,
             'jeton' => $session->jeton,
             'expire_a' => $session->expire_a,
-            'nombre_presents' => $session->presences()->count(),
+            'nombre_presents' => $presences->count(),
             'liste_etudiants' => $listeEtudiants,
         ]);
     }

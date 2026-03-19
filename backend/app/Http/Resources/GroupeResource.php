@@ -15,7 +15,7 @@ class GroupeResource extends JsonResource
             'id' => $this->id,
             'nom' => $this->nom,
             'promotion' => $this->promotion,
-            'etudiants' => EtudiantResource::collection($this->users),
+            'etudiants' => EtudiantResource::collection($this->whenLoaded('users')),
         ];
     }
 }
