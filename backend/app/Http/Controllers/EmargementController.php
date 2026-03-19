@@ -62,11 +62,6 @@ class EmargementController extends Controller
 
         $etudiant = Auth::user();
 
-        // Temporaire : Si pas d'utilisateur authentifié (test), on prend le premier utilisateur
-        if (! $etudiant) {
-            $etudiant = \App\Models\User::first();
-        }
-
         if (! $etudiant) {
             return response()->json(['message' => 'Aucun utilisateur trouvé en base pour le test'], 404);
         }
