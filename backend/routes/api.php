@@ -15,7 +15,7 @@ Route::post('login', [AuthController::class, 'login']);
 * Enseignants
 *
 */
-Route::middleware('auth:sanctum', 'role:enseignant')->group(function () {
+Route::middleware('auth:sanctum', 'role:enseignant|gestionnaire')->group(function () {
     // Emargement
     Route::get('/sessions-emargement/{session}/statut', [EmargementController::class, 'statut']);
     Route::post('/sessions-emargement', [EmargementController::class, 'demarrerSession']);

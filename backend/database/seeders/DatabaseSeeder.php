@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
 
         // 2. Créer l'utilisateur gestionnaire
         $this->command->info('Création du gestionnaire...');
-        User::factory()->withRole('Gestionnaire')->create([
+        User::factory()->withRole('gestionnaire')->create([
             'nom' => 'Admin',
             'prenom' => 'Sygma',
             'email' => 'admin@sygma.com',
