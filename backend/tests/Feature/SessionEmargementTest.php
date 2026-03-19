@@ -4,13 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Seance;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
-class SessionEmargementTest extends TestCase
+class SessionEmargementTest extends FeatureTestCase
 {
-    use RefreshDatabase;
     use WithFaker;
 
     const API_URL = '/api/sessions-emargement';

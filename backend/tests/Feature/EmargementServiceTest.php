@@ -12,13 +12,9 @@ use App\Models\SessionEmargement;
 use App\Models\User;
 use App\Services\EmargementService;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class EmargementServiceTest extends TestCase
+class EmargementServiceTest extends FeatureTestCase
 {
-    use RefreshDatabase;
-
     protected EmargementService $service;
 
     protected function setUp(): void

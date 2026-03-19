@@ -17,8 +17,8 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create roles
-        Role::create(['name' => 'Etudiant']);
-        Role::create(['name' => 'Enseignant']);
-        Role::create(['name' => 'Gestionnaire']);
+        Role::create(['name' => 'etudiant']);
+        Role::create(['name' => 'enseignant']);
+        Role::create(['name' => 'gestionnaire']);
     }
 }
