@@ -47,14 +47,14 @@ class SeanceService
 
         $parPage = min((int) ($filtres['par_page'] ?? 15), 50);
 
-        return $query->orderBy('debut_a', 'asc')->with(['cours', 'enseignant', 'groupe'])->paginate($parPage);
+        return $query->withCount('etudiants as nombre_inscrits')->with(['cours', 'enseignant', 'groupe'])->orderBy('debut_a', 'asc')->paginate($parPage);
     }
 
     // Récupère une séance spécifique avec ses relations et le nombre d'inscrits
     public function getSeance(Seance $seance): Seance
     {
-        $seance->load(['cours', 'enseignant', 'groupe.users']);
-        $seance->nombre_inscrits = $seance->groupe?->users->count() ?? 0;
+        $seance->load(['cours', 'enseignant', 'groupe']);
+        $seance->loadCount('etudiants as nombre_inscrits');
 
         return $seance;
     }
@@ -74,7 +74,8 @@ class SeanceService
         }
 
         $seance = Seance::create($data);
-        $seance->load(['cours', 'enseignant', 'groupe.users']);
+        $seance->load(['cours', 'enseignant', 'groupe']);
+        $seance->loadCount('etudiants as nombre_inscrits');
 
         return $seance;
     }
@@ -96,7 +97,8 @@ class SeanceService
         }
 
         $seance->update($data);
-        $seance->load(['cours', 'groupe.users', 'enseignant']);
+        $seance->load(['cours', 'enseignant', 'groupe']);
+        $seance->loadCount('etudiants as nombre_inscrits');
 
         return $seance;
     }
