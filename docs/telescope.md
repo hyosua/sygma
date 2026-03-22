@@ -4,6 +4,18 @@ Telescope est un outil de débogage visuel accessible sur `http://localhost:8000
 
 ---
 
+## Installation
+
+Si tu récupères cette branche pour la première fois ou après un merge :
+
+```bash
+make update
+```
+
+Cela installe les dépendances (`composer install`) et exécute les migrations, dont celle de Telescope.
+
+---
+
 ## Accès
 
 ```
