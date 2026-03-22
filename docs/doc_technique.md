@@ -91,7 +91,7 @@ Le schéma complet (MCD/MLD) est disponible dans `docs/specs/MCD/`.
 | `cours` | Matières enseignées |
 | `seances` | Séances planifiées (`cours_id`, `enseignant_id`, `groupe_id`, `debut_a`, `fin_a`, `salle`) |
 | `inscriptions` | Inscription étudiant ↔ cours |
-| `sessions_emargement` | Session d'émargement liée à une séance (`jeton`, `expire_a`, `is_methode_qr`, lat/lon) |
+| `sessions_emargement` | Session d'émargement liée à une séance (`jeton`, `jeton_expire_a`, `cloture_a`, `is_methode_qr`, lat/lon) |
 | `presences` | Présence enregistrée (`session_id`, `etudiant_id`, `statut`, `scanne_a`, lat/lon) |
 
 **Relations clés :**
@@ -116,7 +116,7 @@ La logique métier est isolée dans des classes de service, séparée des contr�
 | `validerPresenceParJeton(jeton, User, array)` | Valide un scan QR (jeton, expiration, séance active, inscription, doublon) |
 | `enregistrerPresence(SessionEmargement, User)` | Enregistre une présence manuelle |
 | `rafraichirJeton(SessionEmargement)` | Rotation du jeton (nouveau jeton + 20s d'expiration) |
-| `cloturerSession(SessionEmargement)` | Met `expire_a = now()` |
+| `cloturerSession(SessionEmargement)` | Met `cloture_a = now()` (session inactive si `cloture_a` non null) |
 
 **`SeanceService`** — gestion des séances :
 

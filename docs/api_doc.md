@@ -143,7 +143,8 @@ POST /sessions-emargement
   "seance_id": 61,
   "is_methode_qr": true,
   "jeton": "aB3xKq...",
-  "expire_a": "2026-03-12T10:42:00.000000Z",
+  "jeton_expire_a": "2026-03-12T10:42:00.000000Z",
+  "cloture_a": null,
   "latitude": null,
   "longitude": null
 }
@@ -163,7 +164,7 @@ POST /sessions-emargement
 GET /sessions-emargement/{id}/statut
 ```
 
-Rafraîchit automatiquement le jeton s'il est expiré (méthode QR uniquement).
+Rafraîchit automatiquement le jeton s'il est expiré (méthode QR uniquement, session non clôturée).
 
 **Réponse 200**
 
@@ -171,7 +172,8 @@ Rafraîchit automatiquement le jeton s'il est expiré (méthode QR uniquement).
 {
   "id": 5,
   "jeton": "aB3xKq...",
-  "expire_a": "2026-03-12T10:42:00.000000Z",
+  "jeton_expire_a": "2026-03-12T10:42:00.000000Z",
+  "cloture_a": null,
   "nombre_presents": 12
 }
 ```
@@ -198,7 +200,7 @@ Génère un nouveau jeton et repousse l'expiration de 20 secondes.
 POST /sessions-emargement/{id}/cloturer
 ```
 
-Met fin à la session d'émargement (expire_a = maintenant).
+Met fin à la session d'émargement (positionne `cloture_a` à l'heure actuelle).
 
 **Réponse 200** — retourne la session mise à jour.
 
