@@ -109,8 +109,8 @@ class EmargementController extends Controller
     // Récupère le statut d'une session (nombre de présents, etc.)
     public function statut(SessionEmargement $session)
     {
-        // Si le jeton est expiré, on le rafraîchit automatiquement
-        if ($session->is_methode_qr && $session->expire_a && $session->expire_a->isPast()) {
+        // Si le jeton est expiré et la session non clôturée, on le rafraîchit automatiquement
+        if ($session->is_methode_qr && is_null($session->cloture_a) && $session->jeton_expire_a && $session->jeton_expire_a->isPast()) {
             $this->emargementService->rafraichirJeton($session);
         }
 
@@ -129,7 +129,8 @@ class EmargementController extends Controller
         return response()->json([
             'id' => $session->id,
             'jeton' => $session->jeton,
-            'expire_a' => $session->expire_a,
+            'jeton_expire_a' => $session->jeton_expire_a,
+            'cloture_a' => $session->cloture_a,
             'nombre_presents' => $presences->count(),
             'liste_etudiants' => $listeEtudiants,
         ]);
