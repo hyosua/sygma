@@ -34,7 +34,7 @@ class EmargementService
             'seance_id' => $seance->id,
             'is_methode_qr' => $isMethodeQr,
             'jeton' => $isMethodeQr ? $this->genererJeton() : null,
-            'expire_a' => $isMethodeQr ? Carbon::now()->addSeconds(self::DUREE_VALIDITE_JETON) : null,
+            'jeton_expire_a' => $isMethodeQr ? Carbon::now()->addSeconds(self::DUREE_VALIDITE_JETON) : null,
             'latitude' => $coordonnees['latitude'] ?? null,
             'longitude' => $coordonnees['longitude'] ?? null,
         ]);
@@ -56,7 +56,7 @@ class EmargementService
             throw new JetonInvalideException();
         }
 
-        if ($session->expire_a && $session->expire_a->isPast()) {
+        if ($session->jeton_expire_a && $session->jeton_expire_a->isPast()) {
             throw new JetonExpireException();
         }
 
@@ -108,7 +108,7 @@ class EmargementService
     {
         $session->update([
             'jeton' => $this->genererJeton(),
-            'expire_a' => Carbon::now()->addSeconds(self::DUREE_VALIDITE_JETON),
+            'jeton_expire_a' => Carbon::now()->addSeconds(self::DUREE_VALIDITE_JETON),
         ]);
 
         return $session;
@@ -120,7 +120,7 @@ class EmargementService
     public function cloturerSession(SessionEmargement $session): SessionEmargement
     {
         $session->update([
-            'expire_a' => Carbon::now(),
+            'cloture_a' => Carbon::now(),
         ]);
 
         return $session;
