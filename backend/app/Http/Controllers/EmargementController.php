@@ -109,30 +109,6 @@ class EmargementController extends Controller
     // Récupère le statut d'une session (nombre de présents, etc.)
     public function statut(SessionEmargement $session)
     {
-        // Si le jeton est expiré et la session non clôturée, on le rafraîchit automatiquement
-        if ($session->is_methode_qr && is_null($session->cloture_a) && $session->jeton_expire_a && $session->jeton_expire_a->isPast()) {
-            $this->emargementService->rafraichirJeton($session);
-        }
-
-        $session->load(['seance.groupe.users', 'presences']);
-        $etudiants = $session->seance->groupe->users;
-        $presences = $session->presences->keyBy('etudiant_id');
-
-        $listeEtudiants = $etudiants->map(fn ($etudiant) => [
-            'etudiant_id' => $etudiant->id,
-            'nom' => $etudiant->nom,
-            'prenom' => $etudiant->prenom,
-            'statut' => $presences->get($etudiant->id)?->statut,
-            'scanne_a' => $presences->get($etudiant->id)?->scanne_a,
-        ]);
-
-        return response()->json([
-            'id' => $session->id,
-            'jeton' => $session->jeton,
-            'jeton_expire_a' => $session->jeton_expire_a,
-            'cloture_a' => $session->cloture_a,
-            'nombre_presents' => $presences->count(),
-            'liste_etudiants' => $listeEtudiants,
-        ]);
+        return response()->json($this->emargementService->obtenirStatut($session));
     }
 }

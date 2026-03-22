@@ -127,6 +127,38 @@ class EmargementService
     }
 
     /**
+     * Retourne le statut d'une session : liste des étudiants et leur présence.
+     * Rafraîchit automatiquement le jeton s'il est expiré et la session non clôturée.
+     */
+    public function obtenirStatut(SessionEmargement $session): array
+    {
+        if ($session->is_methode_qr && is_null($session->cloture_a) && $session->jeton_expire_a && $session->jeton_expire_a->isPast()) {
+            $this->rafraichirJeton($session);
+        }
+
+        $session->load(['seance.groupe.users', 'presences']);
+        $etudiants = $session->seance->groupe->users;
+        $presences = $session->presences->keyBy('etudiant_id');
+
+        $listeEtudiants = $etudiants->map(fn ($etudiant) => [
+            'etudiant_id' => $etudiant->id,
+            'nom' => $etudiant->nom,
+            'prenom' => $etudiant->prenom,
+            'statut' => $presences->get($etudiant->id)?->statut,
+            'scanne_a' => $presences->get($etudiant->id)?->scanne_a,
+        ]);
+
+        return [
+            'id' => $session->id,
+            'jeton' => $session->jeton,
+            'jeton_expire_a' => $session->jeton_expire_a,
+            'cloture_a' => $session->cloture_a,
+            'nombre_presents' => $presences->count(),
+            'liste_etudiants' => $listeEtudiants,
+        ];
+    }
+
+    /**
      * Génère une chaîne aléatoire unique pour le jeton.
      */
     protected function genererJeton(): string
