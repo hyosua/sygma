@@ -15,13 +15,15 @@ class SessionEmargement extends Model
         'seance_id',
         'is_methode_qr',
         'jeton',
-        'expire_a',
+        'jeton_expire_a',
+        'cloture_a',
         'latitude',
         'longitude',
     ];
 
     protected $casts = [
-        'expire_a' => 'datetime',
+        'jeton_expire_a' => 'datetime',
+        'cloture_a' => 'datetime',
         'is_methode_qr' => 'boolean',
     ];
 
