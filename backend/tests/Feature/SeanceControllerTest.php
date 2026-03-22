@@ -90,7 +90,6 @@ class SeanceControllerTest extends FeatureTestCase
         $seance = Seance::factory()->create();
         SessionEmargement::factory()->create([
             'seance_id' => $seance->id,
-            'expire_a' => now()->addMinutes(5),
         ]);
 
         $response = $this->actingAs($enseignant)->deleteJson("/api/seances/{$seance->id}");

@@ -32,7 +32,7 @@ class EmargementServiceTest extends FeatureTestCase
         $this->assertInstanceOf(SessionEmargement::class, $session);
         $this->assertEquals($seance->id, $session->seance_id);
         $this->assertNotNull($session->jeton);
-        $this->assertNotNull($session->expire_a);
+        $this->assertNotNull($session->jeton_expire_a);
     }
 
     public function test_peut_valider_une_presence_avec_un_jeton_valide()
@@ -68,7 +68,7 @@ class EmargementServiceTest extends FeatureTestCase
         SessionEmargement::factory()->create([
             'seance_id' => $seance->id,
             'jeton' => 'expire-token',
-            'expire_a' => Carbon::now()->subMinute(),
+            'jeton_expire_a' => Carbon::now()->subMinute(),
         ]);
         $etudiant = User::factory()->create();
 
@@ -87,7 +87,7 @@ class EmargementServiceTest extends FeatureTestCase
         SessionEmargement::factory()->create([
             'seance_id' => $seance->id,
             'jeton' => 'token-seance-finie',
-            'expire_a' => Carbon::now()->addMinutes(10),
+            'jeton_expire_a' => Carbon::now()->addMinutes(10),
         ]);
         $etudiant = User::factory()->create();
 
@@ -124,6 +124,6 @@ class EmargementServiceTest extends FeatureTestCase
         $sessionUpdated = $this->service->rafraichirJeton($session);
 
         $this->assertNotEquals($ancienJeton, $sessionUpdated->jeton);
-        $this->assertTrue($sessionUpdated->expire_a->isFuture());
+        $this->assertTrue($sessionUpdated->jeton_expire_a->isFuture());
     }
 }

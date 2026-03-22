@@ -46,10 +46,10 @@ class SessionEmargementTest extends FeatureTestCase
         ]);
 
         $response->assertStatus(201)
-            ->assertJsonStructure(['id', 'jeton', 'expire_a', 'seance_id', 'is_methode_qr']);
+            ->assertJsonStructure(['id', 'jeton', 'jeton_expire_a', 'seance_id', 'is_methode_qr']);
 
         $this->assertNotNull($response->json('jeton'));
-        $this->assertNotNull($response->json('expire_a'));
+        $this->assertNotNull($response->json('jeton_expire_a'));
     }
 
     public function test_enseignant_peut_lancer_session_emargement_sans_qr(): void
@@ -96,10 +96,28 @@ class SessionEmargementTest extends FeatureTestCase
 
         $response->assertStatus(200);
 
-        // expire_a doit être dans le passé (ou maintenant)
-        $this->assertTrue(
-            \Carbon\Carbon::parse($response->json('expire_a'))->isPast()
-        );
+        $this->assertNotNull($response->json('cloture_a'));
+    }
+
+    public function test_statut_ne_rafraichit_pas_jeton_si_session_cloturee(): void
+    {
+        $enseignant = User::factory()->enseignant()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
+
+        $sessionEmargement = \App\Models\SessionEmargement::factory()->create([
+            'seance_id' => $seance->id,
+            'jeton' => 'jeton-initial',
+            'jeton_expire_a' => \Carbon\Carbon::now()->subMinute(),
+            'cloture_a' => \Carbon\Carbon::now(),
+        ]);
+
+        $this->actingAs($enseignant)
+            ->getJson("/api/sessions-emargement/{$sessionEmargement->id}/statut");
+
+        $this->assertDatabaseHas('sessions_emargement', [
+            'id' => $sessionEmargement->id,
+            'jeton' => 'jeton-initial',
+        ]);
     }
 
     public function test_status_retourne_nombre_de_presents(): void
