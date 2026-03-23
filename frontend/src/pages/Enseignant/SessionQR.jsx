@@ -40,26 +40,6 @@ const SessionQR = () => {
     fetchSeance();
   }, [seanceId, token]);
 
-  // Calculer le temps restant chaque seconde
-  useEffect(() => {
-    if (!jetonExpireA || !session) return;
-
-    const intervalleCompteur = setInterval(() => {
-      const now = new Date();
-      const expiration = new Date(jetonExpireA);
-      const diff = Math.max(0, Math.floor((expiration - now) / 1000));
-
-      setTempsRestant(diff);
-
-      // Si le temps est écoulé, on rafraîchit
-      if (diff === 0) {
-        fetchStatut();
-      }
-    }, 1000);
-
-    return () => clearInterval(intervalleCompteur);
-  }, [jetonExpireA, session, fetchStatut]);
-
   // Fonction pour récupérer le statut de la session (nombre de présents, jeton, expiration)
   const fetchStatut = useCallback(async () => {
     if (!session) return;
@@ -83,6 +63,26 @@ const SessionQR = () => {
       console.error('Échec de la récupération du statut', err);
     }
   }, [session, token]);
+
+  // Calculer le temps restant chaque seconde
+  useEffect(() => {
+    if (!jetonExpireA || !session) return;
+
+    const intervalleCompteur = setInterval(() => {
+      const now = new Date();
+      const expiration = new Date(jetonExpireA);
+      const diff = Math.max(0, Math.floor((expiration - now) / 1000));
+
+      setTempsRestant(diff);
+
+      // Si le temps est écoulé, on rafraîchit
+      if (diff === 0) {
+        fetchStatut();
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalleCompteur);
+  }, [jetonExpireA, session, fetchStatut]);
 
   // Fonction pour démarrer manuellement la session
   const handleStartSession = async () => {
