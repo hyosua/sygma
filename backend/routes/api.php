@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum', 'role:enseignant|gestionnaire')->group(functio
 * Etudiant
 *
 */
-Route::middleware('auth:sanctum', 'role:etudiant')->group(function () {
+Route::middleware('auth:sanctum', 'role:etudiant|gestionnaire')->group(function () {
     // Émargement
     Route::post('/presences/valider-qr', [EmargementController::class, 'validerPresenceParQR']);
 });

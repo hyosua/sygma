@@ -32,13 +32,20 @@ class DatabaseSeeder extends Seeder
             'nom' => 'Admin',
             'prenom' => 'Sygma',
             'email' => 'admin@sygma.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('sygma'),
             'premiere_connexion' => false,
         ]);
 
-        // 3. Créer les enseignants
+        // 3. Créer les enseignants (dont un avec credentials fixes pour les tests)
         $this->command->info('Création des enseignants...');
-        $enseignants = User::factory(5)->enseignant()->create();
+        $enseignantFixe = User::factory()->enseignant()->create([
+            'nom' => 'Dupont',
+            'prenom' => 'Jean',
+            'email' => 'enseignant@sygma.com',
+            'password' => Hash::make('sygma'),
+            'premiere_connexion' => false,
+        ]);
+        $enseignants = User::factory(4)->enseignant()->create()->prepend($enseignantFixe);
 
         // 4. Créer les cours
         $this->command->info('Création des cours...');
@@ -46,15 +53,30 @@ class DatabaseSeeder extends Seeder
 
         // 5. Créer les groupes avec leurs étudiants et leurs inscriptions
         $this->command->info('Création des groupes, étudiants et inscriptions...');
+        $premierGroupe = true;
         Groupe::factory(3)
             ->create()
-            ->each(function (Groupe $groupe) use ($cours, $enseignants) {
+            ->each(function (Groupe $groupe) use ($cours, $enseignants, &$premierGroupe) {
                 $this->command->getOutput()->writeln("  <info>Groupe : {$groupe->libelle}</info>");
 
                 // Pour chaque groupe, créer 20 étudiants
                 $etudiants = User::factory(20)
                     ->etudiant()
                     ->create(['groupe_id' => $groupe->id]);
+
+                // Dans le premier groupe, ajouter un étudiant avec credentials fixes
+                if ($premierGroupe) {
+                    $etudiantFixe = User::factory()->etudiant()->create([
+                        'nom' => 'Martin',
+                        'prenom' => 'Alice',
+                        'email' => 'etudiant@sygma.com',
+                        'password' => Hash::make('sygma'),
+                        'premiere_connexion' => false,
+                        'groupe_id' => $groupe->id,
+                    ]);
+                    $etudiants = $etudiants->prepend($etudiantFixe);
+                    $premierGroupe = false;
+                }
                 $this->command->getOutput()->writeln('    <comment>-> 20 étudiants créés.</comment>');
 
                 // Inscrire le groupe à 4 cours au hasard
@@ -125,7 +147,7 @@ class DatabaseSeeder extends Seeder
 
                 SessionEmargement::factory()->create([
                     'seance_id' => $seanceActive->id,
-                    'expire_a' => now()->addMinutes(10),
+                    'jeton_expire_a' => now()->addMinutes(10),
                 ]);
 
                 $nbSessionsActives++;
