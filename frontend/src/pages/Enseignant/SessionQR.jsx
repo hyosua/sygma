@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import './SessionQR.css';
 
@@ -58,10 +58,10 @@ const SessionQR = () => {
     }, 1000);
 
     return () => clearInterval(intervalleCompteur);
-  }, [jetonExpireA, session]);
+  }, [jetonExpireA, session, fetchStatut]);
 
   // Fonction pour récupérer le statut de la session (nombre de présents, jeton, expiration)
-  const fetchStatut = async () => {
+  const fetchStatut = useCallback(async () => {
     if (!session) return;
     try {
       const reponse = await fetch(
@@ -82,7 +82,7 @@ const SessionQR = () => {
     } catch (err) {
       console.error('Échec de la récupération du statut', err);
     }
-  };
+  }, [session, token]);
 
   // Fonction pour démarrer manuellement la session
   const handleStartSession = async () => {
@@ -124,7 +124,7 @@ const SessionQR = () => {
     const intervalleStatut = setInterval(fetchStatut, 5000);
 
     return () => clearInterval(intervalleStatut);
-  }, [session, token]);
+  }, [session, fetchStatut]);
 
   const handleStopSession = async () => {
     if (!session) return;
