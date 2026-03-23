@@ -53,7 +53,7 @@ const SessionQR = () => {
 
       // Si le temps est écoulé, on rafraîchit
       if (diff === 0) {
-        fetchStatus();
+        fetchStatut();
       }
     }, 1000);
 
@@ -61,11 +61,11 @@ const SessionQR = () => {
   }, [jetonExpireA, session]);
 
   // Fonction pour récupérer le statut de la session (nombre de présents, jeton, expiration)
-  const fetchStatus = async () => {
+  const fetchStatut = async () => {
     if (!session) return;
     try {
       const reponse = await fetch(
-        `http://localhost:8000/api/sessions-emargement/${session.id}/status`,
+        `http://localhost:8000/api/sessions-emargement/${session.id}/statut`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -121,7 +121,7 @@ const SessionQR = () => {
   useEffect(() => {
     if (!session) return;
 
-    const intervalleStatut = setInterval(fetchStatus, 5000);
+    const intervalleStatut = setInterval(fetchStatut, 5000);
 
     return () => clearInterval(intervalleStatut);
   }, [session, token]);
