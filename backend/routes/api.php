@@ -8,37 +8,71 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user/{id}', [UserController::class, 'getUser']);
+// Publique
+Route::post('login', [AuthController::class, 'login']);
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-Route::post('users/AddUser', [UserController::class, 'addUser']);
-Route::patch('users/UpdateUser/{id}', [UserController::class, 'updateUser']);
-Route::delete('users/DeleteUser/{id}', [UserController::class, 'deleteUser']);
-
-// Emargement (Auth temporairement retirée pour tests)
-Route::post('/sessions-emargement', [EmargementController::class, 'demarrerSession']);
-Route::post('/sessions-emargement/{session}/refresh', [EmargementController::class, 'rafraichirJeton']);
-Route::post('/sessions-emargement/{session}/cloturer', [EmargementController::class, 'cloturerSession']);
-Route::get('/sessions-emargement/{session}/status', [EmargementController::class, 'status']);
-Route::post('/presences/valider', [EmargementController::class, 'validerPresence']);
-
-// Séances
-Route::get('/seances', [SeanceController::class, 'getSeances']);
-Route::get('/seances/{seance}', [SeanceController::class, 'getSeance']);
-
-Route::middleware('auth:sanctum')->group(function () {
-    // Autres routes protégées si nécessaire
+/*
+* Enseignants
+*
+*/
+Route::middleware('auth:sanctum', 'role:enseignant|gestionnaire')->group(function () {
+    // Emargement
+    Route::get('/sessions-emargement/{session}/statut', [EmargementController::class, 'statut']);
+    Route::post('/sessions-emargement', [EmargementController::class, 'demarrerSession']);
+    Route::post('/sessions-emargement/{session}/refresh', [EmargementController::class, 'rafraichirJeton']);
+    Route::post('/sessions-emargement/{session}/cloturer', [EmargementController::class, 'cloturerSession']);
 });
 
-// Cours
-Route::get('/Cours', [ControllerCours::class, 'getCours']);
-Route::post('/Cours/Ajouter', [ControllerCours::class, 'createCours']);
-Route::patch('/Cours/Modifier/{id}', [ControllerCours::class, 'updateCours']);
-Route::delete('/Cours/Supprimer/{id}', [ControllerCours::class, 'deleteCours']);
+/*
+* Etudiant
+*
+*/
+Route::middleware('auth:sanctum', 'role:etudiant|gestionnaire')->group(function () {
+    // Émargement
+    Route::post('/presences/valider-qr', [EmargementController::class, 'validerPresenceParQR']);
+});
 
-// Connexion
-Route::post('login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+/*
+* Enseignants/Gestionnaires
+*
+*/
+Route::middleware('auth:sanctum', 'role:enseignant|gestionnaire')->group(function () {
+    // Séances
+    Route::patch('/seances/{seance}', [SeanceController::class, 'modifierSeance']);
+    Route::post('/seances', [SeanceController::class, 'creerSeance']);
+    Route::delete('/seances/{seance}', [SeanceController::class, 'supprimer']);
+
+    // Cours
+    Route::post('/Cours/Ajouter', [ControllerCours::class, 'createCours']);
+    Route::patch('/Cours/Modifier/{id}', [ControllerCours::class, 'updateCours']);
+    Route::delete('/Cours/Supprimer/{id}', [ControllerCours::class, 'deleteCours']);
+
+    // Émargement
+    Route::post('/presences/valider-manuel', [EmargementController::class, 'validerPresenceManuellement']);
+});
+
+/*
+* Enseignant/Gestionnaire/Etudiant
+*
+*/
+Route::middleware('auth:sanctum')->group(function () {
+    // User
+    Route::get('/user/{user}', [UserController::class, 'getUser']);
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    Route::post('users', [UserController::class, 'addUser']);
+    Route::patch('users/{user}', [UserController::class, 'updateUser']);
+    Route::delete('users/{user}', [UserController::class, 'deleteUser']);
+
+    // Cours
+    Route::get('/cours', [ControllerCours::class, 'getCours']);
+
+    // Seance
+    Route::get('/seances', [SeanceController::class, 'getSeances']);
+    Route::get('/seances/{seance}', [SeanceController::class, 'getSeance']);
+    Route::get('/seances/{seance}/sessions-emargement', [SeanceController::class, 'getSessions']);
+
+    // Déconnexion
+    Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+});

@@ -3,16 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\Groupe;
-use App\Models\User;
 use App\Models\Seance;
-use App\Models\Cours;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use App\Models\User;
 
-class GroupManagementTest extends TestCase
+class GroupManagementTest extends FeatureTestCase
 {
-    use RefreshDatabase;
-
     public function test_peut_creer_groupes_et_assigner_des_utilisateurs()
     {
         $groupe = Groupe::factory()->create(['nom' => 'LP Dawii']);

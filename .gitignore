@@ -1,3 +1,6 @@
+# Claude Code
+CLAUDE.local.md
+
 # Laravel
 backend/vendor/
 backend/node_modules/
@@ -42,3 +45,8 @@ Thumbs.db
 .gemini
 GEMINI.md
 docs/specs/001-presence-numerique
+.laravel-docs/
+.claude
+
+#docs
+docs/specs

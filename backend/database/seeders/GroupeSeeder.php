@@ -12,12 +12,12 @@ class GroupeSeeder extends Seeder
     {
         $dawii = Groupe::create([
             'nom' => 'LP Dawii',
-            'promotion' => '2025-2026'
+            'promotion' => '2025-2026',
         ]);
 
         $asri = Groupe::create([
             'nom' => 'LP ASRI',
-            'promotion' => '2025-2026'
+            'promotion' => '2025-2026',
         ]);
 
         // Création d'un étudiant de test

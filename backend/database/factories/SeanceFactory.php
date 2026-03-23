@@ -18,8 +18,9 @@ class SeanceFactory extends Factory
             'cours_id' => Cours::factory(),
             'enseignant_id' => User::factory()->enseignant(),
             'groupe_id' => Groupe::factory(),
-            'debut_a' => now()->addHour(),
-            'fin_a' => now()->addHours(4),
+            'salle' => $this->faker->numberBetween(1, 510),
+            'debut_a' => now()->subHour(),
+            'fin_a' => now()->addHour(),
         ];
     }
 }

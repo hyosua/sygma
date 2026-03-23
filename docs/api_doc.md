@@ -38,24 +38,26 @@ Ce document est destiné aux développeurs frontend. Il décrit les endpoints di
 ## Séances
 
 ### Lister les séances
+
 ```
 GET /seances
 ```
 
 **Paramètres (query string, tous optionnels)**
 
-| Paramètre | Type | Description |
-|---|---|---|
-| `statut` | string | Filtre par statut : `en_cours`, `a_venir`, `terminee` |
-| `enseignant_id` | integer | Filtre par enseignant |
-| `groupe_id` | integer | Filtre par groupe |
-| `cours_id` | integer | Filtre par cours |
-| `date_debut` | datetime | Séances commençant après cette date |
-| `date_fin` | datetime | Séances finissant avant cette date |
-| `par_page` | integer | Nombre de résultats par page (défaut : 15, max : 50) |
-| `page` | integer | Numéro de page (défaut : 1) |
+| Paramètre       | Type     | Description                                           |
+| --------------- | -------- | ----------------------------------------------------- |
+| `statut`        | string   | Filtre par statut : `en_cours`, `a_venir`, `terminee` |
+| `enseignant_id` | integer  | Filtre par enseignant                                 |
+| `groupe_id`     | integer  | Filtre par groupe                                     |
+| `cours_id`      | integer  | Filtre par cours                                      |
+| `date_debut`    | datetime | Séances commençant après cette date                   |
+| `date_fin`      | datetime | Séances finissant avant cette date                    |
+| `par_page`      | integer  | Nombre de résultats par page (défaut : 15, max : 50)  |
+| `page`          | integer  | Numéro de page (défaut : 1)                           |
 
 **Réponse 200**
+
 ```json
 {
   "data": [
@@ -81,20 +83,22 @@ GET /seances
 
 **Valeurs de `statut`**
 
-| Valeur | Signification |
-|---|---|
+| Valeur     | Signification                       |
+| ---------- | ----------------------------------- |
 | `en_cours` | La séance est actuellement en cours |
-| `a_venir` | La séance n'a pas encore commencé |
-| `terminee` | La séance est passée |
+| `a_venir`  | La séance n'a pas encore commencé   |
+| `terminee` | La séance est passée                |
 
 ---
 
 ### Détail d'une séance
+
 ```
 GET /seances/{id}
 ```
 
 **Réponse 200**
+
 ```json
 {
   "id": 61,
@@ -117,27 +121,30 @@ GET /seances/{id}
 ## Sessions d'émargement
 
 ### Démarrer une session
+
 ```
 POST /sessions-emargement
 ```
 
 **Corps (JSON)**
 
-| Champ | Type | Requis | Description |
-|---|---|---|---|
-| `seance_id` | integer | oui | ID de la séance |
-| `is_methode_qr` | boolean | oui | `true` = QR Code, `false` = manuel |
-| `latitude` | float | non | Coordonnées GPS de la salle |
-| `longitude` | float | non | Coordonnées GPS de la salle |
+| Champ           | Type    | Requis | Description                        |
+| --------------- | ------- | ------ | ---------------------------------- |
+| `seance_id`     | integer | oui    | ID de la séance                    |
+| `is_methode_qr` | boolean | oui    | `true` = QR Code, `false` = manuel |
+| `latitude`      | float   | non    | Coordonnées GPS de la salle        |
+| `longitude`     | float   | non    | Coordonnées GPS de la salle        |
 
 **Réponse 201**
+
 ```json
 {
   "id": 5,
   "seance_id": 61,
   "is_methode_qr": true,
   "jeton": "aB3xKq...",
-  "expire_a": "2026-03-12T10:42:00.000000Z",
+  "jeton_expire_a": "2026-03-12T10:42:00.000000Z",
+  "cloture_a": null,
   "latitude": null,
   "longitude": null
 }
@@ -145,25 +152,28 @@ POST /sessions-emargement
 
 **Erreurs possibles**
 
-| Code | Message | Cause |
-|---|---|---|
-| 500 | `La séance n'est pas en cours` | La séance n'a pas le statut `en_cours` |
+| Code | Message                                     | Cause                                  |
+| ---- | ------------------------------------------- | -------------------------------------- |
+| 422  | `La séance associée n'est pas active.`      | La séance n'a pas le statut `en_cours` |
 
 ---
 
 ### Statut d'une session
+
 ```
 GET /sessions-emargement/{id}/statut
 ```
 
-Rafraîchit automatiquement le jeton s'il est expiré (méthode QR uniquement).
+Rafraîchit automatiquement le jeton s'il est expiré (méthode QR uniquement, session non clôturée).
 
 **Réponse 200**
+
 ```json
 {
   "id": 5,
   "jeton": "aB3xKq...",
-  "expire_a": "2026-03-12T10:42:00.000000Z",
+  "jeton_expire_a": "2026-03-12T10:42:00.000000Z",
+  "cloture_a": null,
   "nombre_presents": 12
 }
 ```
@@ -173,6 +183,7 @@ Rafraîchit automatiquement le jeton s'il est expiré (méthode QR uniquement).
 ---
 
 ### Rafraîchir le jeton
+
 ```
 POST /sessions-emargement/{id}/refresh
 ```
@@ -184,11 +195,12 @@ Génère un nouveau jeton et repousse l'expiration de 20 secondes.
 ---
 
 ### Clôturer une session
+
 ```
 POST /sessions-emargement/{id}/cloturer
 ```
 
-Met fin à la session d'émargement (expire_a = maintenant).
+Met fin à la session d'émargement (positionne `cloture_a` à l'heure actuelle).
 
 **Réponse 200** — retourne la session mise à jour.
 
@@ -197,19 +209,21 @@ Met fin à la session d'émargement (expire_a = maintenant).
 ## Présences
 
 ### Valider via QR Code
+
 ```
 POST /presences/valider-qr
 ```
 
 **Corps (JSON)**
 
-| Champ | Type | Requis | Description |
-|---|---|---|---|
-| `jeton` | string | oui | Jeton scanné depuis le QR Code |
-| `latitude` | float | non | Position GPS de l'étudiant |
-| `longitude` | float | non | Position GPS de l'étudiant |
+| Champ       | Type   | Requis | Description                    |
+| ----------- | ------ | ------ | ------------------------------ |
+| `jeton`     | string | oui    | Jeton scanné depuis le QR Code |
+| `latitude`  | float  | non    | Position GPS de l'étudiant     |
+| `longitude` | float  | non    | Position GPS de l'étudiant     |
 
 **Réponse 200**
+
 ```json
 {
   "message": "Présence validée avec succès",
@@ -225,16 +239,17 @@ POST /presences/valider-qr
 
 **Erreurs possibles**
 
-| Code | Message | Cause |
-|---|---|---|
-| 400 | `Jeton invalide` | Le jeton n'existe pas |
-| 400 | `Le QR Code a expiré, veuillez scanner le nouveau` | Le jeton a expiré |
-| 400 | `La séance n'est pas active` | La séance n'est plus en cours |
-| 400 | `Vous avez déjà émargé pour cette séance` | Doublon |
+| Code | Message                                            | Cause                         |
+| ---- | -------------------------------------------------- | ----------------------------- |
+| 422  | `Jeton d'émargement invalide.`                     | Le jeton n'existe pas         |
+| 422  | `QR Code expiré, veuillez scanner le nouveau.`     | Le jeton a expiré             |
+| 422  | `La séance associée n'est pas active.`             | La séance n'est plus en cours |
+| 409  | `Vous avez déjà émargé pour cette séance.`         | Doublon                       |
 
 ---
 
 ### Valider manuellement
+
 ```
 POST /presences/valider-manuel
 ```
@@ -243,12 +258,13 @@ Réservé à l'enseignant pour marquer un étudiant présent sans QR Code.
 
 **Corps (JSON)**
 
-| Champ | Type | Requis | Description |
-|---|---|---|---|
-| `session_emargement_id` | integer | oui | ID de la session |
-| `etudiant_id` | integer | oui | ID de l'étudiant |
+| Champ                   | Type    | Requis | Description      |
+| ----------------------- | ------- | ------ | ---------------- |
+| `session_emargement_id` | integer | oui    | ID de la session |
+| `etudiant_id`           | integer | oui    | ID de l'étudiant |
 
 **Réponse 200**
+
 ```json
 {
   "message": "Présence validée avec succès",
@@ -258,46 +274,50 @@ Réservé à l'enseignant pour marquer un étudiant présent sans QR Code.
 
 **Erreurs possibles**
 
-| Code | Message | Cause |
-|---|---|---|
-| 400 | `L'étudiant a déjà émargé pour cette session` | Doublon |
-| 400 | `L'étudiant n'est pas inscrit à cette séance` | Étudiant hors groupe |
+| Code | Message                                          | Cause                |
+| ---- | ------------------------------------------------ | -------------------- |
+| 409  | `Vous avez déjà émargé pour cette séance.`       | Doublon              |
+| 422  | `L'étudiant n'est pas inscrit à cette séance.`   | Étudiant hors groupe |
 
 ---
 
 ## Utilisateurs
 
 ### Lister tous les utilisateurs
+
 ```
 GET /user/{id}
 ```
+
 > Retourne tous les utilisateurs (le paramètre `{id}` est ignoré pour l'instant).
 
 ---
 
 ### Créer un utilisateur
+
 ```
 POST /users/AddUser
 ```
 
 **Corps (JSON)**
 
-| Champ | Type | Description |
-|---|---|---|
-| `nom` | string | Nom de famille |
-| `prenom` | string | Prénom |
-| `email` | string | Email (doit être unique) |
-| `password` | string | Mot de passe |
-| `ine` | string | Numéro INE (étudiants) |
-| `specialites` | string | Spécialité |
-| `groupe_id` | integer | Groupe de l'étudiant |
+| Champ         | Type    | Description              |
+| ------------- | ------- | ------------------------ |
+| `nom`         | string  | Nom de famille           |
+| `prenom`      | string  | Prénom                   |
+| `email`       | string  | Email (doit être unique) |
+| `password`    | string  | Mot de passe             |
+| `ine`         | string  | Numéro INE (étudiants)   |
+| `specialites` | string  | Spécialité               |
+| `groupe_id`   | integer | Groupe de l'étudiant     |
 
-**Réponse 200** — retourne l'utilisateur créé.
-**Réponse 401** — `"Le compte existe déjà"`
+**Réponse 201** — retourne l'utilisateur créé.
+**Réponse 409** — `{"message": "Le compte existe déjà"}`
 
 ---
 
 ### Modifier un utilisateur
+
 ```
 PATCH /users/UpdateUser/{id}
 ```
@@ -305,47 +325,52 @@ PATCH /users/UpdateUser/{id}
 **Corps (JSON)** : `nom`, `prenom`, `email`, `ine`
 
 **Réponse 200** — retourne l'utilisateur mis à jour.
-**Réponse 400** — `"Utilisateur non trouvé"`
+**Réponse 404** — `{"message": "Utilisateur non trouvé"}`
 
 ---
 
 ### Supprimer un utilisateur
+
 ```
 DELETE /users/DeleteUser/{id}
 ```
 
-**Réponse 200** — `"L'utilisateur a bien été supprimé"`
-**Réponse 400** — `"L'utilisateur n'a pas été trouvé"`
+**Réponse 200** — `{"message": "L'utilisateur a bien été supprimé"}`
+**Réponse 404** — `{"message": "L'utilisateur n'a pas été trouvé"}`
 
 ---
 
 ## Cours
 
 ### Lister les cours
+
 ```
 GET /Cours
 ```
+
 **Réponse 200** — tableau de tous les cours : `[{ "id": 1, "nom": "Mathématiques" }, ...]`
 
 ---
 
 ### Créer un cours
+
 ```
 POST /Cours/Ajouter
 ```
 
 **Corps (JSON)**
 
-| Champ | Type | Requis |
-|---|---|---|
-| `nom` | string | oui |
+| Champ | Type   | Requis |
+| ----- | ------ | ------ |
+| `nom` | string | oui    |
 
-**Réponse 200** — cours créé.
-**Réponse 401** — `"Le cours existe déjà"`
+**Réponse 201** — cours créé.
+**Réponse 409** — `{"message": "Le cours existe déjà"}`
 
 ---
 
 ### Modifier un cours
+
 ```
 PATCH /Cours/Modifier/{id}
 ```
@@ -353,12 +378,13 @@ PATCH /Cours/Modifier/{id}
 **Corps (JSON)** : `nom`
 
 **Réponse 200** — cours mis à jour.
-**Réponse 401** — `"Le cours existe déjà"` (nom déjà pris)
-**Réponse 404** — `"cours introuvable"`
+**Réponse 404** — `{"message": "cours introuvable"}`
+**Réponse 409** — `{"message": "Le cours existe déjà"}` (nom déjà pris)
 
 ---
 
 ### Supprimer un cours
+
 ```
 DELETE /Cours/Supprimer/{id}
 ```
@@ -373,23 +399,27 @@ DELETE /Cours/Supprimer/{id}
 ### Récupérer les séances en cours
 
 ```js
-const response = await fetch('http://localhost:8000/api/seances?statut=en_cours')
-const data = await response.json()
-console.log(data.data) // tableau de séances
+const response = await fetch(
+  "http://localhost:8000/api/seances?statut=en_cours",
+);
+const data = await response.json();
+console.log(data.data); // tableau de séances
 ```
 
 ### Naviguer entre les pages (onglet "passées")
 
 ```js
-let page = 1
+let page = 1;
 
 async function chargerSeancesPassees() {
-  const response = await fetch(`http://localhost:8000/api/seances?statut=terminee&par_page=10&page=${page}`)
-  const data = await response.json()
+  const response = await fetch(
+    `http://localhost:8000/api/seances?statut=terminee&par_page=10&page=${page}`,
+  );
+  const data = await response.json();
 
-  console.log(data.data)        // séances de la page courante
-  console.log(data.total)       // nombre total de séances passées
-  console.log(data.last_page)   // nombre de pages disponibles
+  console.log(data.data); // séances de la page courante
+  console.log(data.total); // nombre total de séances passées
+  console.log(data.last_page); // nombre de pages disponibles
 
   // Bouton "Voir plus" : incrémenter page et rappeler la fonction
 }
@@ -398,75 +428,83 @@ async function chargerSeancesPassees() {
 ### Démarrer une session d'émargement (QR Code)
 
 ```js
-const response = await fetch('http://localhost:8000/api/sessions-emargement', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch("http://localhost:8000/api/sessions-emargement", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     seance_id: 61,
     is_methode_qr: true,
   }),
-})
-const session = await response.json()
-console.log(session.jeton)     // chaîne à encoder en QR Code
-console.log(session.expire_a)  // date d'expiration du jeton
+});
+const session = await response.json();
+console.log(session.jeton); // chaîne à encoder en QR Code
+console.log(session.expire_a); // date d'expiration du jeton
 ```
 
 ### Afficher le QR Code à jour (polling)
 
 ```js
 async function rafraichirStatut(sessionId) {
-  const response = await fetch(`http://localhost:8000/api/sessions-emargement/${sessionId}/statut`)
-  const data = await response.json()
+  const response = await fetch(
+    `http://localhost:8000/api/sessions-emargement/${sessionId}/statut`,
+  );
+  const data = await response.json();
 
-  console.log(data.jeton)           // nouveau jeton si expiré
-  console.log(data.nombre_presents) // nb d'étudiants présents
+  console.log(data.jeton); // nouveau jeton si expiré
+  console.log(data.nombre_presents); // nb d'étudiants présents
 }
 
 // Appeler toutes les 20 secondes
-setInterval(() => rafraichirStatut(5), 20000)
+setInterval(() => rafraichirStatut(5), 20000);
 ```
 
 ### Scanner un QR Code (côté étudiant)
 
 ```js
-const response = await fetch('http://localhost:8000/api/presences/valider-qr', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ jeton: 'aB3xKq...' }),
-})
+const response = await fetch("http://localhost:8000/api/presences/valider-qr", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ jeton: "aB3xKq..." }),
+});
 
 if (!response.ok) {
-  const erreur = await response.json()
-  console.error(erreur.message) // ex: "Le QR Code a expiré..."
+  const erreur = await response.json();
+  console.error(erreur.message); // ex: "Le QR Code a expiré..."
 } else {
-  const data = await response.json()
-  console.log(data.message) // "Présence validée avec succès"
+  const data = await response.json();
+  console.log(data.message); // "Présence validée avec succès"
 }
 ```
 
 ### Valider manuellement un étudiant (côté enseignant)
 
 ```js
-const response = await fetch('http://localhost:8000/api/presences/valider-manuel', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    session_emargement_id: 5,
-    etudiant_id: 3,
-  }),
-})
-const data = await response.json()
-console.log(data.message)
+const response = await fetch(
+  "http://localhost:8000/api/presences/valider-manuel",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      session_emargement_id: 5,
+      etudiant_id: 3,
+    }),
+  },
+);
+const data = await response.json();
+console.log(data.message);
 ```
 
 ### Clôturer une session
 
 ```js
-const response = await fetch('http://localhost:8000/api/sessions-emargement/5/cloturer', {
-  method: 'POST',
-})
-const session = await response.json()
-console.log(session.expire_a) // = maintenant
+const response = await fetch(
+  "http://localhost:8000/api/sessions-emargement/5/cloturer",
+  {
+    method: "POST",
+  },
+);
+const session = await response.json();
+console.log(session.expire_a); // = maintenant
 ```
 
 ---

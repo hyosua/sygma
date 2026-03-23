@@ -34,7 +34,7 @@ return new class extends Migration
                 'url_image_profil',
                 'ine',
                 'specialites',
-                'groupe_id'
+                'groupe_id',
             ]);
         });
     }

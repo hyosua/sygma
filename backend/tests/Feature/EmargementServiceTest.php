@@ -2,23 +2,19 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use App\Models\Seance;
-use App\Models\User;
-use App\Models\SessionEmargement;
+use App\Exceptions\Emargement\DejaEmargeException;
+use App\Exceptions\Emargement\JetonExpireException;
+use App\Exceptions\Emargement\JetonInvalideException;
+use App\Exceptions\Seance\SeanceNonActiveException;
 use App\Models\Presence;
+use App\Models\Seance;
+use App\Models\SessionEmargement;
+use App\Models\User;
 use App\Services\EmargementService;
-use App\Exceptions\JetonInvalideException;
-use App\Exceptions\JetonExpireException;
-use App\Exceptions\SeanceNonActiveException;
-use App\Exceptions\DejaEmargeException;
 use Carbon\Carbon;
 
-class EmargementServiceTest extends TestCase
+class EmargementServiceTest extends FeatureTestCase
 {
-    use RefreshDatabase;
-
     protected EmargementService $service;
 
     protected function setUp(): void
@@ -31,12 +27,12 @@ class EmargementServiceTest extends TestCase
     {
         $seance = Seance::factory()->create();
 
-        $session = $this->service->demarrerSession($seance, 'qr');
+        $session = $this->service->demarrerSession($seance);
 
         $this->assertInstanceOf(SessionEmargement::class, $session);
         $this->assertEquals($seance->id, $session->seance_id);
         $this->assertNotNull($session->jeton);
-        $this->assertNotNull($session->expire_a);
+        $this->assertNotNull($session->jeton_expire_a);
     }
 
     public function test_peut_valider_une_presence_avec_un_jeton_valide()
@@ -46,9 +42,9 @@ class EmargementServiceTest extends TestCase
             'debut_a' => $now->copy()->subHour(),
             'fin_a' => $now->copy()->addHour(),
         ]);
-        
-        $session = $this->service->demarrerSession($seance, 'qr');
-        $etudiant = User::factory()->create();
+
+        $session = $this->service->demarrerSession($seance);
+        $etudiant = User::factory()->create(['groupe_id' => $seance->groupe_id]);
 
         $presence = $this->service->validerPresenceParJeton($session->jeton, $etudiant);
 
@@ -69,10 +65,10 @@ class EmargementServiceTest extends TestCase
     public function test_leve_exception_si_jeton_expire()
     {
         $seance = Seance::factory()->create();
-        $session = SessionEmargement::factory()->create([
+        SessionEmargement::factory()->create([
             'seance_id' => $seance->id,
             'jeton' => 'expire-token',
-            'expire_a' => Carbon::now()->subMinute(),
+            'jeton_expire_a' => Carbon::now()->subMinute(),
         ]);
         $etudiant = User::factory()->create();
 
@@ -87,11 +83,11 @@ class EmargementServiceTest extends TestCase
             'debut_a' => $now->copy()->subHours(5),
             'fin_a' => $now->copy()->subHours(3), // Séance terminée
         ]);
-        
-        $session = SessionEmargement::factory()->create([
+
+        SessionEmargement::factory()->create([
             'seance_id' => $seance->id,
             'jeton' => 'token-seance-finie',
-            'expire_a' => Carbon::now()->addMinutes(10),
+            'jeton_expire_a' => Carbon::now()->addMinutes(10),
         ]);
         $etudiant = User::factory()->create();
 
@@ -106,9 +102,9 @@ class EmargementServiceTest extends TestCase
             'debut_a' => $now->copy()->subHour(),
             'fin_a' => $now->copy()->addHour(),
         ]);
-        
-        $session = $this->service->demarrerSession($seance, 'qr');
-        $etudiant = User::factory()->create();
+
+        $session = $this->service->demarrerSession($seance);
+        $etudiant = User::factory()->create(['groupe_id' => $seance->groupe_id]);
 
         // Premier émargement
         $this->service->validerPresenceParJeton($session->jeton, $etudiant);
@@ -121,13 +117,13 @@ class EmargementServiceTest extends TestCase
     public function test_peut_rafraichir_un_jeton()
     {
         $seance = Seance::factory()->create();
-        $session = $this->service->demarrerSession($seance, 'qr');
+        $session = $this->service->demarrerSession($seance);
         $ancienJeton = $session->jeton;
 
         sleep(1); // Pour s'assurer que l'expiration change
         $sessionUpdated = $this->service->rafraichirJeton($session);
 
         $this->assertNotEquals($ancienJeton, $sessionUpdated->jeton);
-        $this->assertTrue($sessionUpdated->expire_a->isFuture());
+        $this->assertTrue($sessionUpdated->jeton_expire_a->isFuture());
     }
 }

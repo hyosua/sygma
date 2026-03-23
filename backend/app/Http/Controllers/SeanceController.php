@@ -2,19 +2,76 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Resources\SeanceResource;
 use App\Models\Seance;
+use App\Services\SeanceService;
+use Illuminate\Http\Request;
 
 class SeanceController extends Controller
 {
-    public function getSeances(){
-        $seances = Seance::all();
-        return response()->json($seances);
+    public function __construct(private SeanceService $seanceService)
+    {
     }
 
-    public function getSeance(Seance $seance){
-        $seance->load(['cours', 'enseignant', 'groupe.users']);
-        $seance->nombre_inscrits = $seance->groupe?->users->count() ?? 0;
-        return response()->json($seance);
+    public function getSeances(Request $request)
+    {
+        $seances = $this->seanceService->getSeances($request->only(
+            ['enseignant_id', 'groupe_id', 'cours_id', 'date_debut', 'date_fin', 'statut', 'par_page']
+        ));
+
+        return SeanceResource::collection($seances);
+    }
+
+    public function getSeance(Seance $seance)
+    {
+        $seance = $this->seanceService->getSeance($seance);
+
+        return new SeanceResource($seance);
+    }
+
+    public function getSessions(Seance $seance)
+    {
+        $result = $this->seanceService->getSessions($seance);
+
+        return response()->json($result, 200);
+    }
+
+    public function supprimer(Seance $seance)
+    {
+        $this->seanceService->supprimerSeance($seance);
+
+        return response()->noContent();
+    }
+
+    public function creerSeance(Request $request)
+    {
+        $data = $request->validate([
+            'cours_id' => 'required|exists:cours,id',
+            'enseignant_id' => 'required|exists:users,id',
+            'groupe_id' => 'required|exists:groupes,id',
+            'debut_a' => 'required|date',
+            'fin_a' => 'required|date|after:debut_a',
+            'salle' => 'nullable|integer',
+        ]);
+
+        $result = $this->seanceService->creerSeance($data);
+
+        return new SeanceResource($result);
+    }
+
+    public function modifierSeance(Seance $seance, Request $request)
+    {
+        $data = $request->validate([
+            'cours_id' => 'required|exists:cours,id',
+            'enseignant_id' => 'required|exists:users,id',
+            'groupe_id' => 'required|exists:groupes,id',
+            'debut_a' => 'required|date',
+            'fin_a' => 'required|date|after:debut_a',
+            'salle' => 'nullable|integer',
+        ]);
+
+        $seance = $this->seanceService->modifierSeance($seance, $data);
+
+        return new SeanceResource($seance);
     }
 }

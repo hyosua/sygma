@@ -28,17 +28,24 @@ class DatabaseSeeder extends Seeder
 
         // 2. Créer l'utilisateur gestionnaire
         $this->command->info('Création du gestionnaire...');
-        User::factory()->withRole('Gestionnaire')->create([
+        User::factory()->withRole('gestionnaire')->create([
             'nom' => 'Admin',
             'prenom' => 'Sygma',
             'email' => 'admin@sygma.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('sygma'),
             'premiere_connexion' => false,
         ]);
 
-        // 3. Créer les enseignants
+        // 3. Créer les enseignants (dont un avec credentials fixes pour les tests)
         $this->command->info('Création des enseignants...');
-        $enseignants = User::factory(5)->enseignant()->create();
+        $enseignantFixe = User::factory()->enseignant()->create([
+            'nom' => 'Dupont',
+            'prenom' => 'Jean',
+            'email' => 'enseignant@sygma.com',
+            'password' => Hash::make('sygma'),
+            'premiere_connexion' => false,
+        ]);
+        $enseignants = User::factory(4)->enseignant()->create()->prepend($enseignantFixe);
 
         // 4. Créer les cours
         $this->command->info('Création des cours...');
@@ -46,16 +53,31 @@ class DatabaseSeeder extends Seeder
 
         // 5. Créer les groupes avec leurs étudiants et leurs inscriptions
         $this->command->info('Création des groupes, étudiants et inscriptions...');
+        $premierGroupe = true;
         Groupe::factory(3)
             ->create()
-            ->each(function (Groupe $groupe) use ($cours, $enseignants) {
+            ->each(function (Groupe $groupe) use ($cours, $enseignants, &$premierGroupe) {
                 $this->command->getOutput()->writeln("  <info>Groupe : {$groupe->libelle}</info>");
 
                 // Pour chaque groupe, créer 20 étudiants
                 $etudiants = User::factory(20)
                     ->etudiant()
                     ->create(['groupe_id' => $groupe->id]);
-                $this->command->getOutput()->writeln("    <comment>-> 20 étudiants créés.</comment>");
+
+                // Dans le premier groupe, ajouter un étudiant avec credentials fixes
+                if ($premierGroupe) {
+                    $etudiantFixe = User::factory()->etudiant()->create([
+                        'nom' => 'Martin',
+                        'prenom' => 'Alice',
+                        'email' => 'etudiant@sygma.com',
+                        'password' => Hash::make('sygma'),
+                        'premiere_connexion' => false,
+                        'groupe_id' => $groupe->id,
+                    ]);
+                    $etudiants = $etudiants->prepend($etudiantFixe);
+                    $premierGroupe = false;
+                }
+                $this->command->getOutput()->writeln('    <comment>-> 20 étudiants créés.</comment>');
 
                 // Inscrire le groupe à 4 cours au hasard
                 $coursPourLeGroupe = $cours->random(4);
@@ -67,7 +89,7 @@ class DatabaseSeeder extends Seeder
                         ]);
                     }
                 }
-                $this->command->getOutput()->writeln("    <comment>-> Inscription des étudiants à 4 cours.</comment>");
+                $this->command->getOutput()->writeln('    <comment>-> Inscription des étudiants à 4 cours.</comment>');
 
                 // Pour chaque cours du groupe, créer 5 séances
                 foreach ($coursPourLeGroupe as $c) {
@@ -77,7 +99,7 @@ class DatabaseSeeder extends Seeder
                         'groupe_id' => $groupe->id,
                         'enseignant_id' => $enseignants->random()->id,
                     ]);
-                    $this->command->getOutput()->writeln("      <comment>-> 5 séances créées.</comment>");
+                    $this->command->getOutput()->writeln('      <comment>-> 5 séances créées.</comment>');
 
                     // Pour les 3 premières séances (passées), créer l'émargement
                     foreach ($seances->take(3) as $seance) {
@@ -93,9 +115,45 @@ class DatabaseSeeder extends Seeder
                             ]);
                         }
                     }
-                    $this->command->getOutput()->writeln("      <comment>-> Émargement créé pour 3 séances.</comment>");
+                    $this->command->getOutput()->writeln('      <comment>-> Émargement créé pour 3 séances.</comment>');
                 }
             });
+
+        // 6. Créer des séances actives avec sessions d'émargement en cours
+        $this->command->info('Création des séances actives avec sessions d\'émargement en cours...');
+
+        $groupes = Groupe::all();
+        $nbSessionsActives = 0;
+
+        foreach ($groupes as $groupe) {
+            if ($nbSessionsActives >= 5) {
+                break;
+            }
+
+            $coursGroupe = $cours->random(2);
+
+            foreach ($coursGroupe as $c) {
+                if ($nbSessionsActives >= 5) {
+                    break;
+                }
+
+                $seanceActive = Seance::factory()->create([
+                    'cours_id' => $c->id,
+                    'groupe_id' => $groupe->id,
+                    'enseignant_id' => $enseignants->random()->id,
+                    'debut_a' => now()->subMinutes(30),
+                    'fin_a' => now()->addMinutes(90),
+                ]);
+
+                SessionEmargement::factory()->create([
+                    'seance_id' => $seanceActive->id,
+                    'jeton_expire_a' => now()->addMinutes(10),
+                ]);
+
+                $nbSessionsActives++;
+                $this->command->getOutput()->writeln("  <comment>-> Session active #{$nbSessionsActives} créée (groupe : {$groupe->libelle}, cours : {$c->libelle}).</comment>");
+            }
+        }
 
         $this->command->info('Terminé !');
     }
