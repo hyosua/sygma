@@ -44,6 +44,9 @@ Thumbs.db
 .specify
 .gemini
 GEMINI.md
+.claude
+.laravel-docs
+CLAUDE.local.md
 docs/specs/001-presence-numerique
 .laravel-docs/
 .claude
