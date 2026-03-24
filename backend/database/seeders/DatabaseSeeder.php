@@ -28,23 +28,22 @@ class DatabaseSeeder extends Seeder
 
         // 2. Créer l'utilisateur gestionnaire
         $this->command->info('Création du gestionnaire...');
-        User::factory()->withRole('gestionnaire')->create([
+        User::firstOrCreate(['email' => 'admin@sygma.com'], [
             'nom' => 'Admin',
             'prenom' => 'Sygma',
-            'email' => 'admin@sygma.com',
             'password' => Hash::make('sygma'),
             'premiere_connexion' => false,
-        ]);
+        ])->assignRole('gestionnaire');
 
         // 3. Créer les enseignants (dont un avec credentials fixes pour les tests)
         $this->command->info('Création des enseignants...');
-        $enseignantFixe = User::factory()->enseignant()->create([
+        $enseignantFixe = User::firstOrCreate(['email' => 'enseignant@sygma.com'], [
             'nom' => 'Dupont',
             'prenom' => 'Jean',
-            'email' => 'enseignant@sygma.com',
             'password' => Hash::make('sygma'),
             'premiere_connexion' => false,
         ]);
+        $enseignantFixe->assignRole('enseignant');
         $enseignants = User::factory(4)->enseignant()->create()->prepend($enseignantFixe);
 
         // 4. Créer les cours
@@ -66,14 +65,14 @@ class DatabaseSeeder extends Seeder
 
                 // Dans le premier groupe, ajouter un étudiant avec credentials fixes
                 if ($premierGroupe) {
-                    $etudiantFixe = User::factory()->etudiant()->create([
+                    $etudiantFixe = User::firstOrCreate(['email' => 'etudiant@sygma.com'], [
                         'nom' => 'Martin',
                         'prenom' => 'Alice',
-                        'email' => 'etudiant@sygma.com',
                         'password' => Hash::make('sygma'),
                         'premiere_connexion' => false,
                         'groupe_id' => $groupe->id,
                     ]);
+                    $etudiantFixe->assignRole('etudiant');
                     $etudiants = $etudiants->prepend($etudiantFixe);
                     $premierGroupe = false;
                 }
