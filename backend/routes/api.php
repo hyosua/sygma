@@ -5,8 +5,10 @@ use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ExportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Carbon\Carbon;
 
 // Publique
 Route::post('login', [AuthController::class, 'login']);
@@ -76,3 +78,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Déconnexion
     Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 });
+// Connexion
+Route::post('login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
+
+//Export
+Route::get('/getExport',[ExportController::class, 'getSessionByDate']);
+Route::get('/getByToday',[ExportController::class, 'getAbsencesToDay']);
+Route::get('/getStatutAndByDate',[ExportController::class, 'getStatutAndByDate']);
