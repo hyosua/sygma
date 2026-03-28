@@ -5,8 +5,10 @@ use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ExportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Carbon\Carbon;
 
 Route::get('/user/{id}', [UserController::class, 'getUser']);
 
@@ -42,3 +44,7 @@ Route::delete('/Cours/Supprimer/{id}', [ControllerCours::class, 'deleteCours']);
 // Connexion
 Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
+
+//Export
+Route::get('/getExport',[ExportController::class, 'getSessionByDate']);
