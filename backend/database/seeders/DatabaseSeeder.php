@@ -52,10 +52,11 @@ class DatabaseSeeder extends Seeder
 
         // 5. Créer les groupes avec leurs étudiants et leurs inscriptions
         $this->command->info('Création des groupes, étudiants et inscriptions...');
+        $groupeDemo = null;
         $premierGroupe = true;
         Groupe::factory(3)
             ->create()
-            ->each(function (Groupe $groupe) use ($cours, $enseignants, &$premierGroupe) {
+            ->each(function (Groupe $groupe) use ($cours, $enseignants, &$premierGroupe, &$groupeDemo) {
                 $this->command->getOutput()->writeln("  <info>Groupe : {$groupe->libelle}</info>");
 
                 // Pour chaque groupe, créer 20 étudiants
@@ -65,6 +66,7 @@ class DatabaseSeeder extends Seeder
 
                 // Dans le premier groupe, ajouter un étudiant avec credentials fixes
                 if ($premierGroupe) {
+                    $groupeDemo = $groupe; // utilisé pour la séance de démo enseignant
                     $etudiantFixe = User::firstOrCreate(['email' => 'etudiant@sygma.com'], [
                         'nom' => 'Martin',
                         'prenom' => 'Alice',
@@ -118,11 +120,12 @@ class DatabaseSeeder extends Seeder
                 }
             });
 
-        // 6. Créer des séances actives avec sessions d'émargement en cours
+        // 6. Créer des séances actives avec sessions d'émargement en cours (enseignants aléatoires)
         $this->command->info('Création des séances actives avec sessions d\'émargement en cours...');
 
         $groupes = Groupe::all();
         $nbSessionsActives = 0;
+        $enseignantsAleatoires = $enseignants->slice(1); // exclut enseignant@sygma.com
 
         foreach ($groupes as $groupe) {
             if ($nbSessionsActives >= 5) {
@@ -139,7 +142,7 @@ class DatabaseSeeder extends Seeder
                 $seanceActive = Seance::factory()->create([
                     'cours_id' => $c->id,
                     'groupe_id' => $groupe->id,
-                    'enseignant_id' => $enseignants->random()->id,
+                    'enseignant_id' => $enseignantsAleatoires->random()->id,
                     'debut_a' => now()->subMinutes(30),
                     'fin_a' => now()->addMinutes(90),
                 ]);
@@ -153,6 +156,18 @@ class DatabaseSeeder extends Seeder
                 $this->command->getOutput()->writeln("  <comment>-> Session active #{$nbSessionsActives} créée (groupe : {$groupe->libelle}, cours : {$c->libelle}).</comment>");
             }
         }
+
+        // 7. Créer une séance active sans session pour enseignant@sygma.com (démo)
+        // → même groupe que etudiant@sygma.com pour que l'inscription soit valide
+        $this->command->info('Création de la séance de démo pour enseignant@sygma.com...');
+        Seance::factory()->create([
+            'cours_id' => $cours->random()->id,
+            'groupe_id' => $groupeDemo->id,
+            'enseignant_id' => $enseignantFixe->id,
+            'debut_a' => now()->subMinutes(30),
+            'fin_a' => now()->addMinutes(90),
+        ]);
+        $this->command->info('-> Séance de démo créée (en cours, sans session démarrée).');
 
         $this->command->info('Terminé !');
     }

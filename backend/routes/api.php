@@ -3,12 +3,11 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ExportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Carbon\Carbon;
 
 // Publique
 Route::post('login', [AuthController::class, 'login']);
@@ -70,6 +69,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Cours
     Route::get('/cours', [ControllerCours::class, 'getCours']);
 
+    // Groupes
+    Route::get('/groupes', function () {
+        return \App\Models\Groupe::all(['id', 'nom', 'promotion']);
+    });
+
     // Seance
     Route::get('/seances', [SeanceController::class, 'getSeances']);
     Route::get('/seances/{seance}', [SeanceController::class, 'getSeance']);
@@ -82,8 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
-
-//Export
-Route::get('/getExport',[ExportController::class, 'getSessionByDate']);
-Route::get('/getByToday',[ExportController::class, 'getAbsencesToDay']);
-Route::get('/getStatutAndByDate',[ExportController::class, 'getStatutAndByDate']);
+// Export
+Route::get('/getExport', [ExportController::class, 'getSessionByDate']);
+Route::get('/getByToday', [ExportController::class, 'getAbsencesToDay']);
+Route::get('/getStatutAndByDate', [ExportController::class, 'getStatutAndByDate']);

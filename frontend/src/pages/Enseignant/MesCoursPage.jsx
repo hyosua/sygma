@@ -1,58 +1,27 @@
-import React, { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./MesCoursPage.css";
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './MesCoursPage.css';
 
-const mockCourses = [
-  {
-    id: 1,
-    nom: "Développement Web",
-    salle: "B204",
-    classe: "LP MIAW",
-    date: "22 mars 2026",
-    heureDebut: "09:00",
-    heureFin: "11:00",
-    statut: "en-cours",
-  },
-  {
-    id: 2,
-    nom: "Base de données",
-    salle: "C110",
-    classe: "BUT INFO 2",
-    date: "22 mars 2026",
-    heureDebut: "14:00",
-    heureFin: "16:00",
-    statut: "a-venir",
-  },
-  {
-    id: 3,
-    nom: "Programmation React",
-    salle: "A301",
-    classe: "LP MIAW",
-    date: "22 mars 2026",
-    heureDebut: "16:30",
-    heureFin: "18:00",
-    statut: "a-venir",
-  },
-  {
-    id: 4,
-    nom: "Architecture logicielle",
-    salle: "D205",
-    classe: "Master 1",
-    date: "22 mars 2026",
-    heureDebut: "10:00",
-    heureFin: "12:00",
-    statut: "en-cours",
-  },
-];
+const API_BASE = 'http://localhost:8000/api';
+
+function formatDate(isoString) {
+  return new Date(isoString).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
+function formatHeure(isoString) {
+  return new Date(isoString).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+}
 
 function CourseCard({ course, onStart }) {
   return (
     <div className="course-card">
       <div className="course-top">
         <div>
-          <p className="course-badge">
-            {course.statut === "en-cours" ? "En cours" : "À venir"}
-          </p>
+          <p className="course-badge">{course.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
           <h3 className="course-title">{course.nom}</h3>
         </div>
       </div>
@@ -60,7 +29,7 @@ function CourseCard({ course, onStart }) {
       <div className="course-infos">
         <div className="info-box">
           <span className="info-label">Salle</span>
-          <span className="info-value">{course.salle}</span>
+          <span className="info-value">{course.salle ?? '—'}</span>
         </div>
 
         <div className="info-box">
@@ -78,80 +47,171 @@ function CourseCard({ course, onStart }) {
 
       <div className="course-actions">
         <button className="start-button" onClick={() => onStart(course)}>
-          Démarrer l’émargement
+          Démarrer l'émargement
         </button>
       </div>
     </div>
   );
 }
 
+function authHeaders() {
+  const token = localStorage.getItem('token');
+  return {
+    Authorization: `Bearer ${token}`,
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+}
+
 export default function MesCoursPage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("en-cours");
+  const [activeTab, setActiveTab] = useState('en_cours');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [courseMode, setCourseMode] = useState("existing");
+  const [seances, setSeances] = useState([]);
+  const [cours, setCours] = useState([]);
+  const [groupes, setGroupes] = useState([]);
+  const [erreurCreation, setErreurCreation] = useState(null);
 
   const [formData, setFormData] = useState({
-    selectedCourseId: "",
-    nom: "",
-    salle: "",
-    classe: "",
-    date: "",
-    heureDebut: "",
-    heureFin: "",
+    selectedCoursId: '',
+    selectedGroupeId: '',
+    nomCours: '',
+    date: '',
+    heureDebut: '',
+    heureFin: '',
+    salle: '',
   });
 
-  const filteredCourses = useMemo(() => {
-    return mockCourses.filter((course) => course.statut === activeTab);
-  }, [activeTab]);
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  // Chargement des séances de l'enseignant
+  useEffect(() => {
+    const chargerSeances = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/seances?enseignant_id=${user.id}&par_page=50`, {
+          headers: authHeaders(),
+        });
+        const data = await res.json();
+        const liste = (data.data ?? []).map((s) => ({
+          id: s.id,
+          nom: s.cours?.nom ?? 'Cours inconnu',
+          salle: s.salle,
+          classe: s.groupe?.nom ?? '—',
+          date: formatDate(s.debut_a),
+          heureDebut: formatHeure(s.debut_a),
+          heureFin: formatHeure(s.fin_a),
+          statut: s.statut,
+        }));
+        setSeances(liste);
+      } catch (err) {
+        console.error('Erreur chargement séances', err);
+      }
+    };
+    chargerSeances();
+  }, [user.id]);
+
+  // Chargement des cours et groupes pour le modal
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const fetchReferentiels = async () => {
+      try {
+        const [resCours, resGroupes] = await Promise.all([
+          fetch(`${API_BASE}/cours`, { headers: authHeaders() }),
+          fetch(`${API_BASE}/groupes`, { headers: authHeaders() }),
+        ]);
+        setCours(await resCours.json());
+        setGroupes(await resGroupes.json());
+      } catch (err) {
+        console.error('Erreur chargement référentiels', err);
+      }
+    };
+    fetchReferentiels();
+  }, [isModalOpen]);
+
+  const filteredSeances = useMemo(
+    () => seances.filter((s) => s.statut === activeTab),
+    [seances, activeTab]
+  );
 
   const handleStartAttendance = (course) => {
     navigate(`/enseignant/session/${course.id}`);
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setErreurCreation(null);
+    setFormData({
+      selectedCoursId: '',
+      selectedGroupeId: '',
+      nomCours: '',
+      date: '',
+      heureDebut: '',
+      heureFin: '',
+      salle: '',
+    });
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmitSession = (e) => {
+  const handleSubmitSession = async (e) => {
     e.preventDefault();
+    setErreurCreation(null);
 
-    if (courseMode === "existing") {
-      console.log("Créer séance avec cours existant :", {
-        courseId: formData.selectedCourseId,
-        date: formData.date,
-        heureDebut: formData.heureDebut,
-        heureFin: formData.heureFin,
-      });
-    } else {
-      console.log("Créer séance avec nouveau cours :", formData);
+    let coursId = parseInt(formData.selectedCoursId);
+
+    // Si le nom est renseigné, créer le cours d'abord
+    if (formData.nomCours) {
+      try {
+        const resCours = await fetch(`${API_BASE}/Cours/Ajouter`, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ nom: formData.nomCours }),
+        });
+        const dataCours = await resCours.json();
+        if (!resCours.ok) {
+          setErreurCreation(dataCours.message || 'Erreur lors de la création du cours.');
+          return;
+        }
+        coursId = dataCours.id;
+      } catch {
+        setErreurCreation('Impossible de contacter le serveur.');
+        return;
+      }
     }
 
-    setIsModalOpen(false);
+    // new Date('YYYY-MM-DDTHH:mm:ss') est interprété comme heure locale par le navigateur
+    // → .toISOString() convertit en UTC pour que le backend (APP_TIMEZONE=UTC) stocke la bonne valeur
+    const toUTC = (date, time) => new Date(`${date}T${time}:00`).toISOString().slice(0, 19) + 'Z';
 
-    setFormData({
-      selectedCourseId: "",
-      nom: "",
-      salle: "",
-      classe: "",
-      date: "",
-      heureDebut: "",
-      heureFin: "",
-    });
+    const payload = {
+      cours_id: coursId,
+      enseignant_id: user.id,
+      groupe_id: parseInt(formData.selectedGroupeId),
+      debut_a: toUTC(formData.date, formData.heureDebut),
+      fin_a: toUTC(formData.date, formData.heureFin),
+      salle: formData.salle ? parseInt(formData.salle) : null,
+    };
 
-    setCourseMode("existing");
+    try {
+      const res = await fetch(`${API_BASE}/seances`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        handleCloseModal();
+        navigate(`/enseignant/session/${data.id}`);
+      } else {
+        const messages = data.errors ? Object.values(data.errors).flat().join(' ') : data.message;
+        setErreurCreation(messages || 'Erreur lors de la création de la séance.');
+      }
+    } catch {
+      setErreurCreation('Impossible de contacter le serveur.');
+    }
   };
 
   return (
@@ -164,8 +224,8 @@ export default function MesCoursPage() {
             <p className="hero-tag">Espace enseignant</p>
             <h1>Mes cours</h1>
             <p className="hero-subtitle">
-              Retrouvez vos cours en cours et à venir, puis lancez rapidement
-              l’émargement de votre séance.
+              Retrouvez vos cours en cours et à venir, puis lancez rapidement l'émargement de votre
+              séance.
             </p>
           </div>
         </header>
@@ -173,33 +233,29 @@ export default function MesCoursPage() {
         <section className="panel">
           <div className="tabs">
             <button
-              className={`tab ${activeTab === "en-cours" ? "active" : ""}`}
-              onClick={() => setActiveTab("en-cours")}
+              className={`tab ${activeTab === 'en_cours' ? 'active' : ''}`}
+              onClick={() => setActiveTab('en_cours')}
             >
               Cours en cours
             </button>
 
             <button
-              className={`tab ${activeTab === "a-venir" ? "active" : ""}`}
-              onClick={() => setActiveTab("a-venir")}
+              className={`tab ${activeTab === 'a_venir' ? 'active' : ''}`}
+              onClick={() => setActiveTab('a_venir')}
             >
               Cours à venir
             </button>
           </div>
 
           <div className="courses-list">
-            {filteredCourses.length > 0 ? (
-              filteredCourses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  onStart={handleStartAttendance}
-                />
+            {filteredSeances.length > 0 ? (
+              filteredSeances.map((course) => (
+                <CourseCard key={course.id} course={course} onStart={handleStartAttendance} />
               ))
             ) : (
               <div className="empty-state">
                 <h3>Aucun cours disponible</h3>
-                <p>Il n’y a aucun cours dans cet onglet pour le moment.</p>
+                <p>Il n'y a aucun cours dans cet onglet pour le moment.</p>
               </div>
             )}
           </div>
@@ -216,81 +272,51 @@ export default function MesCoursPage() {
               </div>
 
               <form className="session-form" onSubmit={handleSubmitSession}>
-                <div className="mode-switch">
-                  <button
-                    type="button"
-                    className={`mode-btn ${courseMode === "existing" ? "active" : ""}`}
-                    onClick={() => setCourseMode("existing")}
+                <div className="form-group">
+                  <label>Cours</label>
+                  <select
+                    name="selectedCoursId"
+                    value={formData.selectedCoursId}
+                    onChange={handleChange}
+                    required={!formData.nomCours}
                   >
-                    Cours existant
-                  </button>
-                  <button
-                    type="button"
-                    className={`mode-btn ${courseMode === "new" ? "active" : ""}`}
-                    onClick={() => setCourseMode("new")}
-                  >
-                    Nouveau cours
-                  </button>
+                    <option value="">Sélectionnez un cours existant…</option>
+                    {cours.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.nom}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
-                {courseMode === "existing" ? (
-                  <div className="form-group">
-                    <label>Choisir un cours</label>
-                    <select
-                      name="selectedCourseId"
-                      value={formData.selectedCourseId}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Sélectionnez un cours</option>
-                      {mockCourses.map((course) => (
-                        <option key={course.id} value={course.id}>
-                          {course.nom} — {course.classe} — Salle {course.salle}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ) : (
-                  <>
-                    <div className="form-group">
-                      <label>Nom du cours</label>
-                      <input
-                        type="text"
-                        name="nom"
-                        value={formData.nom}
-                        onChange={handleChange}
-                        placeholder="Ex : Développement Web"
-                        required
-                      />
-                    </div>
+                <div className="form-group">
+                  <label>Ou créer un nouveau cours (nom)</label>
+                  <input
+                    type="text"
+                    name="nomCours"
+                    value={formData.nomCours}
+                    onChange={handleChange}
+                    placeholder="Laisser vide pour utiliser le cours ci-dessus"
+                    disabled={!!formData.selectedCoursId}
+                  />
+                </div>
 
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>Salle</label>
-                        <input
-                          type="text"
-                          name="salle"
-                          value={formData.salle}
-                          onChange={handleChange}
-                          placeholder="Ex : B204"
-                          required
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label>Classe</label>
-                        <input
-                          type="text"
-                          name="classe"
-                          value={formData.classe}
-                          onChange={handleChange}
-                          placeholder="Ex : LP MIAW"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
+                <div className="form-group">
+                  <label>Groupe</label>
+                  <select
+                    name="selectedGroupeId"
+                    value={formData.selectedGroupeId}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Sélectionnez un groupe…</option>
+                    {groupes.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.nom} — {g.promotion}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
                 <div className="form-group">
                   <label>Date</label>
@@ -314,7 +340,6 @@ export default function MesCoursPage() {
                       required
                     />
                   </div>
-
                   <div className="form-group">
                     <label>Heure de fin</label>
                     <input
@@ -327,12 +352,25 @@ export default function MesCoursPage() {
                   </div>
                 </div>
 
+                <div className="form-group">
+                  <label>Numéro de salle (optionnel)</label>
+                  <input
+                    type="number"
+                    name="salle"
+                    value={formData.salle}
+                    onChange={handleChange}
+                    placeholder="Ex : 204"
+                  />
+                </div>
+
+                {erreurCreation && (
+                  <p style={{ color: '#e53e3e', fontSize: '0.9rem', margin: 0 }}>
+                    {erreurCreation}
+                  </p>
+                )}
+
                 <div className="form-actions">
-                  <button
-                    type="button"
-                    className="secondary-btn"
-                    onClick={handleCloseModal}
-                  >
+                  <button type="button" className="secondary-btn" onClick={handleCloseModal}>
                     Annuler
                   </button>
                   <button type="submit" className="primary-btn">
@@ -344,7 +382,7 @@ export default function MesCoursPage() {
           </div>
         )}
 
-        <button className="fab" onClick={handleOpenModal}>
+        <button className="fab" onClick={() => setIsModalOpen(true)}>
           +
         </button>
       </div>
