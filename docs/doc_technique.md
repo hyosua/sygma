@@ -241,8 +241,21 @@ make test
 
 Le frontend Vite est configuré comme **proxy inverse** vers le backend :
 
-```
-Téléphone → ngrok → Vite (port 3000) → /api/* → Backend Laravel (port 8000)
+```mermaid
+flowchart LR
+    A["Téléphone"]
+    B["ngrok\ntunnel HTTPS"]
+    C["Vite\nport 3000"]
+    D["Backend Laravel\nport 8000"]
+
+    A -- "HTTPS" --> B
+    B --> C
+    C -- "/api/*" --> D
+
+    style A fill:#dbeafe,stroke:#93c5fd,color:#1e3a5f
+    style B fill:#fce7f3,stroke:#f9a8d4,color:#500724
+    style C fill:#d1fae5,stroke:#6ee7b7,color:#064e3b
+    style D fill:#fef9c3,stroke:#fde047,color:#713f12
 ```
 
 Tous les appels API passent par Vite, qui les transfère au backend via le réseau Docker interne (`http://backend:8000`). Le téléphone ne communique qu'avec un seul serveur, ce qui évite les problèmes CORS et la nécessité de plusieurs tunnels.
