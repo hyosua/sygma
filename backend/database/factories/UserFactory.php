@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Groupe;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -49,7 +50,16 @@ class UserFactory extends Factory
     {
         return $this->withRole('etudiant')->state(fn (array $attributes) => [
             'ine' => fake()->unique()->numerify('###########'),
+            'groupe_id' => $attributes['groupe_id'] ?? Groupe::factory(),
         ]);
+    }
+
+    /**
+     * State pour un gestionnaire.
+     */
+    public function gestionnaire(): static
+    {
+        return $this->withRole('gestionnaire');
     }
 
     /**
