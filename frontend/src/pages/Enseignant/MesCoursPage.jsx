@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MesCoursPage.css';
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = import.meta.env.VITE_API_URL;
 
 function formatDate(isoString) {
   return new Date(isoString).toLocaleDateString('fr-FR', {

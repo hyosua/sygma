@@ -225,6 +225,55 @@ make test
 
 ---
 
+## Tests sur mobile
+
+### Architecture
+
+Le frontend Vite est configuré comme **proxy inverse** vers le backend :
+
+```
+Téléphone → ngrok → Vite (port 3000) → /api/* → Backend Laravel (port 8000)
+```
+
+Tous les appels API passent par Vite, qui les transfère au backend via le réseau Docker interne (`http://backend:8000`). Le téléphone ne communique qu'avec un seul serveur, ce qui évite les problèmes CORS et la nécessité de plusieurs tunnels.
+
+### Configuration
+
+- `VITE_API_URL=/api` dans `frontend/.env` — URL relative, fonctionne sur tous les environnements
+- Proxy déclaré dans `vite.config.js` : `/api` → `http://backend:8000`
+- `allowedHosts: true` dans `vite.config.js` pour autoriser les domaines ngrok
+
+### Lancer les tests mobiles
+
+**Prérequis (une seule fois) :**
+```bash
+ngrok config add-authtoken <ton_token>  # compte gratuit sur dashboard.ngrok.com
+```
+
+**Workflow :**
+```bash
+make mobile       # lance ngrok, affiche l'URL + QR code à scanner
+# tester sur le téléphone...
+make mobile-stop  # arrête ngrok
+```
+
+`make mobile` :
+1. Démarre ngrok sur le port 3000 (tunnel HTTPS)
+2. Récupère l'URL publique via l'API locale ngrok
+3. Affiche l'URL et un QR code à scanner directement dans le terminal
+
+### Fichiers concernés
+
+| Fichier | Rôle |
+|---|---|
+| `ngrok.yml` | Config du tunnel ngrok (port 3000) |
+| `scripts/mobile.sh` | Script d'automatisation ngrok |
+| `scripts/mobile-stop.sh` | Arrêt ngrok |
+| `frontend/.env` | `VITE_API_URL=/api` |
+| `frontend/.env.example` | Template pour les nouveaux développeurs |
+
+---
+
 ## CI/CD
 
 Le pipeline CI/CD est décrit en détail dans `docs/ci-cd.md`.

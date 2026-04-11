@@ -58,8 +58,7 @@ services:
     ports:
       - "3000:3000"
 
-    environment:
-      VITE_API_URL: http://localhost:8000/api
+    environment: {}
 
     # Lance npm install uniquement si vite est absent (premier démarrage),
     # puis démarre le serveur — évite de ralentir les redémarrages suivants

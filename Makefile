@@ -8,7 +8,7 @@ DOCKER_USER := -u $(SYGMA_UID):$(SYGMA_GID)
 GREEN := \033[0;32m
 NC    := \033[0m
 
-.PHONY: install start stop repair update fresh test lint-check lint-fix composer artisan npm-back npm-front help %
+.PHONY: install start stop restart mobile mobile-stop repair update fresh test lint-check lint-fix composer artisan npm-back npm-front help %
 
 install:
 	@echo "$(GREEN)1. Construction des images...$(NC)"
@@ -35,6 +35,17 @@ start:
 stop:
 	docker compose stop
 	@echo "$(GREEN)Services arretes.$(NC)"
+
+restart:
+	docker compose stop
+	docker compose up -d
+	@echo "$(GREEN)Services redemarres !$(NC)"
+
+mobile:
+	@bash scripts/mobile.sh
+
+mobile-stop:
+	@bash scripts/mobile-stop.sh
 
 repair:
 	@echo "$(GREEN)Reparation en cours...$(NC)"
@@ -93,6 +104,9 @@ help:
 	@echo "  install      Premier lancement complet"
 	@echo "  start        Demarrer les conteneurs"
 	@echo "  stop         Arreter les conteneurs"
+	@echo "  restart      Redemarrer les conteneurs
+	@echo "  mobile       Activer le mode mobile via ngrok (HTTPS)"
+	@echo "  mobile-stop  Revenir en mode desktop (localhost)"
 	@echo "  update       Mettre a jour apres un git pull"
 	@echo "  repair       Reinstaller les dependances et redemarrer"
 	@echo "  fresh        Reinitialiser la base de donnees"

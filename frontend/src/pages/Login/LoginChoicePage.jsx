@@ -44,7 +44,7 @@ export default function LoginChoicePage() {
     setLoading(true);
     setErreur(null);
     try {
-      const res = await fetch('http://localhost:8000/api/login', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({ email, password }),

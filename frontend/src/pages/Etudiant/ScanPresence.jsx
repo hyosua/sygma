@@ -42,7 +42,7 @@ const ScanPresence = () => {
 
     try {
       const token = localStorage.getItem('token'); // On suppose que le token est stocké ici
-      const reponse = await fetch('http://localhost:8000/api/presences/valider-qr', {
+      const reponse = await fetch(`${import.meta.env.VITE_API_URL}/presences/valider-qr`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

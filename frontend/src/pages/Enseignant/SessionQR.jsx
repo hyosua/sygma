@@ -19,7 +19,7 @@ const SessionQR = () => {
   useEffect(() => {
     const fetchSeance = async () => {
       try {
-        const reponse = await fetch(`http://localhost:8000/api/seances/${seanceId}`, {
+        const reponse = await fetch(`${import.meta.env.VITE_API_URL}/seances/${seanceId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/json',
@@ -45,7 +45,7 @@ const SessionQR = () => {
     if (!session) return;
     try {
       const reponse = await fetch(
-        `http://localhost:8000/api/sessions-emargement/${session.id}/statut`,
+        `${import.meta.env.VITE_API_URL}/sessions-emargement/${session.id}/statut`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -89,7 +89,7 @@ const SessionQR = () => {
     setLoading(true);
     setErreur(null);
     try {
-      const reponse = await fetch('http://localhost:8000/api/sessions-emargement', {
+      const reponse = await fetch(`${import.meta.env.VITE_API_URL}/sessions-emargement`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ const SessionQR = () => {
     if (!session) return;
     try {
       const reponse = await fetch(
-        `http://localhost:8000/api/sessions-emargement/${session.id}/cloturer`,
+        `${import.meta.env.VITE_API_URL}/sessions-emargement/${session.id}/cloturer`,
         {
           method: 'POST',
           headers: {

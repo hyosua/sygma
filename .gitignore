@@ -31,6 +31,9 @@ frontend/yarn-error.log*
 frontend/.pnpm-debug.log*
 
 
+# ngrok
+ngrok.yml
+
 # Generic
 .DS_Store
 Thumbs.db
