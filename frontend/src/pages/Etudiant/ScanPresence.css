@@ -40,41 +40,88 @@
     width: 100%;
     max-width: 500px;
     background: var(--bg-card);
-    padding: 1.5rem;
+    padding: 1rem;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
     overflow: hidden;
     border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.scanner-overlay .spinner {
+    margin-bottom: 1rem;
+}
+
+.scanner-overlay p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.scan-region-highlight {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px;
+    height: 250px;
+    border: 2px solid var(--primary-color);
+    border-radius: var(--radius-md);
+    box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.scan-region-highlight::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: calc(var(--radius-md) - 2px);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 #reader {
     width: 100% !important;
-    border: none !important;
+    min-height: 250px;
+    background-color: #000;
+    overflow: hidden;
+    border-radius: var(--radius-md);
 }
 
-/* Customizing html5-qrcode default styles */
-#reader__dashboard_section_csr span {
-    color: var(--text-main) !important;
+/* On masque uniquement les boutons et messages textes de la librairie */
+#reader__status_span,
+#reader__header_message,
+#reader__dashboard_section_csr button {
+    display: none !important;
 }
 
-#reader button {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-weight: 600;
-    margin: 0.5rem;
-    transition: background-color 0.2s;
-}
-
-#reader button:hover {
-    background-color: var(--primary-hover);
-}
-
-#reader a {
-    color: var(--primary-color);
+#reader video {
+    width: 100% !important;
+    display: block;
 }
 
 .loading-card, .result-card {

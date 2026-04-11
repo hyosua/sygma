@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
 import './ScanPresence.css';
 
 const ScanPresence = () => {
-  const [statut, setStatut] = useState('attente'); // attente, lecture, validation, succes, erreur
+  const [statut, setStatut] = useState('chargement'); // chargement, lecture, validation, succes, erreur
   const [message, setMessage] = useState('');
-  const [localisation, setLocalisation] = useState(null);
+  const scannerRef = useRef(null);
+  // Ref miroir pour éviter la closure stale sur localisation
+  const localisationRef = useRef(null);
+  // Garde-fou : empêche handleEmargement de s'exécuter plusieurs fois
+  const dejaTraiteRef = useRef(false);
 
   useEffect(() => {
-    // Demander la géolocalisation dès le chargement de la page
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setLocalisation({
+          localisationRef.current = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          });
+          };
         },
         (erreur) => {
           console.error('Erreur de géolocalisation', erreur);
@@ -25,23 +28,32 @@ const ScanPresence = () => {
     }
   }, []);
 
-  const handleEmargement = async (donnees) => {
+  const handleEmargement = useCallback(async (donnees) => {
+    // Le scanner détecte en boucle — on n'exécute qu'une seule fois
+    if (dejaTraiteRef.current) return;
+    dejaTraiteRef.current = true;
+
+    if (scannerRef.current && scannerRef.current.isScanning) {
+      try {
+        await scannerRef.current.stop();
+      } catch (e) {
+        console.warn("Erreur lors de l'arrêt du scanner:", e);
+      }
+    }
+
     setStatut('validation');
     setMessage('Validation de votre présence en cours...');
 
     let jeton = donnees;
-    // Si les données sont au format JSON (comme généré par SessionQR)
     try {
       const parsed = JSON.parse(donnees);
       if (parsed.jeton) jeton = parsed.jeton;
-    } catch (e) {
-      // Pas du JSON, on utilise les données brutes
+    } catch {
       console.warn('Données scannées non JSON, utilisation brute:', donnees);
-      console.warn('Erreur de parsing JSON (si attendu):', e);
     }
 
     try {
-      const token = localStorage.getItem('token'); // On suppose que le token est stocké ici
+      const token = localStorage.getItem('token');
       const reponse = await fetch(`${import.meta.env.VITE_API_URL}/presences/valider-qr`, {
         method: 'POST',
         headers: {
@@ -51,8 +63,8 @@ const ScanPresence = () => {
         },
         body: JSON.stringify({
           jeton: jeton,
-          latitude: localisation?.latitude,
-          longitude: localisation?.longitude,
+          latitude: localisationRef.current?.latitude,
+          longitude: localisationRef.current?.longitude,
         }),
       });
 
@@ -70,45 +82,77 @@ const ScanPresence = () => {
       setMessage('Impossible de contacter le serveur. Vérifiez votre connexion.');
       console.error("Erreur lors de la validation de l'émargement", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    const lecteur = new Html5QrcodeScanner('reader', {
-      qrbox: {
-        width: 250,
-        height: 250,
-      },
-      fps: 5,
-    });
+    const html5QrCode = new Html5Qrcode('reader');
+    scannerRef.current = html5QrCode;
+    let monte = true;
 
-    const onSuccesScan = (resultat) => {
-      lecteur.clear();
-      handleEmargement(resultat);
+    const startScanner = async () => {
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+      try {
+        await html5QrCode.start(
+          { facingMode: 'environment' },
+          config,
+          (decodedText) => handleEmargement(decodedText),
+          () => {}
+        );
+        if (monte) setStatut('lecture');
+      } catch (err) {
+        if (!monte) return;
+        if (typeof err === 'string' && err.includes('already started')) {
+          setStatut('lecture');
+          return;
+        }
+        console.error('Impossible de démarrer la caméra', err);
+        setStatut('erreur');
+        setMessage("L'accès à la caméra a été refusé ou n'est pas disponible.");
+      }
     };
 
-    const onErreurScan = () => {
-      // Ignorer les erreurs de scan continu
-    };
-
-    lecteur.render(onSuccesScan, onErreurScan);
+    startScanner();
 
     return () => {
-      lecteur.clear().catch((error) => console.error('Échec du nettoyage du lecteur', error));
+      monte = false;
+      const stopScanner = async () => {
+        if (html5QrCode.isScanning) {
+          try {
+            await html5QrCode.stop();
+          } catch (e) {
+            console.warn("Erreur lors de l'arrêt du scanner:", e);
+          }
+        }
+        // Nettoie le DOM pour éviter le double rendu en StrictMode
+        try {
+          html5QrCode.clear();
+        } catch (e) {
+          console.warn('Erreur lors du clear du scanner:', e);
+        }
+      };
+      stopScanner();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handleEmargement]);
 
   return (
     <div className="scan-container">
       <header className="scan-header">
-        <h1>Émargement Étudiant</h1>
-        <p>Scannez le QR Code affiché par l'enseignant</p>
+        <h1>Émargement</h1>
+        {statut === 'lecture' && <p>Placez le QR Code dans le cadre</p>}
       </header>
 
       <main className="scan-main">
-        {(statut === 'attente' || statut === 'lecture') && (
+        {(statut === 'chargement' || statut === 'lecture') && (
           <div className="scanner-wrapper">
             <div id="reader"></div>
+            {statut === 'chargement' && (
+              <div className="scanner-overlay">
+                <div className="spinner"></div>
+                <p>Initialisation caméra...</p>
+              </div>
+            )}
+            {statut === 'lecture' && <div className="scan-region-highlight"></div>}
           </div>
         )}
 
@@ -124,7 +168,7 @@ const ScanPresence = () => {
             <div className="icon">✓</div>
             <h2>Validé !</h2>
             <p>{message}</p>
-            <button onClick={() => globalThis.location.reload()} className="retry-button">
+            <button onClick={() => window.location.reload()} className="retry-button">
               Scanner à nouveau
             </button>
           </div>
@@ -135,13 +179,11 @@ const ScanPresence = () => {
             <div className="icon">✕</div>
             <h2>Échec</h2>
             <p>{message}</p>
-            <button onClick={() => globalThis.location.reload()} className="retry-button">
+            <button onClick={() => window.location.reload()} className="retry-button">
               Réessayer
             </button>
           </div>
         )}
-
-        {message && statut === 'attente' && <div className="info-message">{message}</div>}
       </main>
     </div>
   );

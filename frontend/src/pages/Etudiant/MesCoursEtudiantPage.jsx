@@ -1,51 +1,51 @@
-import React, { useMemo, useState } from "react";
-import "./MesCoursEtudiantPage.css";
-import { useNavigate } from "react-router-dom";
+import React, { useMemo, useState } from 'react';
+import './MesCoursEtudiantPage.css';
+import { useNavigate } from 'react-router-dom';
 
 const mockCourses = [
   {
     id: 1,
-    nom: "Développement Web",
-    salle: "B204",
-    classe: "LP MIAW",
-    professeur: "Mme Dupont",
-    date: "22 mars 2026",
-    heureDebut: "09:00",
-    heureFin: "11:00",
-    statut: "en-cours",
+    nom: 'Développement Web',
+    salle: 'B204',
+    classe: 'LP MIAW',
+    professeur: 'Mme Dupont',
+    date: '22 mars 2026',
+    heureDebut: '09:00',
+    heureFin: '11:00',
+    statut: 'en-cours',
   },
   {
     id: 2,
-    nom: "Base de données",
-    salle: "C110",
-    classe: "BUT INFO 2",
-    professeur: "M. Bernard",
-    date: "22 mars 2026",
-    heureDebut: "14:00",
-    heureFin: "16:00",
-    statut: "a-venir",
+    nom: 'Base de données',
+    salle: 'C110',
+    classe: 'BUT INFO 2',
+    professeur: 'M. Bernard',
+    date: '22 mars 2026',
+    heureDebut: '14:00',
+    heureFin: '16:00',
+    statut: 'a-venir',
   },
   {
     id: 3,
-    nom: "Programmation React",
-    salle: "A301",
-    classe: "LP MIAW",
-    professeur: "Mme Martin",
-    date: "22 mars 2026",
-    heureDebut: "16:30",
-    heureFin: "18:00",
-    statut: "a-venir",
+    nom: 'Programmation React',
+    salle: 'A301',
+    classe: 'LP MIAW',
+    professeur: 'Mme Martin',
+    date: '22 mars 2026',
+    heureDebut: '16:30',
+    heureFin: '18:00',
+    statut: 'a-venir',
   },
   {
     id: 4,
-    nom: "Architecture logicielle",
-    salle: "D205",
-    classe: "Master 1",
-    professeur: "M. Leroy",
-    date: "22 mars 2026",
-    heureDebut: "10:00",
-    heureFin: "12:00",
-    statut: "en-cours",
+    nom: 'Architecture logicielle',
+    salle: 'D205',
+    classe: 'Master 1',
+    professeur: 'M. Leroy',
+    date: '22 mars 2026',
+    heureDebut: '10:00',
+    heureFin: '12:00',
+    statut: 'en-cours',
   },
 ];
 
@@ -54,9 +54,7 @@ function CourseCard({ course, onEmarger }) {
     <div className="course-card">
       <div className="course-top">
         <div>
-          <p className="course-badge">
-            {course.statut === "en-cours" ? "En cours" : "À venir"}
-          </p>
+          <p className="course-badge">{course.statut === 'en-cours' ? 'En cours' : 'À venir'}</p>
           <h3 className="course-title">{course.nom}</h3>
         </div>
       </div>
@@ -85,12 +83,9 @@ function CourseCard({ course, onEmarger }) {
         </div>
       </div>
 
-      {course.statut === "en-cours" && (
+      {course.statut === 'en-cours' && (
         <div className="course-actions">
-          <button
-            className="emarger-button"
-            onClick={() => onEmarger(course)}
-          >
+          <button className="emarger-button" onClick={() => onEmarger(course)}>
             Émarger
           </button>
         </div>
@@ -101,7 +96,7 @@ function CourseCard({ course, onEmarger }) {
 
 export default function MesCoursEtudiantPage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("en-cours");
+  const [activeTab, setActiveTab] = useState('en-cours');
 
   const handleEmarger = (course) => {
     navigate(`/etudiant/scan/${course.id}`);
@@ -121,8 +116,8 @@ export default function MesCoursEtudiantPage() {
             <p className="hero-tag">Espace étudiant</p>
             <h1>Mes cours</h1>
             <p className="hero-subtitle">
-              Consultez vos cours en cours et à venir, avec les informations de
-              salle, classe, professeur et horaire.
+              Consultez vos cours en cours et à venir, avec les informations de salle, classe,
+              professeur et horaire.
             </p>
           </div>
         </header>
@@ -130,15 +125,15 @@ export default function MesCoursEtudiantPage() {
         <section className="panel">
           <div className="tabs">
             <button
-              className={`tab ${activeTab === "en-cours" ? "active" : ""}`}
-              onClick={() => setActiveTab("en-cours")}
+              className={`tab ${activeTab === 'en-cours' ? 'active' : ''}`}
+              onClick={() => setActiveTab('en-cours')}
             >
               Cours en cours
             </button>
 
             <button
-              className={`tab ${activeTab === "a-venir" ? "active" : ""}`}
-              onClick={() => setActiveTab("a-venir")}
+              className={`tab ${activeTab === 'a-venir' ? 'active' : ''}`}
+              onClick={() => setActiveTab('a-venir')}
             >
               Cours à venir
             </button>
@@ -147,11 +142,7 @@ export default function MesCoursEtudiantPage() {
           <div className="courses-list">
             {filteredCourses.length > 0 ? (
               filteredCourses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  onEmarger={handleEmarger}
-                />
+                <CourseCard key={course.id} course={course} onEmarger={handleEmarger} />
               ))
             ) : (
               <div className="empty-state">
