@@ -9,6 +9,8 @@ class Seance extends Model
 {
     use HasFactory;
 
+    public const FENETRE_EMARGEMENT_MINUTES = 120;
+
     protected $fillable = [
         'cours_id',
         'enseignant_id',
