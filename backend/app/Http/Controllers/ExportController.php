@@ -2,36 +2,26 @@
 
 namespace App\Http\Controllers;
 
-
-
 use App\Models\Presence;
-use App\Services\EmargementService;
-use App\Models\Seance;
-use App\Models\SessionEmargement;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;  // AJOUTEZ CETTE LIGNE
-use App\Exceptions\JetonInvalideException;
-use App\Exceptions\JetonExpireException;
-use App\Exceptions\SeanceNonActiveException;
-use App\Exceptions\DejaEmargeException;
 use Carbon\Carbon;
-use Exception;
+use Exception;  // AJOUTEZ CETTE LIGNE
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ExportController extends Controller
 {
-    function getSessionByDate(Request $request)
+    public function getSessionByDate(Request $request)
     {
         // Vérifier si la date est fournie
-        if (!$request->has('date')) {
+        if (! $request->has('date')) {
             return response()->json([
                 'error' => 'Date manquante',
-                'message' => 'Veuillez fournir une date au format YYYY-MM-DD'
+                'message' => 'Veuillez fournir une date au format YYYY-MM-DD',
             ], 400);
         }
 
         try {
-            $date = Carbon::parse($request->input("date"))->format('Y-m-d');
+            $date = Carbon::parse($request->input('date'))->format('Y-m-d');
 
             $presences = DB::table('presences as p')
                 ->join('sessions_emargement as se', 'p.session_emargement_id', '=', 'se.id')
@@ -44,7 +34,6 @@ class ExportController extends Controller
                     'u.email as user_email',
                     'u.created_at as user_created_at',
                     'u.updated_at as user_updated_at'
-
                 )
                 ->get();
 
@@ -53,24 +42,24 @@ class ExportController extends Controller
                     'success' => true,
                     'date' => $date,
                     'count' => $presences->count(),
-                    'data' => $presences
+                    'data' => $presences,
                 ], 200);
             } else {
                 return response()->json([
                     'success' => false,
                     'message' => 'Aucun étudiant trouvé pour cette date',
-                    'date' => $date
+                    'date' => $date,
                 ], 200);
             }
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Erreur lors du traitement',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
 
-    function getAbsencesToDay()
+    public function getAbsencesToDay()
     {
         try {
             $today = Carbon::today()->format('Y-m-d');
@@ -99,31 +88,30 @@ class ExportController extends Controller
                     'success' => true,
                     'date' => $today,
                     'count' => $absences->count(),
-                    'data' => $absences
+                    'data' => $absences,
                 ], 200);
             } else {
                 return response()->json([
                     'success' => false,
                     'message' => 'Aucun étudiant absent trouvé pour aujourd\'hui',
-                    'date' => $today
+                    'date' => $today,
                 ], 200);
             }
         } catch (Exception $e) {
             return response()->json([
                 'error' => 'Erreur lors du traitement',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
 
-
-    function getStatutAndByDate(Request $request)
+    public function getStatutAndByDate(Request $request)
     {
         try {
             $date = $request->input('date', Carbon::today()->format('Y-m-d'));
             $statut = $request->input('statut');
 
-            $absences = DB::select("
+            $absences = DB::select('
                 SELECT 
                     users.id,
                     users.nom,
@@ -142,7 +130,7 @@ class ExportController extends Controller
                 JOIN cours ON seances.cours_id = cours.id
                 WHERE presences.created_at::date = ?
                   AND presences.statut = ?
-            ", [$date, $statut]);
+            ', [$date, $statut]);
 
             return response()->json([
                 'success' => true,
@@ -151,12 +139,12 @@ class ExportController extends Controller
                 'count' => count($absences),
                 'data' => $absences,
                 'date_demander' => Carbon::parse($date)->format('Y-m-d'),
-                "statut_demander" => $statut
+                'statut_demander' => $statut,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Erreur lors du traitement',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
