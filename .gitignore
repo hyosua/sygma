@@ -47,6 +47,7 @@ Thumbs.db
 .specify
 .gemini
 GEMINI.md
+CLAUDE.md
 .claude
 .laravel-docs
 CLAUDE.local.md
