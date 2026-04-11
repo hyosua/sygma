@@ -92,7 +92,7 @@ Demandez les variables d'environnement si elles ne vous ont pas été communiqu�
 
 ### 2. Lancer l'installation
 ```bash
-make install
+(which make || sudo apt install make) && make install
 ```
 Cette commande s'occupe de tout : build des images, installation des dépendances, génération de la clé applicative, migrations et seed.
 
