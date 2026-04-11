@@ -1,22 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import './ScanPresence.css';
 
 const ScanPresence = () => {
   const [statut, setStatut] = useState('chargement'); // chargement, lecture, validation, succes, erreur
   const [message, setMessage] = useState('');
-  const [localisation, setLocalisation] = useState(null);
   const scannerRef = useRef(null);
+  // Ref miroir pour éviter la closure stale sur localisation
+  const localisationRef = useRef(null);
+  // Garde-fou : empêche handleEmargement de s'exécuter plusieurs fois
+  const dejaTraiteRef = useRef(false);
 
   useEffect(() => {
-    // Demander la géolocalisation dès le chargement de la page
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setLocalisation({
+          localisationRef.current = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          });
+          };
         },
         (erreur) => {
           console.error('Erreur de géolocalisation', erreur);
@@ -26,8 +28,11 @@ const ScanPresence = () => {
     }
   }, []);
 
-  const handleEmargement = async (donnees) => {
-    // On arrête le scanner dès qu'un code est lu
+  const handleEmargement = useCallback(async (donnees) => {
+    // Le scanner détecte en boucle — on n'exécute qu'une seule fois
+    if (dejaTraiteRef.current) return;
+    dejaTraiteRef.current = true;
+
     if (scannerRef.current && scannerRef.current.isScanning) {
       try {
         await scannerRef.current.stop();
@@ -58,8 +63,8 @@ const ScanPresence = () => {
         },
         body: JSON.stringify({
           jeton: jeton,
-          latitude: localisation?.latitude,
-          longitude: localisation?.longitude,
+          latitude: localisationRef.current?.latitude,
+          longitude: localisationRef.current?.longitude,
         }),
       });
 
@@ -77,33 +82,26 @@ const ScanPresence = () => {
       setMessage('Impossible de contacter le serveur. Vérifiez votre connexion.');
       console.error("Erreur lors de la validation de l'émargement", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    let html5QrCode = new Html5Qrcode('reader');
+    const html5QrCode = new Html5Qrcode('reader');
     scannerRef.current = html5QrCode;
+    let monte = true;
 
     const startScanner = async () => {
-      const config = {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-      };
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
       try {
-        setStatut('chargement');
         await html5QrCode.start(
           { facingMode: 'environment' },
           config,
-          (decodedText) => {
-            handleEmargement(decodedText);
-          },
-          () => {
-            // Erreurs de scan continu ignorées
-          }
+          (decodedText) => handleEmargement(decodedText),
+          () => {}
         );
-        setStatut('lecture');
+        if (monte) setStatut('lecture');
       } catch (err) {
-        // Ignorer si le scanner est déjà démarré
+        if (!monte) return;
         if (typeof err === 'string' && err.includes('already started')) {
           setStatut('lecture');
           return;
@@ -117,19 +115,25 @@ const ScanPresence = () => {
     startScanner();
 
     return () => {
+      monte = false;
       const stopScanner = async () => {
-        if (html5QrCode && html5QrCode.isScanning) {
+        if (html5QrCode.isScanning) {
           try {
             await html5QrCode.stop();
           } catch (e) {
             console.warn("Erreur lors de l'arrêt du scanner:", e);
           }
         }
+        // Nettoie le DOM pour éviter le double rendu en StrictMode
+        try {
+          html5QrCode.clear();
+        } catch (e) {
+          console.warn('Erreur lors du clear du scanner:', e);
+        }
       };
       stopScanner();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handleEmargement]);
 
   return (
     <div className="scan-container">
