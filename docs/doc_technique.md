@@ -52,28 +52,27 @@ L'application suit une architecture **client-serveur** découplée :
 - Le **backend** (Laravel) expose une API JSON préfixée `/api`
 - Les deux communiquent exclusivement en JSON
 
-```
-Navigateur / Mobile
-       │
-       │ HTTP/JSON
-       ▼
-  API Laravel (/api)
-       │
-  ┌────┴────┐
-  │  Routes │
-  └────┬────┘
-       │
-  ┌────┴────────┐
-  │ Contrôleurs │  — validation des entrées, orchestration
-  └────┬────────┘
-       │
-  ┌────┴────┐
-  │ Services │  — logique métier
-  └────┬────┘
-       │
-  ┌────┴────┐
-  │ Modèles │  — accès base de données (Eloquent ORM)
-  └─────────┘
+```mermaid
+flowchart TD
+    A["Navigateur / Mobile"]
+    B["API Laravel /api"]
+    C["Routes"]
+    D["Contrôleurs\nvalidation des entrées, orchestration"]
+    E["Services\nlogique métier"]
+    F["Modèles\naccès base de données — Eloquent ORM"]
+
+    A -- "HTTP / JSON" --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+
+    style A fill:#dbeafe,stroke:#93c5fd,color:#1e3a5f
+    style B fill:#ede9fe,stroke:#c4b5fd,color:#3b0764
+    style C fill:#fce7f3,stroke:#f9a8d4,color:#500724
+    style D fill:#d1fae5,stroke:#6ee7b7,color:#064e3b
+    style E fill:#fef9c3,stroke:#fde047,color:#713f12
+    style F fill:#fee2e2,stroke:#fca5a5,color:#7f1d1d
 ```
 
 ---
@@ -160,12 +159,23 @@ app/Exceptions/
 
 Les exceptions métier ne sont **jamais catchées dans les contrôleurs**. Elles remontent automatiquement jusqu'au gestionnaire global `app/Exceptions/Handler.php`, qui les traduit en réponses JSON cohérentes.
 
-```
-Contrôleur → Service → Exception levée
-                  ↓ (non catchée)
-         app/Exceptions/Handler.php
-                  ↓
-         Réponse JSON avec le bon code HTTP
+```mermaid
+flowchart LR
+    A["Contrôleur"]
+    B["Service"]
+    C["Exception levée"]
+    D["Handler.php\napp/Exceptions/Handler.php"]
+    E["Réponse JSON\navec le bon code HTTP"]
+
+    A --> B --> C
+    C -- "non catchée\n(remonte automatiquement)" --> D
+    D --> E
+
+    style A fill:#d1fae5,stroke:#6ee7b7,color:#064e3b
+    style B fill:#fef9c3,stroke:#fde047,color:#713f12
+    style C fill:#fee2e2,stroke:#fca5a5,color:#7f1d1d
+    style D fill:#ede9fe,stroke:#c4b5fd,color:#3b0764
+    style E fill:#dbeafe,stroke:#93c5fd,color:#1e3a5f
 ```
 
 Ce choix évite la duplication de code et garantit une réponse uniforme sur toutes les routes.
