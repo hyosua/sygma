@@ -26,11 +26,15 @@ install:
 	@echo "$(GREEN)Installation terminee !$(NC)"
 	@echo "Front-end : http://localhost:3000"
 	@echo "Back-end  : http://localhost:8000"
+	@echo "Adminer   : http://localhost:8080"
 	git config core.hooksPath .githooks
 
 start:
 	docker compose up -d
 	@echo "$(GREEN)Services demarres !$(NC)"
+	@echo "Front-end : http://localhost:3000"
+	@echo "Back-end  : http://localhost:8000"
+	@echo "Adminer   : http://localhost:8080"
 
 stop:
 	docker compose stop
@@ -40,6 +44,9 @@ restart:
 	docker compose stop
 	docker compose up -d
 	@echo "$(GREEN)Services redemarres !$(NC)"
+	@echo "Front-end : http://localhost:3000"
+	@echo "Back-end  : http://localhost:8000"
+	@echo "Adminer   : http://localhost:8080"
 
 mobile:
 	@bash scripts/mobile.sh
@@ -54,6 +61,9 @@ repair:
 	docker compose run --rm $(DOCKER_USER) frontend npm install
 	docker compose run --rm $(DOCKER_USER) backend php artisan migrate
 	docker compose restart
+	@echo "Front-end : http://localhost:3000"
+	@echo "Back-end  : http://localhost:8000"
+	@echo "Adminer   : http://localhost:8080"
 
 update:
 	@echo "$(GREEN)Mise a jour de l'environnement...$(NC)"
@@ -62,6 +72,9 @@ update:
 	docker compose run --rm $(DOCKER_USER) frontend npm install
 	docker compose run --rm $(DOCKER_USER) backend php artisan migrate
 	@echo "$(GREEN)Environnement a jour !$(NC)"
+	@echo "Front-end : http://localhost:3000"
+	@echo "Back-end  : http://localhost:8000"
+	@echo "Adminer   : http://localhost:8080"
 
 fresh:
 	docker compose exec $(DOCKER_USER) backend php artisan migrate:fresh --seed
