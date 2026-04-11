@@ -34,7 +34,7 @@ Sygma est une application web de gestion de présence numérique destinée aux �
 | Composant | Technologie |
 |---|---|
 | Backend | Laravel 11 (PHP 8.3), API REST |
-| Frontend | Vue.js 3 / Vite |
+| Frontend | React / Vite |
 | Base de données (prod) | MySQL (via Docker) |
 | Base de données (tests) | PostgreSQL (`sygma_test`, isolée de la base de dev) |
 | Authentification | Laravel Sanctum |
@@ -48,7 +48,7 @@ Sygma est une application web de gestion de présence numérique destinée aux �
 
 L'application suit une architecture **client-serveur** découplée :
 
-- Le **frontend** (Vue.js) consomme l'API REST via des appels HTTP
+- Le **frontend** (React) consomme l'API REST via des appels HTTP
 - Le **backend** (Laravel) expose une API JSON préfixée `/api`
 - Les deux communiquent exclusivement en JSON
 

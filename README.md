@@ -129,23 +129,7 @@ Les modifications de code sont visibles en temps réel. Pour arrêter : `make st
 
 ## 6. Procédure Git & Collaboration
 
-### Nouvelle tâche
-Créez toujours une branche dédiée :
-```bash
-git checkout -b "feat/ma-fonctionnalite"
-```
-
-### Avant de push
-```bash
-git add .
-git commit -m "Message clair et concis"
-git pull origin main  # Fusionner le travail récent des autres
-```
-
-### Envoyer
-```bash
-git push origin feat/ma-fonctionnalite
-```
+Le workflow complet (branches, rebase, PRs, conventions) est documenté dans **[CONTRIBUTING.md](./CONTRIBUTING.md)**.
 
 ---
 
@@ -254,8 +238,6 @@ La commande affiche l'URL `/enseignant/session/{id}` à ouvrir directement.
 
 ### Exécuter les tests
 
-Les tests tournent sur une base PostgreSQL dédiée (`sygma_test`), isolée de la base principale.
-
 ```bash
 make test
 ```
@@ -269,6 +251,8 @@ make artisan test --filter GroupManagementTest
 ```
 
 > `make artisan test` ne crée pas la base `sygma_test` automatiquement. Utiliser `make test` pour le premier lancement.
+
+Pour l'architecture des tests (isolation `sygma_test`, couverture), voir [docs/doc_technique.md](./docs/doc_technique.md#tests).
 
 ---
 
