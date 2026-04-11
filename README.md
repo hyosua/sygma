@@ -83,9 +83,10 @@ code .
 
 ## 4. Installation (commun)
 
-### 1. Copier le fichier d'environnement
+### 1. Copier les fichiers d'environnement
 ```bash
 cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
 ```
 Demandez les variables d'environnement si elles ne vous ont pas été communiquées.
 
