@@ -8,40 +8,30 @@
 - Hyosua Colleter
 
 ## Table des matières
-1. [Configuration de l'environnement](#1-configuration-de-lenvironnement)
-2. [Clonage du dépôt](#2-clonage-du-dépôt)
-3. [Installation](#3-installation)
-4. [Session de travail quotidienne](#4-session-de-travail-quotidienne)
-5. [Procédure Git & Collaboration](#5-procédure-git--collaboration)
-6. [Accès & Commandes](#6-accès--commandes)
-7. [Référence des commandes Make](#7-référence-des-commandes-make)
-8. [Visualisation de la BDD](#8-visualisation-de-la-bdd)
-9. [Tests & Données de démo](#9-tests--données-de-démo)
-10. [Problèmes courants](#10-problèmes-courants)
+1. [Setup Windows (WSL)](#1-setup-windows-wsl)
+2. [Setup Mac](#2-setup-mac)
+3. [Setup Linux](#3-setup-linux)
+4. [Installation (commun)](#4-installation-commun)
+5. [Session de travail quotidienne](#5-session-de-travail-quotidienne)
+6. [Procédure Git & Collaboration](#6-procédure-git--collaboration)
+7. [Accès & Commandes](#7-accès--commandes)
+8. [Référence des commandes Make](#8-référence-des-commandes-make)
+9. [Visualisation de la BDD](#9-visualisation-de-la-bdd)
+10. [Tests & Données de démo](#10-tests--données-de-démo)
+11. [Problèmes courants](#11-problèmes-courants)
 
 ---
 
-## 1. Configuration de l'environnement
+## 1. Setup Windows (WSL)
 
-### Sur Windows (Recommandé)
+### Prérequis
 - **Docker Desktop** : [Installez-le](https://www.docker.com/products/docker-desktop) et activez le moteur WSL2.
 - **VS Code** : Installez l'extension officielle **WSL** de Microsoft.
-- **Connexion** : Cliquez sur le bouton bleu "><" en bas à gauche de VS Code → **Connect to WSL**.
+- **Connexion WSL** : Cliquez sur le bouton bleu "><" en bas à gauche de VS Code → **Connect to WSL**.
 
-### Sur Linux (natif) ou WSL sans Docker Desktop
-- **Docker** : Installez Docker et Docker Compose V2.
-- **Permissions** : Par défaut, Docker nécessite `sudo`. Pour éviter cela, ajoutez votre utilisateur au groupe `docker` :
-  ```bash
-  sudo usermod -aG docker $USER
-  ```
-  Fermez et réouvrez votre terminal (ou redémarrez WSL avec `wsl --shutdown`) pour que cela soit pris en compte.
+### Clonage
 
----
-
-## 2. Clonage du dépôt
-
-### Sur Windows (via WSL)
-**Ne clonez pas le projet dans vos dossiers Windows (C:\Users...).** Le code doit résider dans le système de fichiers Linux pour que Docker soit performant.
+> **Important :** Ne clonez pas le projet dans vos dossiers Windows (`C:\Users\...`). Le code doit résider dans le système de fichiers Linux pour que Docker soit performant.
 
 ```bash
 cd ~
@@ -51,7 +41,38 @@ cd sygma
 code .
 ```
 
-### Sur Linux
+Passez ensuite à la section [4. Installation](#4-installation-commun).
+
+---
+
+## 2. Setup Mac
+
+### Prérequis
+- **Docker Desktop for Mac** : [Installez-le](https://www.docker.com/products/docker-desktop).
+- **make** : si absent, installez-le via Homebrew :
+  ```bash
+  brew install make
+  ```
+
+### Clonage
+
+```bash
+git clone https://github.com/hyosua/sygma.git
+cd sygma
+code .
+```
+
+Passez ensuite à la section [4. Installation](#4-installation-commun).
+
+---
+
+## 3. Setup Linux
+
+### Prérequis
+- **Docker** et **Docker Compose V2** : installez-les via votre gestionnaire de paquets.
+
+### Clonage
+
 ```bash
 git clone https://github.com/hyosua/sygma.git
 cd sygma
@@ -60,7 +81,7 @@ code .
 
 ---
 
-## 3. Installation
+## 4. Installation (commun)
 
 ### 1. Copier le fichier d'environnement
 ```bash
@@ -94,7 +115,7 @@ docker compose exec backend php artisan migrate --seed
 
 ---
 
-## 4. Session de travail quotidienne
+## 5. Session de travail quotidienne
 
 ```bash
 git pull origin main   # Récupérer le travail des autres
@@ -106,7 +127,7 @@ Les modifications de code sont visibles en temps réel. Pour arrêter : `make st
 
 ---
 
-## 5. Procédure Git & Collaboration
+## 6. Procédure Git & Collaboration
 
 ### Nouvelle tâche
 Créez toujours une branche dédiée :
@@ -128,7 +149,7 @@ git push origin feat/ma-fonctionnalite
 
 ---
 
-## 6. Accès & Commandes
+## 7. Accès & Commandes
 
 | Service | URL / Port |
 |---------|-----------|
@@ -139,7 +160,7 @@ git push origin feat/ma-fonctionnalite
 
 ---
 
-## 7. Référence des commandes Make
+## 8. Référence des commandes Make
 
 ### Cycle de vie du projet
 
@@ -148,10 +169,13 @@ git push origin feat/ma-fonctionnalite
 | `make install` | Premier lancement complet (build + dépendances + migrations + seed) |
 | `make start` | Démarrer les serveurs |
 | `make stop` | Arrêter les serveurs |
+| `make restart` | Redémarrer les serveurs |
 | `make update` | Mettre à jour après un `git pull` (dépendances + migrations) |
 | `make fresh` | Réinitialiser la BDD et repeupler |
 | `make repair` | Réinstaller les dépendances et redémarrer les conteneurs |
 | `make test` | Lancer les tests (base `sygma_test` isolée) |
+| `make mobile` | Activer le mode mobile via ngrok (HTTPS) |
+| `make mobile-stop` | Revenir en mode desktop (localhost) |
 | `make lint-check` | Vérifier le lint (PHP + JS) |
 | `make lint-fix` | Corriger le lint automatiquement |
 
@@ -174,7 +198,7 @@ Ces commandes s'exécutent à l'intérieur des conteneurs Docker. N'installez pa
 
 ---
 
-## 8. Visualisation de la BDD
+## 9. Visualisation de la BDD
 
 Adminer est disponible sur [http://localhost:8080](http://localhost:8080). Connectez-vous avec :
 
@@ -188,7 +212,7 @@ Adminer est disponible sur [http://localhost:8080](http://localhost:8080). Conne
 
 ---
 
-## 9. Tests & Données de démo
+## 10. Tests & Données de démo
 
 ### Peupler la base de données
 
@@ -248,9 +272,19 @@ make artisan test --filter GroupManagementTest
 
 ---
 
-## 10. Problèmes courants
+## 11. Problèmes courants
 
-### Erreurs "Permission Denied" ou obligation d'utiliser `sudo`
+### `docker compose` nécessite `sudo` (Linux uniquement)
+
+Par défaut sur Linux, Docker nécessite `sudo`. Pour éviter cela, ajoutez votre utilisateur au groupe `docker` :
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Fermez et réouvrez votre terminal pour que cela soit pris en compte.
+
+### Erreurs "Permission Denied" sur les fichiers
 
 1. Récupérer la propriété des fichiers :
    ```bash
@@ -258,7 +292,8 @@ make artisan test --filter GroupManagementTest
    ```
 2. Vérifier que `make` est installé :
    ```bash
-   which make || sudo apt install make
+   which make || sudo apt install make   # Linux
+   which make || brew install make       # Mac
    ```
 3. Réinstaller les dépendances et redémarrer :
    ```bash
