@@ -15,9 +15,10 @@ class SeanceController extends Controller
 
     public function getSeances(Request $request)
     {
-        $seances = $this->seanceService->getSeances($request->only(
-            ['enseignant_id', 'groupe_id', 'cours_id', 'date_debut', 'date_fin', 'statut', 'par_page']
-        ));
+        $seances = $this->seanceService->getSeances(
+            $request->only(['enseignant_id', 'groupe_id', 'cours_id', 'date_debut', 'date_fin', 'statut', 'par_page']),
+            $request->user()
+        );
 
         return SeanceResource::collection($seances);
     }

@@ -16,5 +16,6 @@ abstract class FeatureTestCase extends TestCase
 
         Role::create(['name' => 'enseignant', 'guard_name' => 'web']);
         Role::create(['name' => 'etudiant', 'guard_name' => 'web']);
+        Role::create(['name' => 'gestionnaire', 'guard_name' => 'web']);
     }
 }

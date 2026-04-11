@@ -8,15 +8,39 @@ use App\Models\User;
 
 class SeanceControllerTest extends FeatureTestCase
 {
-    public function test_peut_recuperer_la_liste_des_seances(): void
+    public function test_enseignant_voit_uniquement_ses_seances(): void
     {
         $enseignant = User::factory()->enseignant()->create();
-        Seance::factory()->count(3)->create();
+        Seance::factory()->count(2)->create(['enseignant_id' => $enseignant->id]);
+        Seance::factory()->count(3)->create(); // autres enseignants
 
         $response = $this->actingAs($enseignant)->getJson('/api/seances');
 
         $response->assertStatus(200)
-            ->assertJsonCount(3);
+            ->assertJsonCount(2, 'data');
+    }
+
+    public function test_gestionnaire_voit_toutes_les_seances(): void
+    {
+        $gestionnaire = User::factory()->gestionnaire()->create();
+        Seance::factory()->count(4)->create();
+
+        $response = $this->actingAs($gestionnaire)->getJson('/api/seances');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(4, 'data');
+    }
+
+    public function test_etudiant_voit_uniquement_les_seances_de_son_groupe(): void
+    {
+        $etudiant = User::factory()->etudiant()->create();
+        Seance::factory()->count(2)->create(['groupe_id' => $etudiant->groupe_id]);
+        Seance::factory()->count(3)->create(); // autres groupes
+
+        $response = $this->actingAs($etudiant)->getJson('/api/seances');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(2, 'data');
     }
 
     public function test_peut_recuperer_une_seance_avec_ses_relations(): void
@@ -50,11 +74,12 @@ class SeanceControllerTest extends FeatureTestCase
     public function test_liste_seances_vide_retourne_tableau_vide(): void
     {
         $enseignant = User::factory()->enseignant()->create();
+        Seance::factory()->count(2)->create(); // séances d'autres enseignants
 
         $response = $this->actingAs($enseignant)->getJson('/api/seances');
 
         $response->assertStatus(200)
-            ->assertJson([]);
+            ->assertJsonCount(0, 'data');
     }
 
     public function test_seance_retourne_les_bons_champs_de_date(): void

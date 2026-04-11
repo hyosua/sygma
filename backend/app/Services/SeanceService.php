@@ -6,21 +6,30 @@ use App\Exceptions\Seance\ConflitSeanceException;
 use App\Exceptions\Seance\SalleOccupeeException;
 use App\Exceptions\Seance\SessionEmargementActiveException;
 use App\Models\Seance;
+use App\Models\User;
 use Illuminate\Support\Collection;
 
 class SeanceService
 {
-    // / Récupère les séances en fonction des filtres fournis
-    public function getSeances(array $filtres = []): \Illuminate\Pagination\LengthAwarePaginator|Collection
+    // Récupère les séances en fonction des filtres fournis et du rôle de l'utilisateur
+    public function getSeances(array $filtres = [], ?User $utilisateur = null): \Illuminate\Pagination\LengthAwarePaginator|Collection
     {
         $query = Seance::query();
 
-        if (isset($filtres['enseignant_id'])) {
-            $query->where('enseignant_id', $filtres['enseignant_id']);
-        }
+        // Filtre par défaut selon le rôle de l'utilisateur authentifié
+        if ($utilisateur && $utilisateur->hasRole('enseignant')) {
+            $query->where('enseignant_id', $utilisateur->id);
+        } elseif ($utilisateur && $utilisateur->hasRole('etudiant')) {
+            $query->where('groupe_id', $utilisateur->groupe_id);
+        } else {
+            // gestionnaire : filtres optionnels fournis par le client
+            if (isset($filtres['enseignant_id'])) {
+                $query->where('enseignant_id', $filtres['enseignant_id']);
+            }
 
-        if (isset($filtres['groupe_id'])) {
-            $query->where('groupe_id', $filtres['groupe_id']);
+            if (isset($filtres['groupe_id'])) {
+                $query->where('groupe_id', $filtres['groupe_id']);
+            }
         }
 
         if (isset($filtres['cours_id'])) {
