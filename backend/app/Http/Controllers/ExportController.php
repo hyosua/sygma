@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use Exception;  // AJOUTEZ CETTE LIGNE
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\StatutExport;
 
 class ExportController extends Controller
 {
@@ -111,36 +113,7 @@ class ExportController extends Controller
             $date = $request->input('date', Carbon::today()->format('Y-m-d'));
             $statut = $request->input('statut');
 
-            $absences = DB::select('
-                SELECT 
-                    users.id,
-                    users.nom,
-                    users.prenom,
-                    users.email,
-                    users.created_at AS user_created_at,
-                    users.updated_at AS user_updated_at,
-                    cours.nom AS cours_nom,
-                    cours.created_at AS cours_created_at,
-                    cours.updated_at AS cours_updated_at,
-                    presences.created_at AS presence_date
-                FROM presences 
-                JOIN sessions_emargement ON presences.session_emargement_id = sessions_emargement.id
-                JOIN seances ON sessions_emargement.seance_id = seances.id 
-                JOIN users ON presences.etudiant_id = users.id
-                JOIN cours ON seances.cours_id = cours.id
-                WHERE presences.created_at::date = ?
-                  AND presences.statut = ?
-            ', [$date, $statut]);
-
-            return response()->json([
-                'success' => true,
-                'date' => $date,
-                'statut' => $statut,
-                'count' => count($absences),
-                'data' => $absences,
-                'date_demander' => Carbon::parse($date)->format('Y-m-d'),
-                'statut_demander' => $statut,
-            ], 200);
+            return Excel::download(new StatutExport($date, $statut), "statut_{$statut}_{$date}.xlsx");
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Erreur lors du traitement',

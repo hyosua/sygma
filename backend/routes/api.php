@@ -88,5 +88,5 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 
 // Export
 Route::get('/getExport', [ExportController::class, 'getSessionByDate']);
-Route::get('/getByToday', [ExportController::class, 'getAbsencesToDay']);
+Route::get('/getByDay', [ExportController::class, 'getAbsencesToDay']);
 Route::get('/getStatutAndByDate', [ExportController::class, 'getStatutAndByDate']);
