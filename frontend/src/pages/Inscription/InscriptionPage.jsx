@@ -3,11 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import '../Login/LoginChoicePage.css';
 import './InscriptionPage.css';
 
-const REDIRECTIONS = {
-  etudiant: '/etudiant/mes-cours',
-  enseignant: '/enseignant/mes-cours',
-};
-
 export default function InscriptionPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -36,9 +31,7 @@ export default function InscriptionPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        navigate(REDIRECTIONS[form.role]);
+        navigate('/email/confirmer');
       } else {
         const messages = data.errors ? Object.values(data.errors).flat().join(' ') : data.message;
         setErreur(messages || "Erreur lors de l'inscription.");

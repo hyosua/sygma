@@ -6,6 +6,8 @@ import MesCoursEtudiantPage from './pages/Etudiant/MesCoursEtudiantPage';
 import ScanPresence from './pages/Etudiant/ScanPresence';
 import LoginChoicePage from './pages/Login/LoginChoicePage';
 import InscriptionPage from './pages/Inscription/InscriptionPage';
+import EmailConfirmerPage from './pages/Email/EmailConfirmerPage';
+import EmailVerifyPage from './pages/Email/EmailVerifyPage';
 import './App.css';
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
 
         <Route path="/login" element={<LoginChoicePage />} />
         <Route path="/inscription" element={<InscriptionPage />} />
+        <Route path="/email/confirmer" element={<EmailConfirmerPage />} />
+        <Route path="/email/verify/:token" element={<EmailVerifyPage />} />
 
         <Route path="/gestionnaire" element={<div>Page gestionnaire</div>} />
 

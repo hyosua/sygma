@@ -33,6 +33,8 @@ class User extends Authenticatable
         'ine',
         'specialites',
         'groupe_id',
+        'verification_token',
+        'verification_token_expires_at',
     ];
 
     /**
@@ -54,6 +56,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'verification_token_expires_at' => 'datetime',
             'password' => 'hashed',
             'premiere_connexion' => 'boolean',
             'specialites' => 'array',

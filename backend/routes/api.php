@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 // Publique
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+Route::get('email/verify/{token}', [AuthController::class, 'verifierEmail']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 /*
