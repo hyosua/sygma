@@ -31,7 +31,8 @@ class StatutExport implements FromQuery, WithHeadings
                 'presences.created_at as presence_date'
             )
             ->whereDate('presences.created_at', $this->date)
-            ->where('presences.statut', $this->statut);
+            ->where('presences.statut', $this->statut)
+            ->orderBy('presences.created_at');
     }
 
     public function headings(): array
