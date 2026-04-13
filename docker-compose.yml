@@ -108,6 +108,19 @@ services:
       - sygma-network
 
 
+  mailpit:
+    image: axllent/mailpit
+    container_name: sygma-mailpit
+    restart: unless-stopped
+
+    ports:
+      - "8025:8025"   # interface web
+      - "1025:1025"   # SMTP
+
+    networks:
+      - sygma-network
+
+
 networks:
   sygma-network:
     driver: bridge
