@@ -5,6 +5,7 @@ import MesCoursPage from './pages/Enseignant/MesCoursPage';
 import MesCoursEtudiantPage from './pages/Etudiant/MesCoursEtudiantPage';
 import ScanPresence from './pages/Etudiant/ScanPresence';
 import LoginChoicePage from './pages/Login/LoginChoicePage';
+import InscriptionPage from './pages/Inscription/InscriptionPage';
 import './App.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
 
         <Route path="/login" element={<LoginChoicePage />} />
+        <Route path="/inscription" element={<InscriptionPage />} />
 
         <Route path="/gestionnaire" element={<div>Page gestionnaire</div>} />
 

@@ -29,7 +29,7 @@
 
 - **Packages à ajouter**
   - Phase 3 : `laravel/socialite` + `socialiteproviders/google`
-  - Phase 5 : `maatwebsite/excel` ou `league/csv`
+  - Phase 5 : `maatwebsite/excel`
 
 ---
 
@@ -44,12 +44,12 @@ Formulaire `/inscription` (nom, prénom, email, mot de passe, rôle) connecté �
 
 ### Critères d'acceptation
 
-- [ ] `POST /register` crée un compte avec le rôle `etudiant` ou `enseignant` et retourne un token Sanctum
-- [ ] Un email déjà utilisé retourne une erreur 409
-- [ ] Un rôle autre que `etudiant` / `enseignant` est refusé (422)
-- [ ] Page `/inscription` : formulaire fonctionnel, erreurs affichées, redirection vers l'espace utilisateur après succès
-- [ ] Lien "Créer un compte" visible sur la page de login et pointe vers `/inscription`
-- [ ] Tests feature : inscription valide (etudiant), inscription valide (enseignant), email dupliqué, rôle invalide
+- [x] `POST /register` crée un compte avec le rôle `etudiant` ou `enseignant` et retourne un token Sanctum
+- [x] Un email déjà utilisé retourne une erreur 409
+- [x] Un rôle autre que `etudiant` / `enseignant` est refusé (422)
+- [x] Page `/inscription` : formulaire fonctionnel, erreurs affichées, redirection vers l'espace utilisateur après succès
+- [x] Lien "Créer un compte" visible sur la page de login et pointe vers `/inscription`
+- [x] Tests feature : inscription valide (etudiant), inscription valide (enseignant), email dupliqué, rôle invalide
 
 ---
 

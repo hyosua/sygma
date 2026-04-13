@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './LoginChoicePage.css';
 
 const ROLES = {
@@ -83,6 +83,9 @@ export default function LoginChoicePage() {
                 {config.label}
               </button>
             ))}
+            <Link to="/inscription" className="login-creer-compte">
+              Créer un compte
+            </Link>
           </div>
         </div>
       </div>
