@@ -29,6 +29,34 @@ class AuthController extends Controller
         ], 200);
     }
 
+    public function register(Request $req)
+    {
+        $req->validate([
+            'nom' => 'required|string',
+            'prenom' => 'required|string',
+            'email' => 'required|email',
+            'password' => 'required|min:8',
+            'role' => 'required|in:etudiant,enseignant',
+        ]);
+
+        if (User::where('email', $req->email)->exists()) {
+            return response()->json(['message' => 'Un compte existe déjà avec cet email.'], 409);
+        }
+
+        $user = User::create([
+            'nom' => $req->nom,
+            'prenom' => $req->prenom,
+            'email' => $req->email,
+            'password' => Hash::make($req->password),
+        ]);
+
+        $user->assignRole($req->role);
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return response()->json(['user' => $user, 'token' => $token], 201);
+    }
+
     public function logout(Request $req)
     {
         $req->user()->currentAccessToken()->delete();
