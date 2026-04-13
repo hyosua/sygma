@@ -31,6 +31,10 @@ Ce document est destiné aux développeurs frontend. Il décrit les endpoints di
   - [Créer un cours](#créer-un-cours)
   - [Modifier un cours](#modifier-un-cours)
   - [Supprimer un cours](#supprimer-un-cours)
+- [Export de donner](#export-de-donner)
+  - [Récupérer les sessions par date](#récupérer-les-sessions-par-date)
+  - [Récupérer les absences du jour](#récupérer-les-absences-du-jour)
+  - [Exporter statut par date](#exporter-statut-par-date)
 - [Notes](#notes)
 
 ---
@@ -391,6 +395,78 @@ DELETE /Cours/Supprimer/{id}
 
 **Réponse 200** — `"Le cours a bien été supprimé"`
 **Réponse 404** — `"Le cours n'a pas été trouvé"`
+
+---
+
+## Export de donner
+
+### Récupérer les sessions par date
+
+```
+GET /getExport
+```
+
+**Paramètres (query string)**
+
+| Paramètre | Type   | Description                 |
+| --------- | ------ | --------------------------- |
+| `date`    | string | Date au format `YYYY-MM-DD` |
+
+**Réponse 200**
+
+```json
+{
+  "success": true,
+  "date": "2026-03-12",
+  "count": 12,
+  "data": [ ... ]
+}
+```
+
+---
+
+### Récupérer les absences du jour
+
+```
+GET /getByDay
+```
+
+**Réponse 200**
+
+```json
+{
+  "success": true,
+  "date": "2026-03-12",
+  "count": 5,
+  "data": [ ... ]
+}
+```
+
+---
+
+### Exporter statut par date
+
+```
+GET /getStatutAndByDate
+```
+
+**Paramètres (query string)**
+
+| Paramètre | Type   | Description |
+| --------- | ------ | ----------- |
+| `date`    | string | Date au format `YYYY-MM-DD` (optionnel, défaut : aujourd'hui) |
+| `statut`  | string | Statut de présence : `present` ou `absent` |
+| `type`    | string | `E` pour Excel, `P` pour PDF |
+
+**Réponse 200**
+
+- Télécharge un fichier Excel ou PDF selon le paramètre `type`.
+
+**Erreurs possibles**
+
+| Code | Message |
+| ---- | ------- |
+| 403  | `Aucun type cohérent choisi : choisissez E pour Excel ou P pour PDF` |
 
 ---
 
