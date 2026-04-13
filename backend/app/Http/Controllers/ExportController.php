@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\StatutExport;
+use Barryvdh\DomPDF\Facade\Pdf;  
 
 class ExportController extends Controller
 {
@@ -92,6 +93,7 @@ class ExportController extends Controller
                     'count' => $absences->count(),
                     'data' => $absences,
                 ], 200);
+                
             } else {
                 return response()->json([
                     'success' => false,
@@ -112,6 +114,9 @@ class ExportController extends Controller
         try {
             $date = $request->input('date', Carbon::today()->format('Y-m-d'));
             $statut = $request->input('statut');
+            $type = $request->input('type');
+
+           
 
             $absences = DB::select('
                 SELECT 
@@ -134,12 +139,28 @@ class ExportController extends Controller
                   AND presences.statut = ?
             ', [$date, $statut]);
 
-             // Convertir les objets en tableaux associatifs
-            $data = array_map(function ($row) {
+             $data = array_map(function ($row) {
             return (array) $row;
             }, $absences);
 
-            return Excel::download(new StatutExport($date, $statut), "statut_{$statut}_{$date}.xlsx");
+            if ($type == "E") {
+                return Excel::download(new StatutExport($date, $statut), "statut_{$statut}_{$date}.xlsx");
+            } elseif ($type == "P") {
+                $Nombre = count($data);
+
+                $pdf = Pdf::loadView('pdf.liste-personnes', [
+                    'items' => $data,
+                    'date' => $date,
+                    'statut' => $statut,
+                    'Nombre' => $Nombre,
+                ]);
+                
+
+                return $pdf->stream("statut_{$statut}_{$date}.pdf");
+            } else {
+                return response()->json("Aucun type cohérent choisi : choisissez E pour Excel ou P pour PDF", 403);
+            }
+            
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Erreur lors du traitement',
