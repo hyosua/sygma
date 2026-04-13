@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StatutExport;
 use App\Models\Presence;
+use Barryvdh\DomPDF\Facade\Pdf;  // AJOUTEZ CETTE LIGNE
 use Carbon\Carbon;
-use Exception;  // AJOUTEZ CETTE LIGNE
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\StatutExport;
-use Barryvdh\DomPDF\Facade\Pdf;  
 
 class ExportController extends Controller
 {
@@ -93,7 +93,6 @@ class ExportController extends Controller
                     'count' => $absences->count(),
                     'data' => $absences,
                 ], 200);
-                
             } else {
                 return response()->json([
                     'success' => false,
@@ -116,51 +115,47 @@ class ExportController extends Controller
             $statut = $request->input('statut');
             $type = $request->input('type');
 
-           
-
             $absences = DB::select('
-                SELECT 
+                SELECT
                     users.id,
                     users.nom,
                     users.prenom,
                     users.email,
-                    users.created_at AS user_created_at,
-                    users.updated_at AS user_updated_at,
                     cours.nom AS cours_nom,
-                    cours.created_at AS cours_created_at,
-                    cours.updated_at AS cours_updated_at,
-                    presences.created_at AS presence_date
-                FROM presences 
+                    seances.debut_a AS presence_date
+                FROM presences
                 JOIN sessions_emargement ON presences.session_emargement_id = sessions_emargement.id
-                JOIN seances ON sessions_emargement.seance_id = seances.id 
+                JOIN seances ON sessions_emargement.seance_id = seances.id
                 JOIN users ON presences.etudiant_id = users.id
                 JOIN cours ON seances.cours_id = cours.id
-                WHERE presences.created_at::date = ?
+                WHERE seances.debut_a::date = ?
                   AND presences.statut = ?
             ', [$date, $statut]);
 
-             $data = array_map(function ($row) {
-            return (array) $row;
-            }, $absences);
+            $data = array_map(fn ($row) => (array) $row, $absences);
 
-            if ($type == "E") {
+            if ($type === 'E') {
                 return Excel::download(new StatutExport($date, $statut), "statut_{$statut}_{$date}.xlsx");
-            } elseif ($type == "P") {
-                $Nombre = count($data);
+            } elseif ($type === 'P') {
+                $nombre = count($data);
 
                 $pdf = Pdf::loadView('pdf.liste-personnes', [
                     'items' => $data,
                     'date' => $date,
                     'statut' => $statut,
-                    'Nombre' => $Nombre,
+                    'Nombre' => $nombre,
                 ]);
-                
 
                 return $pdf->stream("statut_{$statut}_{$date}.pdf");
-            } else {
-                return response()->json("Aucun type cohérent choisi : choisissez E pour Excel ou P pour PDF", 403);
             }
-            
+
+            return response()->json([
+                'success' => true,
+                'date' => $date,
+                'statut' => $statut,
+                'count' => count($data),
+                'data' => $data,
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Erreur lors du traitement',

@@ -2,13 +2,15 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromQuery;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 class StatutExport implements FromQuery, WithHeadings
 {
-    protected $date, $statut;
+    protected $date;
+
+    protected $statut;
 
     public function __construct($date, $statut)
     {
@@ -24,19 +26,20 @@ class StatutExport implements FromQuery, WithHeadings
             ->join('users', 'presences.etudiant_id', '=', 'users.id')
             ->join('cours', 'seances.cours_id', '=', 'cours.id')
             ->select(
-                'users.id', 'users.nom', 'users.prenom', 'users.email',
-                'users.created_at as user_created_at', 'users.updated_at as user_updated_at',
+                'users.id',
+                'users.nom',
+                'users.prenom',
+                'users.email',
                 'cours.nom as cours_nom',
-                'cours.created_at as cours_created_at', 'cours.updated_at as cours_updated_at',
-                'presences.created_at as presence_date'
+                'seances.debut_a as presence_date'
             )
-            ->whereDate('presences.created_at', $this->date)
+            ->whereDate('seances.debut_a', $this->date)
             ->where('presences.statut', $this->statut)
-            ->orderBy('presences.created_at');
+            ->orderBy('seances.debut_a');
     }
 
     public function headings(): array
     {
-        return ['id', 'nom', 'prenom', 'email', 'user_created_at', 'user_updated_at', 'cours_nom', 'cours_created_at', 'cours_updated_at', 'presence_date'];
+        return ['id', 'nom', 'prenom', 'email', 'cours', 'date_seance'];
     }
 }
