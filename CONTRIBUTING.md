@@ -85,6 +85,21 @@ git checkout -b "feat/ma-super-idee"
 
 ---
 
+## Variables d'environnement (.env)
+
+Le fichier `backend/.env` n'est pas versionné. Copie `backend/.env.example` pour démarrer, puis assure-toi d'avoir ces valeurs pour le développement local :
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_FROM_ADDRESS="hello@sygma.com"
+```
+
+Les emails sont interceptés par **Mailpit** (pas envoyés réellement). Interface web accessible sur `http://localhost:8025`.
+
+---
+
 ## Le Workflow Docker : La Regle d'Or
 
 C'est super simple :
