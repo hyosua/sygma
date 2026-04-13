@@ -187,7 +187,7 @@ class DatabaseSeeder extends Seeder
 
         // 6. Séances actives avec session en cours (autres enseignants uniquement)
         $this->command->info('Création des séances actives avec sessions d\'émargement en cours...');
-        $groupes = Groupe::all();
+        $groupes = Groupe::where('id', '!=', $groupeDemo->id)->get();
         $nbSessions = 0;
 
         foreach ($groupes as $groupe) {
