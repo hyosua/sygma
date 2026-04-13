@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 // Publique
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 /*
 * Enseignants
@@ -83,9 +84,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Déconnexion
     Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 });
-// Connexion
-Route::post('login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 // Export
 Route::middleware('auth:sanctum')->group(function () {

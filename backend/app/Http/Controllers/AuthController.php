@@ -43,6 +43,10 @@ class AuthController extends Controller
             return response()->json(['message' => 'Un compte existe déjà avec cet email.'], 409);
         }
 
+        if (! in_array($req->role, ['etudiant', 'enseignant'])) {
+            return response()->json(['message' => 'Rôle invalide.'], 400);
+        }
+
         $user = User::create([
             'nom' => $req->nom,
             'prenom' => $req->prenom,
