@@ -37,14 +37,10 @@ class AuthController extends Controller
         $req->validate([
             'nom' => 'required|string',
             'prenom' => 'required|string',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
             'role' => 'required|in:etudiant,enseignant',
         ]);
-
-        if (User::where('email', $req->email)->exists()) {
-            return response()->json(['message' => 'Un compte existe déjà avec cet email.'], 409);
-        }
 
         $tokenVerification = Str::uuid()->toString();
 

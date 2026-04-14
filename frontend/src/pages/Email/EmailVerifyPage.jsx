@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import '../Login/LoginChoicePage.css';
 
 const REDIRECTIONS = {
@@ -50,7 +50,7 @@ export default function EmailVerifyPage() {
             <h1 className="login-title">Lien invalide</h1>
             <p style={{ color: '#e55', marginTop: '1rem' }}>{erreur}</p>
             <p style={{ marginTop: '1.5rem' }}>
-              <a href="/inscription">Créer un nouveau compte</a>
+              <Link to="/inscription">Créer un nouveau compte</Link>
             </p>
           </>
         ) : (

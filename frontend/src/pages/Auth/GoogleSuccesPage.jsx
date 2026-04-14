@@ -43,5 +43,18 @@ export default function GoogleSuccesPage() {
     recupererUtilisateur();
   }, [searchParams, navigate]);
 
-  return null;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+      }}
+    >
+      <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Connexion réussie !</h1>
+      <p style={{ fontSize: '1.2rem' }}>Vous allez être redirigé automatiquement.</p>
+    </div>
+  );
 }

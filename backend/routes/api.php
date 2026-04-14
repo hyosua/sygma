@@ -83,9 +83,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/seances', [SeanceController::class, 'getSeances']);
     Route::get('/seances/{seance}', [SeanceController::class, 'getSeance']);
     Route::get('/seances/{seance}/sessions-emargement', [SeanceController::class, 'getSessions']);
-
-    // Déconnexion
-    Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 });
 
 // Export
