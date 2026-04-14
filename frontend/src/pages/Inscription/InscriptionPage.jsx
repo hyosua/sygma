@@ -126,6 +126,15 @@ export default function InscriptionPage() {
             {loading ? 'Inscription...' : 'Créer mon compte'}
           </button>
 
+          <div className="inscription-separateur">
+            <span>ou</span>
+          </div>
+
+          <a href="/auth/google/redirect" className="role-button secondary google-button">
+            <img src="/google-icon.svg" alt="" width="18" height="18" />
+            Continuer avec Google
+          </a>
+
           <p className="inscription-lien-connexion">
             Déjà un compte ? <Link to="/login">Se connecter</Link>
           </p>

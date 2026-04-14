@@ -6,8 +6,10 @@ import MesCoursEtudiantPage from './pages/Etudiant/MesCoursEtudiantPage';
 import ScanPresence from './pages/Etudiant/ScanPresence';
 import LoginChoicePage from './pages/Login/LoginChoicePage';
 import InscriptionPage from './pages/Inscription/InscriptionPage';
+import ChoisirRolePage from './pages/Inscription/ChoisirRolePage';
 import EmailConfirmerPage from './pages/Email/EmailConfirmerPage';
 import EmailVerifyPage from './pages/Email/EmailVerifyPage';
+import GoogleSuccesPage from './pages/Auth/GoogleSuccesPage';
 import './App.css';
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
 
         <Route path="/login" element={<LoginChoicePage />} />
         <Route path="/inscription" element={<InscriptionPage />} />
+        <Route path="/inscription/choisir-role" element={<ChoisirRolePage />} />
+        <Route path="/auth/google/succes" element={<GoogleSuccesPage />} />
         <Route path="/email/confirmer" element={<EmailConfirmerPage />} />
         <Route path="/email/verify/:token" element={<EmailVerifyPage />} />
 
