@@ -35,6 +35,8 @@ class User extends Authenticatable
         'groupe_id',
         'verification_token',
         'verification_token_expires_at',
+        'google_id',
+        'email_verified_at',
     ];
 
     /**
