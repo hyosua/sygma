@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Mail\ConfirmationEmail;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -83,9 +84,9 @@ class AuthController extends Controller
         $sanctumToken = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $sanctumToken,
-        ], 200);
+        ]);
     }
 
     public function logout(Request $req)
