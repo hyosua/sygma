@@ -158,6 +158,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+  margin-bottom: 22px;
 }
 
 .info-box {
@@ -183,6 +184,30 @@
   font-weight: 600;
   color: #1E1E1E;
   line-height: 1.4;
+}
+
+.course-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.emarger-button {
+  border: none;
+  background: #451ED0;
+  color: #FFFFFF;
+  padding: 12px 22px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 20px rgba(69, 30, 208, 0.22);
+}
+
+.emarger-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(69, 30, 208, 0.28);
 }
 
 .empty-state {
