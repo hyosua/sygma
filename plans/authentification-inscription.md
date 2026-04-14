@@ -64,12 +64,12 @@ On ajoute la couche email par-dessus l'inscription existante. À l'inscription, 
 
 ### Critères d'acceptation
 
-- [ ] L'inscription via `POST /register` envoie un email de confirmation (vérifiable via Mailpit/log)
-- [ ] `GET /email/verify/{token}` valide le token, remplit `email_verified_at` et retourne un token Sanctum
-- [ ] Token expiré (> 24h) retourne une erreur explicite
-- [ ] Token invalide retourne une erreur explicite
-- [ ] Page `/email/confirmer` affichée après inscription, en attente du clic sur le lien
-- [ ] Tests feature : token valide, token expiré, token invalide
+- [x] L'inscription via `POST /register` envoie un email de confirmation (vérifiable via Mailpit/log)
+- [x] `GET /email/verify/{token}` valide le token, remplit `email_verified_at` et retourne un token Sanctum
+- [x] Token expiré (> 24h) retourne une erreur explicite
+- [x] Token invalide retourne une erreur explicite
+- [x] Page `/email/confirmer` affichée après inscription, en attente du clic sur le lien
+- [x] Tests feature : token valide, token expiré, token invalide
 
 ---
 
@@ -84,17 +84,17 @@ Intégration de Laravel Socialite pour Google. Trois cas dans le callback : `goo
 
 ### Critères d'acceptation
 
-- [ ] Migration : colonne `google_id` nullable unique sur `users`
-- [ ] `GET /auth/google/redirect` redirige vers Google
-- [ ] Callback — utilisateur connu par `google_id` : token Sanctum retourné directement
-- [ ] Callback — email connu, `google_id` null : `google_id` lié au compte, token Sanctum retourné
-- [ ] Callback — utilisateur inconnu : `{ nouveau_utilisateur: true, token_temporaire }` retourné
-- [ ] `POST /auth/google/finaliser` avec rôle `etudiant` ou `enseignant` : compte créé, `email_verified_at` rempli, token Sanctum retourné
-- [ ] `POST /auth/google/finaliser` avec rôle `gestionnaire` : refusé (403)
-- [ ] `token_temporaire` expiré : erreur explicite
-- [ ] Page `/inscription/choisir-role` : sélecteur de rôle fonctionnel → appel finaliser → redirection espace utilisateur
-- [ ] Bouton "Se connecter avec Google" visible sur `/inscription` et sur le login
-- [ ] Tests feature : callback connu, callback email existant, callback nouveau user, finalisation valide, finalisation rôle gestionnaire, token temporaire expiré
+- [x] Migration : colonne `google_id` nullable unique sur `users`
+- [x] `GET /auth/google/redirect` redirige vers Google
+- [x] Callback — utilisateur connu par `google_id` : token Sanctum retourné directement
+- [x] Callback — email connu, `google_id` null : `google_id` lié au compte, token Sanctum retourné
+- [x] Callback — utilisateur inconnu : `{ nouveau_utilisateur: true, token_temporaire }` retourné
+- [x] `POST /auth/google/finaliser` avec rôle `etudiant` ou `enseignant` : compte créé, `email_verified_at` rempli, token Sanctum retourné
+- [x] `POST /auth/google/finaliser` avec rôle `gestionnaire` : refusé (403)
+- [x] `token_temporaire` expiré : erreur explicite
+- [x] Page `/inscription/choisir-role` : sélecteur de rôle fonctionnel → appel finaliser → redirection espace utilisateur
+- [x] Bouton "Se connecter avec Google" visible sur `/inscription` et sur le login
+- [x] Tests feature : callback connu, callback email existant, callback nouveau user, finalisation valide, finalisation rôle gestionnaire, token temporaire expiré
 
 ---
 
