@@ -55,7 +55,7 @@ class InscriptionTest extends FeatureTestCase
         Mail::assertSent(\App\Mail\ConfirmationEmail::class);
     }
 
-    public function test_email_duplique_retourne_409(): void
+    public function test_email_duplique_retourne_422(): void
     {
         Mail::fake();
 

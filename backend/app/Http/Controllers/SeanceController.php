@@ -52,7 +52,6 @@ class SeanceController extends Controller
 
     public function creerSeance(Request $request)
     {
-
         $data = $request->validate([
             'cours_id' => 'required|exists:cours,id',
             'enseignant_id' => 'required|exists:users,id',

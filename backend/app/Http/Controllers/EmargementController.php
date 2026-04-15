@@ -94,6 +94,7 @@ class EmargementController extends Controller
 
         $session = SessionEmargement::findOrFail($data['session_emargement_id']);
 
+        // La validation manuelle est également ouverte aux gestionnaires (ex: après avoir recu un justificatif)
         if ($session->seance->enseignant_id !== Auth::id() && ! Auth::user()->hasRole('gestionnaire')) {
             throw new NonAutoriseException();
         }
