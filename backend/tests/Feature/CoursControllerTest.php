@@ -63,7 +63,7 @@ class CoursControllerTest extends FeatureTestCase
     public function test_peut_modifier_un_cours(): void
     {
         $enseignant = User::factory()->enseignant()->create();
-        $cours = Cours::factory()->create(['nom' => 'PHP']);
+        $cours = Cours::factory()->create(['nom' => 'PHP', 'enseignant_id' => $enseignant->id]);
 
         $response = $this->actingAs($enseignant)->patchJson("/api/Cours/Modifier/{$cours->id}", [
             'nom' => 'PHP avancé',
@@ -114,7 +114,7 @@ class CoursControllerTest extends FeatureTestCase
     public function test_peut_supprimer_un_cours(): void
     {
         $enseignant = User::factory()->enseignant()->create();
-        $cours = Cours::factory()->create();
+        $cours = Cours::factory()->create(['enseignant_id' => $enseignant->id]);
 
         $response = $this->actingAs($enseignant)->deleteJson("/api/Cours/Supprimer/{$cours->id}");
 
