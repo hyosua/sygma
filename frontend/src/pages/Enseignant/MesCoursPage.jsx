@@ -174,10 +174,21 @@ export default function MesCoursPage() {
         });
         const dataCours = await resCours.json();
         if (!resCours.ok) {
-          setErreurCreation(dataCours.message || 'Erreur lors de la création du cours.');
-          return;
+          // Si le cours existe déjà, on réutilise son ID depuis la liste chargée
+          const coursExistant = cours.find(
+            (c) => c.nom.toLowerCase() === formData.nomCours.toLowerCase()
+          );
+          if (coursExistant) {
+            coursId = coursExistant.id;
+          } else {
+            setErreurCreation(dataCours.message || 'Erreur lors de la création du cours.');
+            return;
+          }
+        } else {
+          coursId = dataCours.id;
         }
-        coursId = dataCours.id;
+        // Évite une double-création si la séance échoue et que l'on re-soumet
+        setFormData((prev) => ({ ...prev, nomCours: '', selectedCoursId: String(coursId) }));
       } catch {
         setErreurCreation('Impossible de contacter le serveur.');
         return;
