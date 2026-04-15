@@ -63,7 +63,7 @@ class CoursControllerTest extends FeatureTestCase
     public function test_peut_modifier_un_cours(): void
     {
         $enseignant = User::factory()->enseignant()->create();
-        $cours = Cours::factory()->create(['nom' => 'PHP']);
+        $cours = Cours::factory()->create(['nom' => 'PHP', 'enseignant_id' => $enseignant->id]);
 
         $response = $this->actingAs($enseignant)->patchJson("/api/Cours/Modifier/{$cours->id}", [
             'nom' => 'PHP avancé',
@@ -79,7 +79,7 @@ class CoursControllerTest extends FeatureTestCase
     {
         $enseignant = User::factory()->enseignant()->create();
         Cours::factory()->create(['nom' => 'Java']);
-        $cours = Cours::factory()->create(['nom' => 'Python']);
+        $cours = Cours::factory()->create(['nom' => 'Python', 'enseignant_id' => $enseignant->id]);
 
         $response = $this->actingAs($enseignant)->patchJson("/api/Cours/Modifier/{$cours->id}", [
             'nom' => 'Java',
@@ -98,6 +98,19 @@ class CoursControllerTest extends FeatureTestCase
         $response->assertStatus(400);
     }
 
+    public function test_modification_cours_par_autre_enseignant_retourne_403(): void
+    {
+        $proprietaire = User::factory()->enseignant()->create();
+        $autreEnseignant = User::factory()->enseignant()->create();
+        $cours = Cours::factory()->create(['nom' => 'PHP', 'enseignant_id' => $proprietaire->id]);
+
+        $response = $this->actingAs($autreEnseignant)->patchJson("/api/Cours/Modifier/{$cours->id}", [
+            'nom' => 'PHP avancé',
+        ]);
+
+        $response->assertStatus(403);
+    }
+
     public function test_modification_cours_introuvable_retourne_404(): void
     {
         $enseignant = User::factory()->enseignant()->create();
@@ -114,12 +127,23 @@ class CoursControllerTest extends FeatureTestCase
     public function test_peut_supprimer_un_cours(): void
     {
         $enseignant = User::factory()->enseignant()->create();
-        $cours = Cours::factory()->create();
+        $cours = Cours::factory()->create(['enseignant_id' => $enseignant->id]);
 
         $response = $this->actingAs($enseignant)->deleteJson("/api/Cours/Supprimer/{$cours->id}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('cours', ['id' => $cours->id]);
+    }
+
+    public function test_suppression_cours_par_autre_enseignant_retourne_403(): void
+    {
+        $proprietaire = User::factory()->enseignant()->create();
+        $autreEnseignant = User::factory()->enseignant()->create();
+        $cours = Cours::factory()->create(['enseignant_id' => $proprietaire->id]);
+
+        $response = $this->actingAs($autreEnseignant)->deleteJson("/api/Cours/Supprimer/{$cours->id}");
+
+        $response->assertStatus(403);
     }
 
     public function test_suppression_cours_introuvable_retourne_404(): void
