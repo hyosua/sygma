@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import CookieBanner from './components/CookieBanner';
 import AccueilEnseignantPage from './pages/Enseignant/AccueilEnseignantPage';
 import EnseignantLayout from './layouts/EnseignantLayout';
 import SessionQR from './pages/Enseignant/SessionQR';
@@ -17,45 +18,55 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Route par défaut redirigeant vers la session QR pour le moment */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+    <>
+      <Router>
+        <Routes>
+          {/* Route par défaut */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
-        <Route path="/login" element={<LoginChoicePage />} />
-        <Route path="/inscription" element={<InscriptionPage />} />
-        <Route path="/inscription/choisir-role" element={<ChoisirRolePage />} />
-        <Route path="/auth/google/succes" element={<GoogleSuccesPage />} />
-        <Route path="/email/confirmer" element={<EmailConfirmerPage />} />
-        <Route path="/email/verify/:token" element={<EmailVerifyPage />} />
+          {/* Routes publiques */}
+          <Route path="/login" element={<LoginChoicePage />} />
+          <Route path="/inscription" element={<InscriptionPage />} />
+          <Route path="/inscription/choisir-role" element={<ChoisirRolePage />} />
+          <Route path="/auth/google/succes" element={<GoogleSuccesPage />} />
+          <Route path="/email/confirmer" element={<EmailConfirmerPage />} />
+          <Route path="/email/verify/:token" element={<EmailVerifyPage />} />
 
-        <Route path="/gestionnaire" element={<div>Page gestionnaire</div>} />
+          <Route path="/gestionnaire" element={<div>Page gestionnaire</div>} />
 
-        {/* Espace enseignant avec layout commun */}
-        <Route path="/enseignant" element={<EnseignantLayout />}>
-          <Route path="accueil" element={<AccueilEnseignantPage />} />
-          <Route path="mes-cours" element={<MesCoursPage />} />
-          <Route path="profil" element={<ProfilEnseignantPage />} />
-          <Route path="session/:seanceId" element={<SessionQR />} />
-        </Route>
+          {/* Espace enseignant avec layout commun (Header/Sidebar) */}
+          <Route path="/enseignant" element={<EnseignantLayout />}>
+            <Route path="accueil" element={<AccueilEnseignantPage />} />
+            <Route path="mes-cours" element={<MesCoursPage />} />
+            <Route path="profil" element={<ProfilEnseignantPage />} />
+            <Route path="session/:seanceId" element={<SessionQR />} />
+          </Route>
 
-        {/* Route Étudiant */}
-        <Route path="/etudiant/scan" element={<ScanPresence />} />
-        <Route path="/etudiant/mes-cours" element={<MesCoursEtudiantPage />} />
+          {/* Route Étudiant */}
+          <Route path="/etudiant/scan" element={<ScanPresence />} />
+          <Route path="/etudiant/mes-cours" element={<MesCoursEtudiantPage />} />
 
-        {/* Fallback route */}
-        <Route
-          path="*"
-          element={
-            <div style={{ padding: '2rem', textAlign: 'center' }}>
-              <h1>404 - Page non trouvée</h1>
-              <p>Désolé, cette page n'existe pas ou n'est pas encore implémentée.</p>
-            </div>
-          }
-        />
-      </Routes>
-    </Router>
+          <Route
+            path="/confidentialite"
+            element={<div style={{ padding: '40px' }}>Page de confidentialité à compléter</div>}
+          />
+
+          {/* Fallback 404 */}
+          <Route
+            path="*"
+            element={
+              <div style={{ padding: '2rem', textAlign: 'center' }}>
+                <h1>404 - Page non trouvée</h1>
+                <p>Désolé, cette page n'existe pas.</p>
+              </div>
+            }
+          />
+        </Routes>
+
+        {/* Le CookieBanner est ici : il sera visible sur TOUTES les pages */}
+        <CookieBanner />
+      </Router>
+    </>
   );
 }
-
 export default App;
