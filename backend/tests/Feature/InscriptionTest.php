@@ -75,7 +75,7 @@ class InscriptionTest extends FeatureTestCase
             'role' => 'etudiant',
         ]);
 
-        $response->assertStatus(409);
+        $response->assertStatus(422);
     }
 
     public function test_role_gestionnaire_retourne_422(): void

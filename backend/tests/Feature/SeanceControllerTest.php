@@ -101,7 +101,7 @@ class SeanceControllerTest extends FeatureTestCase
     public function test_supprime_seance_sans_session_active(): void
     {
         $enseignant = User::factory()->enseignant()->create();
-        $seance = Seance::factory()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
 
         $response = $this->actingAs($enseignant)->deleteJson("/api/seances/{$seance->id}");
 
@@ -112,7 +112,7 @@ class SeanceControllerTest extends FeatureTestCase
     public function test_refuse_suppression_si_session_emargement_active(): void
     {
         $enseignant = User::factory()->enseignant()->create();
-        $seance = Seance::factory()->create();
+        $seance = Seance::factory()->create(['enseignant_id' => $enseignant->id]);
         SessionEmargement::factory()->create([
             'seance_id' => $seance->id,
         ]);

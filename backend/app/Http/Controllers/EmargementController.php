@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\Emargement\NonAutoriseException;
+use App\Exceptions\NonAutoriseException;
 use App\Models\Seance;
 use App\Models\SessionEmargement;
 use App\Models\User;
