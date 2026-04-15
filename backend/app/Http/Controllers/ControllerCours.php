@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cours;
 use App\Services\CoursService;
 use Illuminate\Http\Request;
 
@@ -19,16 +18,10 @@ class ControllerCours extends Controller
 
     public function createCours(Request $req)
     {
-
         $nom = $req->input('nom');
 
         if (! $nom) {
             return response()->json('il faut un nom de cours', 400);
-        }
-
-        $existe = Cours::where('nom', $nom)->first();
-        if ($existe) {
-            return response()->json(['message' => 'Le cours existe déjà'], 409);
         }
 
         $cours = $this->coursService->createCours($nom);
@@ -42,10 +35,6 @@ class ControllerCours extends Controller
 
         if (! $nom) {
             return response()->json('il faut un nom de cours', 400);
-        }
-        $existe = Cours::where('nom', $nom)->first();
-        if ($existe) {
-            return response()->json(['message' => 'Le cours existe déjà'], 409);
         }
 
         $cours = $this->coursService->updateCours($id, $nom);
