@@ -3,10 +3,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\SeanceResource;
 use App\Models\Presence;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -14,10 +14,6 @@ class PresenceController extends Controller{
 
 
 
-
-     public function __construct(private PresenceController $sresenceController)
-    {
-    }
 
     function getPresenceById(User $user, Request $request){
 
