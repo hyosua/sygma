@@ -5,9 +5,9 @@ use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\PresenceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +37,9 @@ Route::middleware('auth:sanctum', 'role:enseignant|gestionnaire')->group(functio
 Route::middleware('auth:sanctum', 'role:etudiant|gestionnaire')->group(function () {
     // Émargement
     Route::post('/presences/valider-qr', [EmargementController::class, 'validerPresenceParQR']);
+
+    // Historique des présences
+    Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
 });
 
 /*
@@ -93,5 +96,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getStatutAndByDate', [ExportController::class, 'getStatutAndByDate']);
 });
 
-//Présence
+// Présence
 Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
