@@ -7,6 +7,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PresenceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -91,3 +92,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/getByDay', [ExportController::class, 'getAbsencesToDay']);
     Route::get('/getStatutAndByDate', [ExportController::class, 'getStatutAndByDate']);
 });
+
+//Présence
+Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
