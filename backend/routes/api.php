@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -11,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 
 // Publique
 Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [AuthController::class, 'register']);
+Route::get('email/verify/{token}', [AuthController::class, 'verifierEmail']);
+Route::post('auth/google/finaliser', [GoogleAuthController::class, 'finaliser']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 /*
 * Enseignants
@@ -78,13 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/seances', [SeanceController::class, 'getSeances']);
     Route::get('/seances/{seance}', [SeanceController::class, 'getSeance']);
     Route::get('/seances/{seance}/sessions-emargement', [SeanceController::class, 'getSessions']);
-
-    // Déconnexion
-    Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 });
-// Connexion
-Route::post('login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 // Export
 Route::middleware('auth:sanctum')->group(function () {

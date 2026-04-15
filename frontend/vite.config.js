@@ -16,6 +16,14 @@ export default defineConfig({
         target: 'http://backend:8000',
         changeOrigin: true,
       },
+      '/auth/google/redirect': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
+      '/auth/google/callback': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
     },
   },
 });

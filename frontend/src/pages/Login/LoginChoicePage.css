@@ -101,6 +101,20 @@
   object-fit: contain;
 }
 
+.login-creer-compte {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: #451ed0;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+}
+
+.login-creer-compte:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 520px) {
   .login-card {
     padding: 28px 20px;

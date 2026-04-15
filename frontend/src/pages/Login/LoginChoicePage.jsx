@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './LoginChoicePage.css';
 
 const ROLES = {
@@ -83,6 +83,18 @@ export default function LoginChoicePage() {
                 {config.label}
               </button>
             ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '4px 0' }}>
+              <hr style={{ flex: 1, border: 'none', borderTop: '1px solid #ddd' }} />
+              <span style={{ fontSize: '0.8rem', color: '#999' }}>ou</span>
+              <hr style={{ flex: 1, border: 'none', borderTop: '1px solid #ddd' }} />
+            </div>
+            <a href="/auth/google/redirect" className="role-button secondary google-button">
+              <img src="/google-icon.svg" alt="" width="18" height="18" />
+              Continuer avec Google
+            </a>
+            <Link to="/inscription" className="login-creer-compte">
+              Créer un compte
+            </Link>
           </div>
         </div>
       </div>

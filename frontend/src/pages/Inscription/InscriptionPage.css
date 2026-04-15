@@ -1,0 +1,106 @@
+.inscription-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.inscription-row {
+  display: flex;
+  gap: 12px;
+}
+
+.inscription-row .form-field {
+  flex: 1;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-field label {
+  font-size: 0.85rem;
+  color: #666;
+  text-align: left;
+}
+
+.form-field input[type='text'],
+.form-field input[type='email'],
+.form-field input[type='password'] {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+}
+
+.role-radio-group {
+  display: flex;
+  gap: 12px;
+}
+
+.role-radio-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 2px solid #ddd;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #555;
+  transition: border-color 0.15s;
+}
+
+.role-radio-option.selected {
+  border-color: #451ed0;
+  font-weight: 600;
+  color: #451ed0;
+}
+
+.role-radio-option input[type='radio'] {
+  accent-color: #451ed0;
+}
+
+.inscription-erreur {
+  color: #e53e3e;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.inscription-lien-connexion {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+}
+
+.inscription-lien-connexion a {
+  color: #451ed0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.inscription-separateur {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.inscription-separateur::before,
+.inscription-separateur::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid #ddd;
+}
+
+.google-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+}
