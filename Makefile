@@ -8,7 +8,7 @@ DOCKER_USER := -u $(SYGMA_UID):$(SYGMA_GID)
 GREEN := \033[0;32m
 NC    := \033[0m
 
-.PHONY: install start stop restart mobile mobile-stop repair update fresh test lint-check lint-fix composer artisan npm-back npm-front help %
+.PHONY: install start stop restart mobile mobile-stop demo-start demo-stop repair update fresh test lint-check lint-fix composer artisan npm-back npm-front help %
 
 install:
 	@echo "$(GREEN)1. Construction des images...$(NC)"
@@ -53,6 +53,12 @@ mobile:
 
 mobile-stop:
 	@bash scripts/mobile-stop.sh
+
+demo-start:
+	@bash scripts/demo-start.sh
+
+demo-stop:
+	@bash scripts/demo-stop.sh
 
 repair:
 	@echo "$(GREEN)Reparation en cours...$(NC)"
@@ -120,6 +126,8 @@ help:
 	@echo "  restart      Redemarrer les conteneurs
 	@echo "  mobile       Activer le mode mobile via ngrok (HTTPS)"
 	@echo "  mobile-stop  Revenir en mode desktop (localhost)"
+	@echo "  demo-start   Mode demo mobile avec Google Auth (ngrok)"
+	@echo "  demo-stop    Revenir en mode local apres demo"
 	@echo "  update       Mettre a jour apres un git pull"
 	@echo "  repair       Reinstaller les dependances et redemarrer"
 	@echo "  fresh        Reinitialiser la base de donnees"

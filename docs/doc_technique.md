@@ -295,6 +295,70 @@ make mobile-stop  # arrête ngrok
 
 ---
 
+### Mode démo mobile avec Google Auth
+
+Par défaut, Google Auth est configuré pour fonctionner en local (`localhost`). Pour une démonstration sur mobile (ngrok), un script dédié switche la configuration sans modifier manuellement le `.env`.
+
+#### Pourquoi un script séparé
+
+Le callback Google OAuth doit pointer vers une URL publique. En mode local, il pointe vers `http://localhost:8000/auth/google/callback`. Sur mobile via ngrok, il faut que ce callback soit accessible depuis Internet.
+
+La solution exploite le **proxy Vite déjà en place** : le callback Google passe par le tunnel ngrok frontend (port 3000), qui le transfère au backend via le proxy interne. Un seul tunnel ngrok suffit.
+
+```mermaid
+flowchart LR
+    A["Téléphone"]
+    B["ngrok\nbullpen-unafraid-mutual.ngrok-free.dev"]
+    C["Vite\nport 3000"]
+    D["Backend Laravel\nport 8000"]
+    E["Google OAuth"]
+
+    A -- "HTTPS" --> B
+    B --> C
+    C -- "/auth/google/callback" --> D
+    E -- "redirect callback" --> B
+
+    style A fill:#dbeafe,stroke:#93c5fd,color:#1e3a5f
+    style B fill:#fce7f3,stroke:#f9a8d4,color:#500724
+    style C fill:#d1fae5,stroke:#6ee7b7,color:#064e3b
+    style D fill:#fef9c3,stroke:#fde047,color:#713f12
+    style E fill:#ede9fe,stroke:#c4b5fd,color:#3b0764
+```
+
+#### Prérequis (une seule fois)
+
+Enregistrer l'URI de callback ngrok dans [Google Cloud Console](https://console.cloud.google.com) → APIs & Services → Credentials → OAuth 2.0 Client → **Authorized redirect URIs** :
+
+```
+https://bullpen-unafraid-mutual.ngrok-free.dev/auth/google/callback
+```
+
+#### Workflow
+
+```bash
+make demo-start   # met à jour .env, redémarre le backend, lance ngrok + QR code
+# démonstration sur mobile...
+make demo-stop    # restaure .env localhost, redémarre le backend, arrête ngrok
+```
+
+`make demo-start` modifie automatiquement deux variables dans `backend/.env` :
+
+| Variable | Valeur locale | Valeur démo mobile |
+|---|---|---|
+| `GOOGLE_REDIRECT_URI` | `http://localhost:8000/auth/google/callback` | `https://bullpen-unafraid-mutual.ngrok-free.dev/auth/google/callback` |
+| `FRONTEND_URL` | `http://localhost:3000` | `https://bullpen-unafraid-mutual.ngrok-free.dev` |
+
+`make demo-stop` restaure les valeurs localhost.
+
+#### Fichiers concernés
+
+| Fichier | Rôle |
+|---|---|
+| `scripts/demo-start.sh` | Activation du mode démo (env + ngrok) |
+| `scripts/demo-stop.sh` | Restauration du mode local |
+
+---
+
 ## CI/CD
 
 Le pipeline CI/CD est décrit en détail dans `docs/ci-cd.md`.
