@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const REDIRECTIONS = {
   etudiant: '/etudiant/mes-cours',
-  enseignant: '/enseignant/mes-cours',
+  enseignant: '/enseignant/mes-seances',
   gestionnaire: '/gestionnaire',
 };
 

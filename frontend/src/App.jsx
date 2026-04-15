@@ -30,7 +30,7 @@ function App() {
 
         {/* Routes Enseignant */}
         <Route path="/enseignant/session/:seanceId" element={<SessionQR />} />
-        <Route path="/enseignant/mes-cours" element={<MesCoursPage />} />
+        <Route path="/enseignant/mes-seances" element={<MesCoursPage />} />
 
         {/* Route Étudiant */}
         <Route path="/etudiant/scan" element={<ScanPresence />} />
