@@ -1,7 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import AccueilEnseignantPage from './pages/Enseignant/AccueilEnseignantPage';
+import EnseignantLayout from './layouts/EnseignantLayout';
 import SessionQR from './pages/Enseignant/SessionQR';
 import MesCoursPage from './pages/Enseignant/MesCoursPage';
+import ProfilEnseignantPage from './pages/Enseignant/ProfilEnseignantPage';
 import MesCoursEtudiantPage from './pages/Etudiant/MesCoursEtudiantPage';
 import ScanPresence from './pages/Etudiant/ScanPresence';
 import LoginChoicePage from './pages/Login/LoginChoicePage';
@@ -28,9 +31,13 @@ function App() {
 
         <Route path="/gestionnaire" element={<div>Page gestionnaire</div>} />
 
-        {/* Routes Enseignant */}
-        <Route path="/enseignant/session/:seanceId" element={<SessionQR />} />
-        <Route path="/enseignant/mes-cours" element={<MesCoursPage />} />
+        {/* Espace enseignant avec layout commun */}
+        <Route path="/enseignant" element={<EnseignantLayout />}>
+          <Route path="accueil" element={<AccueilEnseignantPage />} />
+          <Route path="mes-cours" element={<MesCoursPage />} />
+          <Route path="profil" element={<ProfilEnseignantPage />} />
+          <Route path="session/:seanceId" element={<SessionQR />} />
+        </Route>
 
         {/* Route Étudiant */}
         <Route path="/etudiant/scan" element={<ScanPresence />} />
