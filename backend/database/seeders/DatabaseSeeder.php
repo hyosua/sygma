@@ -59,10 +59,13 @@ class DatabaseSeeder extends Seeder
         $enseignantFixe->assignRole('enseignant');
 
         $autresEnseignants = User::factory(4)->enseignant()->create();
+        $tousLesEnseignants = $autresEnseignants->prepend($enseignantFixe);
 
         // 4. Cours
         $this->command->info('Création des cours...');
-        $cours = Cours::factory(10)->create();
+        $cours = Cours::factory(10)
+            ->sequence(fn () => ['enseignant_id' => $tousLesEnseignants->random()->id])
+            ->create();
 
         // Créneaux horaires : 4 plages fixes (une par cours du groupe)
         $creneaux = [
