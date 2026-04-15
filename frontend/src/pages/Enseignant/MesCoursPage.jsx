@@ -72,15 +72,25 @@ export default function MesCoursPage() {
   const [groupes, setGroupes] = useState([]);
   const [erreurCreation, setErreurCreation] = useState(null);
 
-  const [formData, setFormData] = useState({
-    selectedCoursId: '',
-    selectedGroupeId: '',
-    nomCours: '',
-    date: '',
-    heureDebut: '',
-    heureFin: '',
-    salle: '',
-  });
+  const defaultsFormulaire = () => {
+    const maintenant = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const date = `${maintenant.getFullYear()}-${pad(maintenant.getMonth() + 1)}-${pad(maintenant.getDate())}`;
+    const heureDebut = `${pad(maintenant.getHours())}:${pad(maintenant.getMinutes())}`;
+    const fin = new Date(maintenant.getTime() + 4 * 60 * 60 * 1000);
+    const heureFin = `${pad(fin.getHours())}:${pad(fin.getMinutes())}`;
+    return {
+      selectedCoursId: '',
+      selectedGroupeId: '',
+      nomCours: '',
+      date,
+      heureDebut,
+      heureFin,
+      salle: '',
+    };
+  };
+
+  const [formData, setFormData] = useState(defaultsFormulaire);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -140,15 +150,7 @@ export default function MesCoursPage() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setErreurCreation(null);
-    setFormData({
-      selectedCoursId: '',
-      selectedGroupeId: '',
-      nomCours: '',
-      date: '',
-      heureDebut: '',
-      heureFin: '',
-      salle: '',
-    });
+    setFormData(defaultsFormulaire());
   };
 
   const handleChange = (e) => {
@@ -381,7 +383,13 @@ export default function MesCoursPage() {
           </div>
         )}
 
-        <button className="fab" onClick={() => setIsModalOpen(true)}>
+        <button
+          className="fab"
+          onClick={() => {
+            setFormData(defaultsFormulaire());
+            setIsModalOpen(true);
+          }}
+        >
           +
         </button>
       </div>
