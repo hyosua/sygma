@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Emargement\NonAutoriseException;
 use App\Models\Seance;
 use App\Models\SessionEmargement;
 use App\Models\User;
@@ -45,6 +46,10 @@ class EmargementController extends Controller
 
     public function rafraichirJeton(SessionEmargement $session)
     {
+        if ($session->seance->enseignant_id !== Auth::id()) {
+            throw new NonAutoriseException();
+        }
+
         $sessionUpdated = $this->emargementService->rafraichirJeton($session);
 
         return response()->json($sessionUpdated);
@@ -88,6 +93,11 @@ class EmargementController extends Controller
         ]);
 
         $session = SessionEmargement::findOrFail($data['session_emargement_id']);
+
+        if ($session->seance->enseignant_id !== Auth::id() && ! Auth::user()->hasRole('gestionnaire')) {
+            throw new NonAutoriseException();
+        }
+
         $etudiant = User::findOrFail($data['etudiant_id']);
 
         $presence = $this->emargementService->enregistrerPresence($session, $etudiant);
@@ -101,6 +111,10 @@ class EmargementController extends Controller
     // Clôture une session d'émargement.
     public function cloturerSession(SessionEmargement $session)
     {
+        if ($session->seance->enseignant_id !== Auth::id()) {
+            throw new NonAutoriseException();
+        }
+
         $sessionUpdated = $this->emargementService->cloturerSession($session);
 
         return response()->json($sessionUpdated);

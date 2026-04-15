@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Emargement\NonAutoriseException;
 use App\Http\Resources\SeanceResource;
 use App\Models\Seance;
 use App\Services\SeanceService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SeanceController extends Controller
 {
@@ -39,6 +41,10 @@ class SeanceController extends Controller
 
     public function supprimer(Seance $seance)
     {
+        if ($seance->enseignant_id !== Auth::id()) {
+            throw new NonAutoriseException();
+        }
+
         $this->seanceService->supprimerSeance($seance);
 
         return response()->noContent();
@@ -46,6 +52,7 @@ class SeanceController extends Controller
 
     public function creerSeance(Request $request)
     {
+
         $data = $request->validate([
             'cours_id' => 'required|exists:cours,id',
             'enseignant_id' => 'required|exists:users,id',
@@ -62,6 +69,10 @@ class SeanceController extends Controller
 
     public function modifierSeance(Seance $seance, Request $request)
     {
+        if ($seance->enseignant_id !== Auth::id()) {
+            throw new NonAutoriseException();
+        }
+
         $data = $request->validate([
             'cours_id' => 'required|exists:cours,id',
             'enseignant_id' => 'required|exists:users,id',
