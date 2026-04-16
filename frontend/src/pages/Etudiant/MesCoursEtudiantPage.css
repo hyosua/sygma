@@ -29,8 +29,8 @@
 }
 
 .hero {
-  background: linear-gradient(135deg, #1E1E1E 0%, #2c2c2c 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--color-dark) 0%, #2c2c2c 100%);
+  color: var(--color-white);
   border-radius: 28px;
   padding: 32px;
   box-shadow: 0 20px 60px rgba(30, 30, 30, 0.16);
@@ -43,7 +43,7 @@
   margin: 0 0 14px 0;
   padding: 8px 14px;
   background: rgba(69, 30, 208, 0.18);
-  color: #FFFFFF;
+  color: var(--color-white);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
   font-size: 13px;
@@ -69,8 +69,8 @@
 .panel {
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(69, 30, 208, 0.08);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: var(--blur);
+  backdrop-filter: var(--blur);
   border-radius: 28px;
   padding: 24px;
   box-shadow: 0 16px 50px rgba(69, 30, 208, 0.08);
@@ -89,7 +89,7 @@
 .tab {
   border: none;
   background: transparent;
-  color: #1E1E1E;
+  color: var(--color-dark);
   padding: 14px 20px;
   border-radius: 12px;
   font-size: 14px;
@@ -103,8 +103,8 @@
 }
 
 .tab.active {
-  background: #451ED0;
-  color: #FFFFFF;
+  background: var(--color-primary);
+  color: var(--color-white);
   box-shadow: 0 8px 20px rgba(69, 30, 208, 0.28);
 }
 
@@ -115,7 +115,7 @@
 }
 
 .course-card {
-  background: #FFFFFF;
+  background: var(--color-white);
   border-radius: 22px;
   padding: 22px;
   border: 1px solid rgba(69, 30, 208, 0.08);
@@ -141,15 +141,15 @@
   margin: 0 0 10px 0;
   padding: 7px 12px;
   border-radius: 999px;
-  background: rgba(69, 30, 208, 0.1);
-  color: #451ED0;
+  background: var(--color-primary-hover);
+  color: var(--color-primary);
   font-size: 12px;
   font-weight: 700;
 }
 
 .course-title {
   margin: 0;
-  color: #1E1E1E;
+  color: var(--color-dark);
   font-size: 24px;
   font-weight: 800;
 }
@@ -182,7 +182,7 @@
 .info-value {
   font-size: 15px;
   font-weight: 600;
-  color: #1E1E1E;
+  color: var(--color-dark);
   line-height: 1.4;
 }
 
@@ -194,8 +194,8 @@
 
 .emarger-button {
   border: none;
-  background: #451ED0;
-  color: #FFFFFF;
+  background: var(--color-primary);
+  color: var(--color-white);
   padding: 12px 22px;
   border-radius: 14px;
   font-size: 14px;
@@ -211,7 +211,7 @@
 }
 
 .empty-state {
-  background: #FFFFFF;
+  background: var(--color-white);
   border-radius: 22px;
   padding: 40px 24px;
   text-align: center;
@@ -220,7 +220,7 @@
 
 .empty-state h3 {
   margin: 0 0 8px 0;
-  color: #1E1E1E;
+  color: var(--color-dark);
   font-size: 20px;
 }
 

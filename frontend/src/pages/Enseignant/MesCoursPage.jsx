@@ -237,7 +237,8 @@ export default function MesCoursPage() {
             <p className="hero-tag">Espace enseignant</p>
             <h1>Mes séances</h1>
             <p className="hero-subtitle">
-              Retrouvez vos séances en cours et à venir, puis lancez rapidement l'émargement.
+              Retrouvez vos cours en cours et à venir, puis lancez rapidement l’émargement de votre
+              séance.
             </p>
           </div>
         </header>

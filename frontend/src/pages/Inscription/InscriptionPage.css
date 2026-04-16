@@ -55,13 +55,13 @@
 }
 
 .role-radio-option.selected {
-  border-color: #451ed0;
+  border-color: var(--color-primary);
   font-weight: 600;
-  color: #451ed0;
+  color: var(--color-primary);
 }
 
 .role-radio-option input[type='radio'] {
-  accent-color: #451ed0;
+  accent-color: var(--color-primary);
 }
 
 .inscription-erreur {
@@ -77,7 +77,7 @@
 }
 
 .inscription-lien-connexion a {
-  color: #451ed0;
+  color: var(--color-primary);
   font-weight: 600;
   text-decoration: none;
 }
