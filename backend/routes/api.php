@@ -5,6 +5,7 @@ use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\InvitationGestionnaireController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
@@ -17,6 +18,8 @@ Route::post('register', [AuthController::class, 'register']);
 Route::get('email/verify/{token}', [AuthController::class, 'verifierEmail']);
 Route::post('auth/google/finaliser', [GoogleAuthController::class, 'finaliser']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+Route::post('/invitations/gestionnaire/{token}', [InvitationGestionnaireController::class, 'inscrire']);
+Route::get('/invitations/gestionnaire/{token}', [InvitationGestionnaireController::class, 'verifierToken']);
 
 /*
 * Enseignants
@@ -28,6 +31,17 @@ Route::middleware('auth:sanctum', 'role:enseignant|gestionnaire')->group(functio
     Route::post('/sessions-emargement', [EmargementController::class, 'demarrerSession']);
     Route::post('/sessions-emargement/{session}/refresh', [EmargementController::class, 'rafraichirJeton']);
     Route::post('/sessions-emargement/{session}/cloturer', [EmargementController::class, 'cloturerSession']);
+});
+
+/*
+* Gestionnaires
+*
+*/
+Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
+    Route::post('/gestionnaire/invitations', [InvitationGestionnaireController::class, 'inviter']);
+    Route::post('/gestionnaire/invitations/{token}/renvoyer', [InvitationGestionnaireController::class, 'renvoyer']);
+    Route::get('/gestionnaire/invitations', [InvitationGestionnaireController::class, 'getInvitations']);
+    Route::delete('/gestionnaire/invitations/{invitation}', [InvitationGestionnaireController::class, 'annuler']);
 });
 
 /*

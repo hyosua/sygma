@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Exceptions\Emargement;
+namespace App\Exceptions\Invitation;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class JetonInvalideException extends Exception
+class TokenDejaUtiliseException extends Exception
 {
     public function __construct()
     {
-        parent::__construct('Jeton invalide.');
+        parent::__construct('Token déjà utilisé.');
     }
 
     public function render(): JsonResponse

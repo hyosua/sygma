@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Exceptions\Emargement;
+namespace App\Exceptions\Invitation;
 
 use Exception;
 use Illuminate\Http\JsonResponse;
 
-class JetonInvalideException extends Exception
+class TokenExpireException extends Exception
 {
     public function __construct()
     {
-        parent::__construct('Jeton invalide.');
+        parent::__construct('Token d\'invitation expiré, veuillez demander une nouvelle invitation.');
     }
 
     public function render(): JsonResponse
