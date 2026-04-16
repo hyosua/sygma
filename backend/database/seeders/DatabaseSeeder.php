@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Cours;
 use App\Models\Groupe;
 use App\Models\Inscription;
+use App\Models\InvitationGestionnaire;
 use App\Models\Presence;
 use App\Models\Seance;
 use App\Models\SessionEmargement;
@@ -47,6 +48,22 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('sygma'),
             'premiere_connexion' => false,
         ])->assignRole('gestionnaire');
+
+        // Invitations gestionnaire
+        $this->command->info('Création des invitations gestionnaire...');
+        InvitationGestionnaire::firstOrCreate(['email' => 'invite@sygma.com'], [
+            'token' => 'abc123token',
+            'expires_at' => now()->addDays(7),
+        ]);
+        InvitationGestionnaire::firstOrCreate(['email' => 'expired@sygma.com'], [
+            'token' => 'expiredtoken',
+            'expires_at' => now()->subDays(1),
+        ]);
+        InvitationGestionnaire::firstOrCreate(['email' => 'used@sygma.com'], [
+            'token' => 'usedtoken',
+            'expires_at' => now()->addDays(7),
+            'used_at' => now(),
+        ]);
 
         // 3. Enseignants — enseignant@sygma.com est exclu du pool aléatoire
         $this->command->info('Création des enseignants...');
