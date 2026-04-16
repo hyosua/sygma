@@ -2,76 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cours;
+use App\Services\CoursService;
 use Illuminate\Http\Request;
 
 class ControllerCours extends Controller
 {
+    public function __construct(private CoursService $coursService)
+    {
+    }
+
     public function getCours()
     {
-        $cours = Cours::all();
-
-        return $cours;
+        return response()->json($this->coursService->getCours(), 200);
     }
 
     public function createCours(Request $req)
     {
+        $nom = $req->input('nom');
 
-        $lib = $req->input('nom');
-
-        $verif = Cours::where('nom', $lib)->get();
-
-        foreach ($verif as $v) {
-            if ($v->nom) {
-                return response()->json(['message' => 'Le cours existe déjà'], 409);
-            }
+        if (! $nom) {
+            return response()->json('il faut un nom de cours', 400);
         }
 
-        $cours = Cours::create([
-            'nom' => $lib,
-        ]);
+        $cours = $this->coursService->createCours($nom);
 
         return response()->json($cours, 201);
     }
 
     public function updateCours(Request $req, $id)
     {
-        $cours = Cours::find($id);
+        $nom = $req->input('nom');
 
-        if ($cours) {
-            $lib = $req->input('nom');
-
-            if ($lib) {
-                $verif2 = Cours::where('nom', $lib)->get();
-
-                foreach ($verif2 as $v2) {
-                    if ($v2->nom) {
-                        return response()->json(['message' => 'Le cours existe déjà'], 409);
-                    }
-                }
-
-                $cours->nom = $lib;
-                $cours->Save();
-
-                return response()->json($cours, 200);
-            }
-
-            return response()->json('il faut un libelé', 400);
+        if (! $nom) {
+            return response()->json('il faut un nom de cours', 400);
         }
 
-        return response()->json('cours introuvable', 404);
+        $cours = $this->coursService->updateCours($id, $nom);
+
+        return response()->json($cours, 200);
     }
 
     public function deleteCours($id)
     {
-        $cours = Cours::find($id);
+        $this->coursService->deleteCours($id);
 
-        if ($cours) {
-            $cours->delete();
-
-            return response()->json('Le cours à bien été supprimé', 200);
-        }
-
-        return response()->json("Le cours n'a pas été trouver", 404);
+        return response()->json(['message' => 'Cours supprimé avec succès'], 200);
     }
 }

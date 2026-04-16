@@ -5,7 +5,7 @@ import './InscriptionPage.css';
 
 const REDIRECTIONS = {
   etudiant: '/etudiant/mes-cours',
-  enseignant: '/enseignant/mes-cours',
+  enseignant: '/enseignant/mes-seances',
 };
 
 export default function ChoisirRolePage() {

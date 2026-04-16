@@ -11,7 +11,7 @@ class Cours extends Model
 
     protected $table = 'cours';
 
-    protected $fillable = ['nom'];
+    protected $fillable = ['nom', 'enseignant_id'];
 
     public function inscriptions()
     {
@@ -26,5 +26,10 @@ class Cours extends Model
     public function seances()
     {
         return $this->hasMany(Seance::class, 'cours_id');
+    }
+
+    public function enseignant()
+    {
+        return $this->belongsTo(User::class, 'enseignant_id');
     }
 }

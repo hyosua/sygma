@@ -16,17 +16,17 @@ function formatHeure(isoString) {
   return new Date(isoString).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 }
 
-function CourseCard({ course, onStart }) {
+function SeanceCard({ course, onStart }) {
   return (
-    <div className="course-card">
-      <div className="course-top">
+    <div className="seance-card">
+      <div className="seance-top">
         <div>
-          <p className="course-badge">{course.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
-          <h3 className="course-title">{course.nom}</h3>
+          <p className="seance-badge">{course.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
+          <h3 className="seance-title">{course.nom}</h3>
         </div>
       </div>
 
-      <div className="course-infos">
+      <div className="seance-infos">
         <div className="info-box">
           <span className="info-label">Salle</span>
           <span className="info-value">{course.salle ?? '—'}</span>
@@ -45,7 +45,7 @@ function CourseCard({ course, onStart }) {
         </div>
       </div>
 
-      <div className="course-actions">
+      <div className="seance-actions">
         <button className="start-button" onClick={() => onStart(course)}>
           Démarrer l'émargement
         </button>
@@ -72,15 +72,25 @@ export default function MesCoursPage() {
   const [groupes, setGroupes] = useState([]);
   const [erreurCreation, setErreurCreation] = useState(null);
 
-  const [formData, setFormData] = useState({
-    selectedCoursId: '',
-    selectedGroupeId: '',
-    nomCours: '',
-    date: '',
-    heureDebut: '',
-    heureFin: '',
-    salle: '',
-  });
+  const defaultsFormulaire = () => {
+    const maintenant = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const date = `${maintenant.getFullYear()}-${pad(maintenant.getMonth() + 1)}-${pad(maintenant.getDate())}`;
+    const heureDebut = `${pad(maintenant.getHours())}:${pad(maintenant.getMinutes())}`;
+    const fin = new Date(maintenant.getTime() + 4 * 60 * 60 * 1000);
+    const heureFin = `${pad(fin.getHours())}:${pad(fin.getMinutes())}`;
+    return {
+      selectedCoursId: '',
+      selectedGroupeId: '',
+      nomCours: '',
+      date,
+      heureDebut,
+      heureFin,
+      salle: '',
+    };
+  };
+
+  const [formData, setFormData] = useState(defaultsFormulaire);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -140,15 +150,7 @@ export default function MesCoursPage() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setErreurCreation(null);
-    setFormData({
-      selectedCoursId: '',
-      selectedGroupeId: '',
-      nomCours: '',
-      date: '',
-      heureDebut: '',
-      heureFin: '',
-      salle: '',
-    });
+    setFormData(defaultsFormulaire());
   };
 
   const handleChange = (e) => {
@@ -172,10 +174,21 @@ export default function MesCoursPage() {
         });
         const dataCours = await resCours.json();
         if (!resCours.ok) {
-          setErreurCreation(dataCours.message || 'Erreur lors de la création du cours.');
-          return;
+          // Si le cours existe déjà, on réutilise son ID depuis la liste chargée
+          const coursExistant = cours.find(
+            (c) => c.nom.toLowerCase() === formData.nomCours.toLowerCase()
+          );
+          if (coursExistant) {
+            coursId = coursExistant.id;
+          } else {
+            setErreurCreation(dataCours.message || 'Erreur lors de la création du cours.');
+            return;
+          }
+        } else {
+          coursId = dataCours.id;
         }
-        coursId = dataCours.id;
+        // Évite une double-création si la séance échoue et que l'on re-soumet
+        setFormData((prev) => ({ ...prev, nomCours: '', selectedCoursId: String(coursId) }));
       } catch {
         setErreurCreation('Impossible de contacter le serveur.');
         return;
@@ -222,7 +235,7 @@ export default function MesCoursPage() {
         <header className="hero">
           <div>
             <p className="hero-tag">Espace enseignant</p>
-            <h1>Mes cours</h1>
+            <h1>Mes séances</h1>
             <p className="hero-subtitle">
               Retrouvez vos cours en cours et à venir, puis lancez rapidement l’émargement de votre
               séance.
@@ -236,26 +249,26 @@ export default function MesCoursPage() {
               className={`tab ${activeTab === 'en_cours' ? 'active' : ''}`}
               onClick={() => setActiveTab('en_cours')}
             >
-              Cours en cours
+              Séances en cours
             </button>
 
             <button
               className={`tab ${activeTab === 'a_venir' ? 'active' : ''}`}
               onClick={() => setActiveTab('a_venir')}
             >
-              Cours à venir
+              Séances à venir
             </button>
           </div>
 
           <div className="courses-list">
             {filteredSeances.length > 0 ? (
               filteredSeances.map((course) => (
-                <CourseCard key={course.id} course={course} onStart={handleStartAttendance} />
+                <SeanceCard key={course.id} course={course} onStart={handleStartAttendance} />
               ))
             ) : (
               <div className="empty-state">
-                <h3>Aucun cours disponible</h3>
-                <p>Il n'y a aucun cours dans cet onglet pour le moment.</p>
+                <h3>Aucune séance disponible</h3>
+                <p>Il n'y a aucune séance dans cet onglet pour le moment.</p>
               </div>
             )}
           </div>
@@ -382,7 +395,13 @@ export default function MesCoursPage() {
           </div>
         )}
 
-        <button className="fab" onClick={() => setIsModalOpen(true)}>
+        <button
+          className="fab"
+          onClick={() => {
+            setFormData(defaultsFormulaire());
+            setIsModalOpen(true);
+          }}
+        >
           +
         </button>
       </div>
