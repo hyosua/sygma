@@ -9,7 +9,6 @@ use App\Mail\InvitationGestionnaireEmail;
 use App\Models\InvitationGestionnaire;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -79,8 +78,8 @@ class InvitationGestionnaireService
         }
     }
 
-    public function getInvitations(): Collection
+    public function getInvitations(int $perPage = 10)
     {
-        return InvitationGestionnaire::orderBy('created_at', 'desc')->get();
+        return InvitationGestionnaire::orderBy('created_at', 'desc')->paginate($perPage);
     }
 }

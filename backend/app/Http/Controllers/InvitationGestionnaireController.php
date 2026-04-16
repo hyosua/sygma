@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NonAutoriseException;
+use App\Http\Resources\InvitationResource;
 use App\Models\InvitationGestionnaire;
 use App\Services\InvitationGestionnaireService;
 use Illuminate\Http\Request;
@@ -28,7 +29,7 @@ class InvitationGestionnaireController extends Controller
     {
         $invitations = $this->invitGestionnaireService->getInvitations();
 
-        return response()->json($invitations);
+        return InvitationResource::collection($invitations);
     }
 
     public function annuler(InvitationGestionnaire $invitation)
