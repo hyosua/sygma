@@ -9,8 +9,8 @@
 }
 
 .hero-card {
-  background: linear-gradient(135deg, #1e1e1e 0%, #2b2b2b 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-dark) 0%, #2b2b2b 100%);
+  color: var(--color-white);
   border-radius: 28px;
   padding: 34px;
   box-shadow: 0 20px 50px rgba(30, 30, 30, 0.14);
@@ -45,7 +45,7 @@
 .quick-access h2 {
   margin: 0 0 18px 0;
   font-size: 26px;
-  color: #1e1e1e;
+  color: var(--color-dark);
 }
 
 .quick-grid {
@@ -57,7 +57,7 @@
 .quick-card {
   text-decoration: none;
   color: inherit;
-  background: #ffffff;
+  background: var(--color-white);
   border-radius: 24px;
   padding: 24px;
   border: 1px solid rgba(69, 30, 208, 0.08);
@@ -85,7 +85,7 @@
 .quick-card h3 {
   margin: 0 0 10px 0;
   font-size: 22px;
-  color: #1e1e1e;
+  color: var(--color-dark);
 }
 
 .quick-card p {

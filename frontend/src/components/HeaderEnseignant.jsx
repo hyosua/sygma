@@ -6,20 +6,13 @@ export default function HeaderEnseignant() {
   return (
     <header className="topbar">
       <div className="topbar-left">
-        <div className="brand">
+        <NavLink className="container-logo" to="/enseignant/accueil">
           <img src="/sygma-logo-noir.webp" alt="Logo SYGMA" className="header-logo" />
           <span className="brand-name">SYGMA</span>
-        </div>
+        </NavLink>
       </div>
 
       <nav className="topbar-nav">
-        <NavLink
-          to="/enseignant/accueil"
-          className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-        >
-          Accueil
-        </NavLink>
-
         <NavLink
           to="/enseignant/mes-cours"
           className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}

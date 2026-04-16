@@ -15,6 +15,7 @@ import EmailConfirmerPage from './pages/Email/EmailConfirmerPage';
 import EmailVerifyPage from './pages/Email/EmailVerifyPage';
 import GoogleSuccesPage from './pages/Auth/GoogleSuccesPage';
 import './App.css';
+import './styles/variables.css';
 
 function App() {
   return (

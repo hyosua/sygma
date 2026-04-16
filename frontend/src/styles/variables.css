@@ -1,0 +1,21 @@
+:root {
+  /* 🎨 Couleurs principales */
+  --color-primary: #451ED0;
+  --color-dark: #1E1E1E;
+  --color-grey: rgba(255, 255, 255, 0.08);
+  --color-grey-light: #6b6b6b;
+  --color-white: #FFFFFF;
+
+  /* 🌈 Variantes utiles */
+  --color-dark-bis: #1e1e1e34;
+  --color-primary-light: rgba(69, 30, 208, 0.1);
+  --color-primary-hover: #3720a8;
+  --color-primary-bis: #2f14a0;
+  --color-red: #e53e3e;
+
+  --color-border: rgba(0, 0, 0, 0.08);
+
+  --blur: blur(10px);
+
+
+}

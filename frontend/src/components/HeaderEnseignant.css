@@ -76,6 +76,13 @@
   object-fit: contain;
 }
 
+.container-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
 @media (max-width: 900px) {
   .topbar {
     flex-direction: column;
