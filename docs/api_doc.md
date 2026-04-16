@@ -31,6 +31,13 @@ Ce document est destiné aux développeurs frontend. Il décrit les endpoints di
   - [Créer un cours](#créer-un-cours)
   - [Modifier un cours](#modifier-un-cours)
   - [Supprimer un cours](#supprimer-un-cours)
+- [Invitations gestionnaire](#invitations-gestionnaire)
+  - [Inviter un gestionnaire](#inviter-un-gestionnaire)
+  - [Lister les invitations](#lister-les-invitations)
+  - [Annuler une invitation](#annuler-une-invitation)
+  - [Renvoyer une invitation](#renvoyer-une-invitation)
+  - [Vérifier un token](#vérifier-un-token)
+  - [S'inscrire via token](#sinscrire-via-token)
 - [Export de donner](#export-de-donner)
   - [Récupérer les sessions par date](#récupérer-les-sessions-par-date)
   - [Récupérer les absences du jour](#récupérer-les-absences-du-jour)
@@ -395,6 +402,155 @@ DELETE /Cours/Supprimer/{id}
 
 **Réponse 200** — `"Le cours a bien été supprimé"`
 **Réponse 404** — `"Le cours n'a pas été trouvé"`
+
+---
+
+## Invitations gestionnaire
+
+### Inviter un gestionnaire
+
+```
+POST /gestionnaire/invitations
+```
+
+**Auth requise** : gestionnaire
+
+**Corps (JSON)**
+
+| Champ   | Type   | Requis | Description                  |
+| ------- | ------ | ------ | ---------------------------- |
+| `email` | string | oui    | Email de la personne invitée |
+
+**Réponse 201** — invitation créée (ou réinitialisée si l'email existait déjà).
+
+Un email contenant un lien d'inscription valable **48 heures** est envoyé automatiquement.
+
+**Erreurs possibles**
+
+| Code | Cause |
+| ---- | ----- |
+| 422  | Email manquant ou invalide |
+| 401  | Non authentifié |
+| 403  | Rôle insuffisant |
+
+---
+
+### Lister les invitations
+
+```
+GET /gestionnaire/invitations
+```
+
+**Auth requise** : gestionnaire
+
+**Réponse 200** — tableau des invitations, ordre anti-chronologique.
+
+```json
+[
+  {
+    "id": 1,
+    "email": "nouveau@example.fr",
+    "token": "abc123...",
+    "expires_at": "2026-04-18T09:00:00.000000Z",
+    "used_at": null,
+    "created_at": "2026-04-16T09:00:00.000000Z"
+  }
+]
+```
+
+---
+
+### Annuler une invitation
+
+```
+DELETE /gestionnaire/invitations/{id}
+```
+
+**Auth requise** : gestionnaire
+
+**Réponse 204** — aucun contenu.
+
+---
+
+### Renvoyer une invitation
+
+```
+POST /gestionnaire/invitations/{token}/renvoyer
+```
+
+**Auth requise** : gestionnaire
+
+Régénère le token et la date d'expiration, renvoie l'email.
+
+**Réponse 200**
+
+```json
+{ "message": "Invitation renvoyée." }
+```
+
+**Erreurs possibles**
+
+| Code | Cause |
+| ---- | ----- |
+| 403  | Token introuvable |
+
+---
+
+### Vérifier un token
+
+```
+GET /invitations/gestionnaire/{token}
+```
+
+**Auth non requise** — utilisé par la page d'inscription frontend pour valider le lien avant affichage du formulaire.
+
+**Réponse 200** — retourne l'invitation (dont l'email pré-rempli).
+
+**Erreurs possibles**
+
+| Code | Message | Cause |
+| ---- | ------- | ----- |
+| 422  | `Jeton invalide.` | Token inexistant |
+| 422  | `Token d'invitation expiré...` | Token expiré (> 48h) |
+| 422  | `Token déjà utilisé.` | Inscription déjà effectuée |
+
+---
+
+### S'inscrire via token
+
+```
+POST /invitations/gestionnaire/{token}
+```
+
+**Auth non requise** — point d'entrée public pour finaliser la création de compte.
+
+**Corps (JSON)**
+
+| Champ      | Type   | Requis | Description          |
+| ---------- | ------ | ------ | -------------------- |
+| `nom`      | string | oui    | Nom de famille       |
+| `prenom`   | string | oui    | Prénom               |
+| `password` | string | oui    | Mot de passe (≥ 8 caractères) |
+
+**Réponse 201**
+
+```json
+{
+  "message": "Inscription réussie.",
+  "token": "<sanctum-token>"
+}
+```
+
+Le compte est créé avec le rôle `gestionnaire`. L'invitation est marquée comme utilisée (`used_at`).
+
+**Erreurs possibles**
+
+| Code | Message | Cause |
+| ---- | ------- | ----- |
+| 422  | `Jeton invalide.` | Token inexistant |
+| 422  | `Token d'invitation expiré...` | Token expiré |
+| 422  | `Token déjà utilisé.` | Invitation déjà consommée |
+| 422  | Erreurs de validation | Champs manquants ou mot de passe trop court |
 
 ---
 

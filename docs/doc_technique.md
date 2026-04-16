@@ -86,13 +86,14 @@ Le schéma complet (MCD/MLD) est disponible dans `docs/specs/MCD/`.
 
 | Table | Description |
 |---|---|
-| `users` | Étudiants et enseignants, avec rôles Spatie et `google_id` pour OAuth |
+| `users` | Étudiants, enseignants et gestionnaires, avec rôles Spatie et `google_id` pour OAuth |
 | `groupes` | Groupes d'étudiants |
 | `cours` | Matières enseignées |
 | `seances` | Séances planifiées (`cours_id`, `enseignant_id`, `groupe_id`, `debut_a`, `fin_a`, `salle`) |
 | `inscriptions` | Inscription étudiant ↔ cours |
 | `sessions_emargement` | Session d'émargement liée à une séance (`jeton`, `jeton_expire_a`, `cloture_a`, `is_methode_qr`, lat/lon) |
 | `presences` | Présence enregistrée (`session_id`, `etudiant_id`, `statut`, `scanne_a`, lat/lon) |
+| `invitations_gestionnaire` | Invitation en attente d'un gestionnaire (`email`, `token`, `expires_at`, `used_at`) |
 
 ---
 
@@ -111,6 +112,21 @@ La logique métier est isolée dans des classes de service, séparée des contr�
 | `enregistrerPresence(SessionEmargement, User)` | Enregistre une présence manuelle |
 | `rafraichirJeton(SessionEmargement)` | Rotation du jeton (nouveau jeton + 20s d'expiration) |
 | `cloturerSession(SessionEmargement)` | Met `cloture_a = now()` (session inactive si `cloture_a` non null) |
+
+**`InvitationGestionnaireService`** — gestion du cycle de vie des invitations gestionnaire :
+
+| Méthode | Rôle |
+|---|---|
+| `creerInvitation(email)` | Crée ou réinitialise une invitation (token 32 car., expiration 48h), envoie l'email |
+| `validerToken(token)` | Vérifie qu'un token existe, n'est pas expiré et n'a pas déjà été utilisé |
+| `inscrireViaToken(token, data)` | Crée le compte gestionnaire, assigne le rôle, marque l'invitation comme utilisée |
+| `supprimerInvitation(id)` | Supprime une invitation en attente |
+| `getInvitations()` | Liste toutes les invitations (ordre anti-chronologique) |
+
+**Règles métier notables :**
+- Durée de validité d'une invitation : **48 heures** (constante `DUREE_VALIDITE_INVITATION`)
+- `updateOrCreate` sur l'email : réinviter un même email renouvelle le token sans créer de doublon
+- L'inscription via token consomme l'invitation (`used_at = now()`) — elle ne peut être utilisée qu'une fois
 
 **`SeanceService`** — gestion des séances :
 
@@ -140,6 +156,9 @@ app/Exceptions/
 │   ├── EtudiantNonInscritException.php
 │   ├── JetonExpireException.php
 │   └── JetonInvalideException.php
+├── Invitation/
+│   ├── TokenExpireException.php
+│   └── TokenDejaUtiliseException.php
 └── Seance/
     ├── ConflitSeanceException.php
     ├── SalleOccupeeException.php
@@ -225,6 +244,7 @@ Ils tournent sur une base PostgreSQL dédiée (`sygma_test`), isolée de la base
 | `SessionEmargementTest.php` | Tests des routes d'émargement (démarrage, clôture, statut, présence manuelle) |
 | `EmargementSecurityTest.php` | Tests spécifiques sur les autorisations d'émargement |
 | `GoogleAuthTest.php` | Tests du cycle d'authentification Google OAuth |
+| `InvitationGestionnaireTest.php` | Tests du flux d'invitation gestionnaire (inviter, lister, annuler, vérifier token, s'inscrire, renvoyer — envoi mail inclus) |
 
 **Lancer les tests :**
 
