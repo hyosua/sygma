@@ -443,19 +443,23 @@ GET /gestionnaire/invitations
 
 **Auth requise** : gestionnaire
 
-**Réponse 200** — tableau des invitations, ordre anti-chronologique.
+**Réponse 200** — liste paginée des invitations, ordre anti-chronologique.
 
 ```json
-[
-  {
-    "id": 1,
-    "email": "nouveau@example.fr",
-    "token": "abc123...",
-    "expires_at": "2026-04-18T09:00:00.000000Z",
-    "used_at": null,
-    "created_at": "2026-04-16T09:00:00.000000Z"
-  }
-]
+{
+  "data": [
+    {
+      "id": 1,
+      "email": "nouveau@example.fr",
+      "expires_at": "2026-04-18T09:00:00.000000Z",
+      "used_at": null
+    }
+  ],
+  "current_page": 1,
+  "last_page": 1,
+  "per_page": 10,
+  "total": 1
+}
 ```
 
 ---
@@ -475,7 +479,7 @@ DELETE /gestionnaire/invitations/{id}
 ### Renvoyer une invitation
 
 ```
-POST /gestionnaire/invitations/{token}/renvoyer
+POST /gestionnaire/invitations/{id}/renvoyer
 ```
 
 **Auth requise** : gestionnaire
@@ -492,7 +496,7 @@ Régénère le token et la date d'expiration, renvoie l'email.
 
 | Code | Cause |
 | ---- | ----- |
-| 403  | Token introuvable |
+| 404  | Invitation introuvable |
 
 ---
 

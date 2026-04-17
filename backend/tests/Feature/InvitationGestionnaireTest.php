@@ -293,26 +293,25 @@ class InvitationGestionnaireTest extends FeatureTestCase
         Mail::fake();
 
         $gestionnaire = $this->creerGestionnaire();
-        $token = Str::random(32);
 
-        InvitationGestionnaire::create([
+        $invitation = InvitationGestionnaire::create([
             'email' => 'a@test.fr',
-            'token' => $token,
+            'token' => Str::random(32),
             'expires_at' => now()->addHours(48),
         ]);
 
-        $response = $this->actingAs($gestionnaire)->postJson("/api/gestionnaire/invitations/{$token}/renvoyer");
+        $response = $this->actingAs($gestionnaire)->postJson("/api/gestionnaire/invitations/{$invitation->id}/renvoyer");
 
         $response->assertStatus(200)->assertJsonFragment(['message' => 'Invitation renvoyée.']);
         Mail::assertSent(InvitationGestionnaireEmail::class, fn ($mail) => $mail->hasTo('a@test.fr'));
     }
 
-    public function test_renvoyer_token_inexistant_retourne_erreur(): void
+    public function test_renvoyer_id_inexistant_retourne_erreur(): void
     {
         $gestionnaire = $this->creerGestionnaire();
 
-        $response = $this->actingAs($gestionnaire)->postJson('/api/gestionnaire/invitations/token-inexistant/renvoyer');
+        $response = $this->actingAs($gestionnaire)->postJson('/api/gestionnaire/invitations/99999/renvoyer');
 
-        $response->assertStatus(403);
+        $response->assertStatus(404);
     }
 }
