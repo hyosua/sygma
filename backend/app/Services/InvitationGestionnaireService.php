@@ -69,15 +69,6 @@ class InvitationGestionnaireService
         return $user->createToken('api-token')->plainTextToken;
     }
 
-    public function supprimerInvitation(int $id): void
-    {
-        $invitation = InvitationGestionnaire::where('id', $id)->first();
-
-        if ($invitation) {
-            $invitation->delete();
-        }
-    }
-
     public function getInvitations(int $perPage = 10)
     {
         return InvitationGestionnaire::orderBy('created_at', 'desc')->paginate($perPage);

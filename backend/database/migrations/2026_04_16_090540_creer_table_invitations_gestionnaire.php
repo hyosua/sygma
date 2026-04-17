@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('invitations_gestionnaire', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
+            $table->string('email')->unique();
             $table->string('token')->unique();
             $table->timestamp('expires_at');
             $table->timestamp(('used_at'))->nullable();

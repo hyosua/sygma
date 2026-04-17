@@ -34,8 +34,7 @@ class InvitationGestionnaireController extends Controller
 
     public function annuler(InvitationGestionnaire $invitation)
     {
-
-        $this->invitGestionnaireService->supprimerInvitation($invitation->id);
+        $invitation->delete();
 
         return response()->noContent();
     }
