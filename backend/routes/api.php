@@ -39,7 +39,7 @@ Route::middleware('auth:sanctum', 'role:enseignant|gestionnaire')->group(functio
 */
 Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
     Route::post('/gestionnaire/invitations', [InvitationGestionnaireController::class, 'inviter']);
-    Route::post('/gestionnaire/invitations/{token}/renvoyer', [InvitationGestionnaireController::class, 'renvoyer']);
+    Route::post('/gestionnaire/invitations/{invitation}/renvoyer', [InvitationGestionnaireController::class, 'renvoyer']);
     Route::get('/gestionnaire/invitations', [InvitationGestionnaireController::class, 'getInvitations']);
     Route::delete('/gestionnaire/invitations/{invitation}', [InvitationGestionnaireController::class, 'annuler']);
 });

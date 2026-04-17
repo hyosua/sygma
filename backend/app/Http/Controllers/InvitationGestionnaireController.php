@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\NonAutoriseException;
 use App\Http\Resources\InvitationResource;
 use App\Models\InvitationGestionnaire;
 use App\Services\InvitationGestionnaireService;
@@ -55,14 +54,8 @@ class InvitationGestionnaireController extends Controller
         ], 201);
     }
 
-    public function renvoyer(Request $request, string $token)
+    public function renvoyer(InvitationGestionnaire $invitation)
     {
-        $invitation = InvitationGestionnaire::where('token', $token)->first();
-
-        if (! $invitation) {
-            throw new NonAutoriseException();
-        }
-
         $this->invitGestionnaireService->creerInvitation($invitation->email);
 
         return response()->json(['message' => 'Invitation renvoyée.']);
