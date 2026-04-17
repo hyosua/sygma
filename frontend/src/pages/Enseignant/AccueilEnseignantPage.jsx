@@ -4,7 +4,7 @@ import './AccueilEnseignantPage.css';
 export default function AccueilEnseignantPage() {
   return (
     <div className="enseignant-home-page">
-      <main className="home-content">
+      <div className="home-content">
         <section className="hero-card">
           <p className="hero-badge">Espace enseignant</p>
           <h1>Bienvenue sur votre espace</h1>
@@ -31,7 +31,7 @@ export default function AccueilEnseignantPage() {
             </Link>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 }

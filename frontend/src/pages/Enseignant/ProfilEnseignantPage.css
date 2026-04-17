@@ -1,0 +1,10 @@
+.profil-card {
+  background: var(--color-white);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 28px rgba(30, 30, 30, 0.06);
+}
+
+.profil-card h1 {
+  margin-top: 0;
+}
