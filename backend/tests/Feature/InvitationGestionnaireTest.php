@@ -107,7 +107,7 @@ class InvitationGestionnaireTest extends FeatureTestCase
 
         $response = $this->actingAs($gestionnaire)->getJson('/api/gestionnaire/invitations');
 
-        $response->assertStatus(200)->assertJsonCount(1);
+        $response->assertStatus(200)->assertJsonCount(1, 'data');
     }
 
     // DELETE /gestionnaire/invitations/{invitation}
