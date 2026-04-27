@@ -258,84 +258,19 @@ make test
 
 ### Architecture
 
-Le frontend Vite est configuré comme **proxy inverse** vers le backend :
-
-```mermaid
-flowchart LR
-    A["Téléphone"]
-    B["ngrok\ntunnel HTTPS"]
-    C["Vite\nport 3000"]
-    D["Backend Laravel\nport 8000"]
-
-    A -- "HTTPS" --> B
-    B --> C
-    C -- "/api/*" --> D
-
-    style A fill:#dbeafe,stroke:#93c5fd,color:#1e3a5f
-    style B fill:#fce7f3,stroke:#f9a8d4,color:#500724
-    style C fill:#d1fae5,stroke:#6ee7b7,color:#064e3b
-    style D fill:#fef9c3,stroke:#fde047,color:#713f12
-```
-
-Tous les appels API passent par Vite, qui les transfère au backend via le réseau Docker interne (`http://backend:8000`). Le téléphone ne communique qu'avec un seul serveur, ce qui évite les problèmes CORS et la nécessité de plusieurs tunnels.
-
-### Configuration
-
-- `VITE_API_URL=/api` dans `frontend/.env` — URL relative, fonctionne sur tous les environnements
-- Proxy déclaré dans `vite.config.js` : `/api` → `http://backend:8000`
-- `allowedHosts: true` dans `vite.config.js` pour autoriser les domaines ngrok
-
-### Lancer les tests mobiles
-
-**Prérequis (une seule fois) :**
-```bash
-ngrok config add-authtoken <ton_token>  # compte gratuit sur dashboard.ngrok.com
-```
-
-**Workflow :**
-```bash
-make mobile       # lance ngrok, affiche l'URL + QR code à scanner
-# tester sur le téléphone...
-make mobile-stop  # arrête ngrok
-```
-
-`make mobile` :
-1. Démarre ngrok sur le port 3000 (tunnel HTTPS)
-2. Récupère l'URL publique via l'API locale ngrok
-3. Affiche l'URL et un QR code à scanner directement dans le terminal
-
-### Fichiers concernés
-
-| Fichier | Rôle |
-|---|---|
-| `ngrok.yml` | Config du tunnel ngrok (port 3000) |
-| `scripts/mobile.sh` | Script d'automatisation ngrok |
-| `scripts/mobile-stop.sh` | Arrêt ngrok |
-| `frontend/.env` | `VITE_API_URL=/api` |
-
----
-
-### Mode démo mobile avec Google Auth
-
-Par défaut, Google Auth est configuré pour fonctionner en local (`localhost`). Pour une démonstration sur mobile (ngrok), un script dédié switche la configuration sans modifier manuellement le `.env`.
-
-#### Pourquoi un script séparé
-
-Le callback Google OAuth doit pointer vers une URL publique. En mode local, il pointe vers `http://localhost:8000/auth/google/callback`. Sur mobile via ngrok, il faut que ce callback soit accessible depuis Internet.
-
-La solution exploite le **proxy Vite déjà en place** : le callback Google passe par le tunnel ngrok frontend (port 3000), qui le transfère au backend via le proxy interne. Un seul tunnel ngrok suffit.
+Le frontend est exposé via un tunnel ngrok HTTPS et sert de proxy inverse vers le backend :
 
 ```mermaid
 flowchart LR
     A["Téléphone"]
     B["ngrok\nbullpen-unafraid-mutual.ngrok-free.dev"]
-    C["Vite\nport 3000"]
+    C["Vite / preview\nport 3000"]
     D["Backend Laravel\nport 8000"]
     E["Google OAuth"]
 
     A -- "HTTPS" --> B
     B --> C
-    C -- "/auth/google/callback" --> D
+    C -- "/api/*\n/auth/google/callback" --> D
     E -- "redirect callback" --> B
 
     style A fill:#dbeafe,stroke:#93c5fd,color:#1e3a5f
@@ -345,37 +280,65 @@ flowchart LR
     style E fill:#ede9fe,stroke:#c4b5fd,color:#3b0764
 ```
 
-#### Prérequis (une seule fois)
+Tous les appels API et callbacks OAuth passent par le proxy Vite, qui les transfère au backend via le réseau Docker interne (`http://backend:8000`). Un seul tunnel ngrok suffit.
 
-Enregistrer l'URI de callback ngrok dans [Google Cloud Console](https://console.cloud.google.com) → APIs & Services → Credentials → OAuth 2.0 Client → **Authorized redirect URIs** :
+### Configuration
 
+- `VITE_API_URL=/api` dans `frontend/.env` — URL relative, fonctionne sur tous les environnements
+- Proxy déclaré dans `vite.config.js` : `/api` et `/auth` → `http://backend:8000`
+- `allowedHosts: true` dans `vite.config.js` pour autoriser les domaines ngrok
+- Domaine ngrok fixe configuré dans `ngrok.yml` : `bullpen-unafraid-mutual.ngrok-free.dev`
+
+### Prérequis (une seule fois)
+
+1. Configurer l'authtoken ngrok :
+```bash
+ngrok config add-authtoken <ton_token>  # compte gratuit sur dashboard.ngrok.com
+```
+
+2. Enregistrer l'URI de callback dans [Google Cloud Console](https://console.cloud.google.com) → APIs & Services → Credentials → OAuth 2.0 Client → **Authorized redirect URIs** :
 ```
 https://bullpen-unafraid-mutual.ngrok-free.dev/auth/google/callback
 ```
 
-#### Workflow
+### Workflow
 
 ```bash
-make demo-start   # met à jour .env, redémarre le backend, lance ngrok + QR code
-# démonstration sur mobile...
-make demo-stop    # restaure .env localhost, redémarre le backend, arrête ngrok
+make mobile       # configure, build le frontend, lance ngrok + QR code
+# tester sur le téléphone...
+make mobile-stop  # restaure la configuration locale et repasse en mode dev
 ```
 
-`make demo-start` modifie automatiquement deux variables dans `backend/.env` :
+`make mobile` effectue dans l'ordre :
+1. Démarre ngrok (domaine fixe `bullpen-unafraid-mutual.ngrok-free.dev`, port 3000)
+2. Met à jour `backend/.env` avec toutes les variables nécessaires
+3. Redémarre le backend pour recharger `.env`
+4. Build le frontend en mode production et le démarre en mode preview (`docker-compose.mobile.yml`)
+5. Affiche l'URL et un QR code à scanner dans le terminal
 
-| Variable | Valeur locale | Valeur démo mobile |
+Variables modifiées dans `backend/.env` :
+
+| Variable | Valeur locale | Valeur mobile |
 |---|---|---|
 | `GOOGLE_REDIRECT_URI` | `http://localhost:8000/auth/google/callback` | `https://bullpen-unafraid-mutual.ngrok-free.dev/auth/google/callback` |
 | `FRONTEND_URL` | `http://localhost:3000` | `https://bullpen-unafraid-mutual.ngrok-free.dev` |
+| `APP_URL` | `http://localhost:8000` | `https://bullpen-unafraid-mutual.ngrok-free.dev` |
+| `SANCTUM_STATEFUL_DOMAINS` | `localhost:3000,...` | `bullpen-unafraid-mutual.ngrok-free.dev,localhost:3000,...` |
+| `SESSION_DOMAIN` | `null` | `.bullpen-unafraid-mutual.ngrok-free.dev` |
+| `SESSION_SECURE_COOKIE` | `false` | `true` |
+| `SESSION_SAME_SITE` | `lax` | `none` |
 
-`make demo-stop` restaure les valeurs localhost.
+`make mobile-stop` restaure toutes ces valeurs et repasse le frontend en mode dev (`npm run dev`).
 
-#### Fichiers concernés
+### Fichiers concernés
 
 | Fichier | Rôle |
 |---|---|
-| `scripts/demo-start.sh` | Activation du mode démo (env + ngrok) |
-| `scripts/demo-stop.sh` | Restauration du mode local |
+| `ngrok.yml` | Config du tunnel ngrok (domaine fixe, port 3000) |
+| `docker-compose.mobile.yml` | Override Docker : frontend en mode `build + preview` |
+| `scripts/mobile.sh` | Configuration complète + ngrok + QR code |
+| `scripts/mobile-stop.sh` | Restauration mode local + frontend dev |
+| `frontend/.env` | `VITE_API_URL=/api` |
 
 ---
 
