@@ -76,7 +76,7 @@ class DatabaseSeeder extends Seeder
         $enseignantFixe->assignRole('enseignant');
 
         $autresEnseignants = User::factory(4)->enseignant()->create();
-        $tousLesEnseignants = $autresEnseignants->prepend($enseignantFixe);
+        $tousLesEnseignants = collect([$enseignantFixe])->concat($autresEnseignants);
 
         // 4. Cours
         $this->command->info('Création des cours...');
