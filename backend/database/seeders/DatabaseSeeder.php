@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
      * Ce que voit enseignant@sygma.com :
      *   - 4 cours × 3 séances passées (avec émargement clôturé + présences)
      *   - 4 cours × 2 séances à venir
-     *   - 1 séance en cours sans session démarrée (prête pour la démo)
+     *   - 1 séance en cours avec session active + 1 présence enregistrée (etudiant@sygma.com)
      *
      * Ce que voit etudiant@sygma.com :
      *   - Les mêmes séances que son groupe (groupeDemo)
@@ -76,7 +76,7 @@ class DatabaseSeeder extends Seeder
         $enseignantFixe->assignRole('enseignant');
 
         $autresEnseignants = User::factory(4)->enseignant()->create();
-        $tousLesEnseignants = $autresEnseignants->prepend($enseignantFixe);
+        $tousLesEnseignants = collect([$enseignantFixe])->concat($autresEnseignants);
 
         // 4. Cours
         $this->command->info('Création des cours...');
@@ -245,14 +245,26 @@ class DatabaseSeeder extends Seeder
             $q->whereHas('utilisateur', fn ($u) => $u->where('groupe_id', $groupeDemo->id));
         })->inRandomOrder()->first() ?? $cours->first();
 
-        Seance::factory()->create([
+        $seanceDemo = Seance::factory()->create([
             'cours_id' => $coursDemo->id,
             'groupe_id' => $groupeDemo->id,
             'enseignant_id' => $enseignantFixe->id,
             'debut_a' => now()->subMinutes(30),
             'fin_a' => now()->addMinutes(90),
         ]);
-        $this->command->info('-> Séance de démo créée (en cours, sans session).');
+
+        $sessionDemo = SessionEmargement::factory()->create([
+            'seance_id' => $seanceDemo->id,
+            'jeton_expire_a' => now()->addMinutes(10),
+        ]);
+
+        $etudiantFixe = User::where('email', 'etudiant@sygma.com')->first();
+        Presence::factory()->create([
+            'session_emargement_id' => $sessionDemo->id,
+            'etudiant_id' => $etudiantFixe->id,
+        ]);
+
+        $this->command->info('-> Séance de démo créée (en cours, avec session + 1 présence enregistrée pour etudiant@sygma.com).');
 
         $this->command->info('');
         $this->command->info('✓ Comptes de test :');
