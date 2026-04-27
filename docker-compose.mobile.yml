@@ -1,0 +1,3 @@
+services:
+  frontend:
+    command: sh -c "npm run build && npm run preview"
