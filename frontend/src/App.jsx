@@ -15,6 +15,8 @@ import ChoisirRolePage from './pages/Inscription/ChoisirRolePage';
 import EmailConfirmerPage from './pages/Email/EmailConfirmerPage';
 import EmailVerifyPage from './pages/Email/EmailVerifyPage';
 import GoogleSuccesPage from './pages/Auth/GoogleSuccesPage';
+import GestionnaireLayout from './layouts/GestionnaireLayout';
+import AccueilGestionnairePage from './pages/Gestionnaire/AccueilGestionnairePage';
 import './App.css';
 import './styles/variables.css';
 
@@ -34,7 +36,9 @@ function App() {
         <Route path="/email/confirmer" element={<EmailConfirmerPage />} />
         <Route path="/email/verify/:token" element={<EmailVerifyPage />} />
 
-        <Route path="/gestionnaire" element={<div>Page gestionnaire</div>} />
+        <Route path="/gestionnaire" element={<GestionnaireLayout />}>
+          <Route index element={<AccueilGestionnairePage />} />
+        </Route>
 
         {/* Espace enseignant avec layout commun (Header/Sidebar) */}
         <Route path="/enseignant" element={<EnseignantLayout />}>
