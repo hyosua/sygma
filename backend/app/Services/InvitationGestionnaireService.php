@@ -23,7 +23,7 @@ class InvitationGestionnaireService
 
         $invitation = InvitationGestionnaire::updateOrCreate(
             ['email' => $email],
-            ['token' => $token, 'expires_at' => $expiresAt, 'used_at' => null]
+            ['token' => $token, 'expires_at' => $expiresAt, 'used_at' => null, 'demande' => false]
         );
 
         Mail::to($email)->send(new InvitationGestionnaireEmail($invitation));
@@ -31,15 +31,33 @@ class InvitationGestionnaireService
         return $invitation;
     }
 
+    public function creerDemande(string $email): InvitationGestionnaire
+    {
+        $dejaEnAttente = InvitationGestionnaire::where('email', $email)
+            ->where('demande', true)
+            ->exists();
+
+        if ($dejaEnAttente) {
+            abort(422, 'Une demande existe déjà pour cet email.');
+        }
+
+        return InvitationGestionnaire::create([
+            'email' => $email,
+            'token' => Str::random(32),
+            'expires_at' => null,
+            'demande' => true,
+        ]);
+    }
+
     public function validerToken(string $token): InvitationGestionnaire
     {
         $invitation = InvitationGestionnaire::where('token', $token)->first();
 
-        if (! $invitation) {
+        if (! $invitation || $invitation->demande) {
             throw new JetonInvalideException();
         }
 
-        if ($invitation->expires_at->isPast()) {
+        if ($invitation->expires_at?->isPast()) {
             throw new TokenExpireException();
         }
 
@@ -71,6 +89,15 @@ class InvitationGestionnaireService
 
     public function getInvitations(int $perPage = 10)
     {
-        return InvitationGestionnaire::orderBy('created_at', 'desc')->paginate($perPage);
+        return InvitationGestionnaire::where('demande', false)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+    }
+
+    public function getDemandes()
+    {
+        return InvitationGestionnaire::where('demande', true)
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 }

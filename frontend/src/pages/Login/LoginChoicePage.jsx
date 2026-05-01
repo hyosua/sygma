@@ -114,6 +114,10 @@ export default function LoginChoicePage() {
                 <Link to="/inscription" className="login-creer-compte">
                   Créer un compte
                 </Link>
+
+                <Link to="/demande-gestionnaire" className="login-creer-compte">
+                  Devenir gestionnaire
+                </Link>
               </div>
             </>
           ) : (

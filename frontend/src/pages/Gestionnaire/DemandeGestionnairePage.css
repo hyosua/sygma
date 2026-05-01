@@ -1,0 +1,102 @@
+.demande-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top left, rgba(69, 30, 208, 0.14), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(69, 30, 208, 0.1), transparent 22%),
+    #f7f7fb;
+  padding: 24px;
+}
+
+.demande-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 36px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(69, 30, 208, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.demande-logo {
+  height: 32px;
+  width: auto;
+  align-self: flex-start;
+}
+
+.demande-titre {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e1e1e;
+  margin: 0;
+}
+
+.demande-description {
+  color: #555;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.demande-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.demande-input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.demande-input:focus {
+  border-color: #451ed0;
+}
+
+.demande-btn {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #451ed0;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.demande-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.demande-erreur {
+  color: #e53e3e;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.demande-succes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #27ae60;
+  font-size: 0.95rem;
+}
+
+.demande-retour {
+  font-size: 0.88rem;
+  color: #451ed0;
+  text-decoration: none;
+  align-self: flex-start;
+}
+
+.demande-retour:hover {
+  text-decoration: underline;
+}

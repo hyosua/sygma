@@ -20,6 +20,7 @@ Route::post('auth/google/finaliser', [GoogleAuthController::class, 'finaliser'])
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 Route::post('/invitations/gestionnaire/{token}', [InvitationGestionnaireController::class, 'inscrire']);
 Route::get('/invitations/gestionnaire/{token}', [InvitationGestionnaireController::class, 'verifierToken']);
+Route::post('/demandes/gestionnaire', [InvitationGestionnaireController::class, 'demanderAcces']);
 
 /*
 * Enseignants
@@ -42,6 +43,10 @@ Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
     Route::post('/gestionnaire/invitations/{invitation}/renvoyer', [InvitationGestionnaireController::class, 'renvoyer']);
     Route::get('/gestionnaire/invitations', [InvitationGestionnaireController::class, 'getInvitations']);
     Route::delete('/gestionnaire/invitations/{invitation}', [InvitationGestionnaireController::class, 'annuler']);
+
+    Route::get('/gestionnaire/demandes', [InvitationGestionnaireController::class, 'getDemandes']);
+    Route::post('/gestionnaire/demandes/{invitation}/approuver', [InvitationGestionnaireController::class, 'approuver']);
+    Route::delete('/gestionnaire/demandes/{invitation}', [InvitationGestionnaireController::class, 'refuser']);
 });
 
 /*

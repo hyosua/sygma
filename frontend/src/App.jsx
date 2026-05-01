@@ -17,6 +17,7 @@ import EmailVerifyPage from './pages/Email/EmailVerifyPage';
 import GoogleSuccesPage from './pages/Auth/GoogleSuccesPage';
 import GestionnaireLayout from './layouts/GestionnaireLayout';
 import AccueilGestionnairePage from './pages/Gestionnaire/AccueilGestionnairePage';
+import DemandeGestionnairePage from './pages/Gestionnaire/DemandeGestionnairePage';
 import './App.css';
 import './styles/variables.css';
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/inscription" element={<InscriptionPage />} />
         <Route path="/inscription/choisir-role" element={<ChoisirRolePage />} />
         <Route path="/inscription/gestionnaire/:token" element={<InscriptionGestionnairePage />} />
+        <Route path="/demande-gestionnaire" element={<DemandeGestionnairePage />} />
         <Route path="/auth/google/succes" element={<GoogleSuccesPage />} />
         <Route path="/email/confirmer" element={<EmailConfirmerPage />} />
         <Route path="/email/verify/:token" element={<EmailVerifyPage />} />

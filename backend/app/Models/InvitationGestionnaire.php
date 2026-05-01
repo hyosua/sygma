@@ -16,15 +16,17 @@ class InvitationGestionnaire extends Model
         'token',
         'expires_at',
         'used_at',
+        'demande',
     ];
 
     protected $casts = [
         'used_at' => 'datetime',
         'expires_at' => 'datetime',
+        'demande' => 'boolean',
     ];
 
     public function estValide()
     {
-        return $this->expires_at->isFuture() && ! $this->used_at;
+        return $this->expires_at?->isFuture() && ! $this->used_at;
     }
 }

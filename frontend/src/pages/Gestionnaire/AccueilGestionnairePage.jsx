@@ -9,6 +9,7 @@ function statutInvitation(inv) {
 
 export default function AccueilGestionnairePage() {
   const [invitations, setInvitations] = useState([]);
+  const [demandes, setDemandes] = useState([]);
   const [email, setEmail] = useState('');
   const [chargement, setChargement] = useState(true);
   const [envoi, setEnvoi] = useState(false);
@@ -32,8 +33,21 @@ export default function AccueilGestionnairePage() {
     }
   };
 
+  const chargerDemandes = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/gestionnaire/demandes`, {
+        headers,
+      });
+      const data = await res.json();
+      if (res.ok) setDemandes(data.data ?? data);
+    } catch {
+      // silencieux
+    }
+  };
+
   useEffect(() => {
     chargerInvitations();
+    chargerDemandes();
   }, []);
 
   const inviter = async (e) => {
@@ -72,6 +86,34 @@ export default function AccueilGestionnairePage() {
       if (res.ok) chargerInvitations();
     } catch {
       setErreur("Erreur lors de l'annulation.");
+    }
+  };
+
+  const approuverDemande = async (id) => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/gestionnaire/demandes/${id}/approuver`,
+        { method: 'POST', headers }
+      );
+      if (res.ok) {
+        setSucces('Invitation envoyée.');
+        chargerDemandes();
+        chargerInvitations();
+      }
+    } catch {
+      setErreur("Erreur lors de l'approbation.");
+    }
+  };
+
+  const refuserDemande = async (id) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/gestionnaire/demandes/${id}`, {
+        method: 'DELETE',
+        headers,
+      });
+      if (res.ok) chargerDemandes();
+    } catch {
+      setErreur('Erreur lors du refus.');
     }
   };
 
@@ -115,6 +157,36 @@ export default function AccueilGestionnairePage() {
         {succes && <p className="message-succes">{succes}</p>}
         {erreur && <p className="message-erreur">{erreur}</p>}
       </section>
+
+      {demandes.length > 0 && (
+        <section className="section-liste">
+          <h2>Demandes reçues</h2>
+          <div className="liste-invitations">
+            {demandes.map((demande) => (
+              <div key={demande.id} className="carte-invitation">
+                <div className="carte-info">
+                  <span className="carte-email">{demande.email}</span>
+                  <span className="statut-badge statut-attente">En attente</span>
+                </div>
+                <div className="carte-actions">
+                  <button
+                    onClick={() => approuverDemande(demande.id)}
+                    className="btn-action btn-renvoyer"
+                  >
+                    Approuver
+                  </button>
+                  <button
+                    onClick={() => refuserDemande(demande.id)}
+                    className="btn-action btn-annuler"
+                  >
+                    Refuser
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="section-liste">
         <h2>Invitations envoyées</h2>
