@@ -100,3 +100,20 @@
 .demande-retour:hover {
   text-decoration: underline;
 }
+
+@media (max-width: 480px) {
+  .demande-page {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .demande-card {
+    padding: 28px 20px;
+    border-radius: 16px;
+  }
+
+  .demande-titre {
+    font-size: 1.25rem;
+  }
+}
