@@ -119,6 +119,25 @@ class EmargementService
      */
     public function cloturerSession(SessionEmargement $session): SessionEmargement
     {
+        $absentsIds = $session->seance->groupe->users()
+            ->whereNotIn('id', function ($query) use ($session) {
+                $query->select('etudiant_id')
+                    ->from('presences')
+                    ->where('session_emargement_id', $session->id);
+            })
+            ->pluck('id');
+
+        // préparer le insertions
+        $absents = $absentsIds->map(fn ($etudiantId) => [
+            'session_emargement_id' => $session->id,
+            'etudiant_id' => $etudiantId,
+            'statut' => 'absent',
+            'scanne_a' => null,
+        ]);
+
+        // insertion en masse
+        Presence::insert($absents->all());
+
         $session->update([
             'cloture_a' => Carbon::now(),
         ]);
