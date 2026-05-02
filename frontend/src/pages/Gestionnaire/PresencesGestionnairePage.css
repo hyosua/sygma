@@ -177,8 +177,39 @@
     padding: 20px 18px;
   }
 
-  .tableau-presences {
+  .tableau-presences thead {
+    display: none;
+  }
+
+  .tableau-presences tbody tr {
     display: block;
-    overflow-x: auto;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    padding: 4px 0;
+  }
+
+  .tableau-presences td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 0.88rem;
+  }
+
+  .tableau-presences tbody tr td:last-child {
+    border-bottom: none;
+  }
+
+  .tableau-presences td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #555;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    margin-right: 12px;
   }
 }

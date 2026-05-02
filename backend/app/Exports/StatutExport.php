@@ -31,6 +31,7 @@ class StatutExport implements FromQuery, WithHeadings
             ->select(
                 'users.nom',
                 'users.prenom',
+                'users.email',
                 'presences.statut',
                 'groupes.nom as groupe',
                 'cours.nom as cours_nom',
@@ -49,6 +50,6 @@ class StatutExport implements FromQuery, WithHeadings
 
     public function headings(): array
     {
-        return ['Nom', 'Prénom', 'Statut', 'Groupe', 'Cours', 'Date de séance'];
+        return ['Nom', 'Prénom', 'Email', 'Statut', 'Groupe', 'Cours', 'Date de séance'];
     }
 }

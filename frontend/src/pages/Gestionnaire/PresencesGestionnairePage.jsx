@@ -31,10 +31,14 @@ export default function PresencesGestionnairePage() {
 
   useEffect(() => {
     const fetchFiltres = async () => {
+      const authHeaders = {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Accept: 'application/json',
+      };
       try {
         const [resGroupes, resCours] = await Promise.all([
-          fetch(`${import.meta.env.VITE_API_URL}/groupes`, { headers }),
-          fetch(`${import.meta.env.VITE_API_URL}/cours`, { headers }),
+          fetch(`${import.meta.env.VITE_API_URL}/groupes`, { headers: authHeaders }),
+          fetch(`${import.meta.env.VITE_API_URL}/cours`, { headers: authHeaders }),
         ]);
         const [dataGroupes, dataCours] = await Promise.all([resGroupes.json(), resCours.json()]);
         setGroupes(Array.isArray(dataGroupes) ? dataGroupes : []);
@@ -250,17 +254,17 @@ export default function PresencesGestionnairePage() {
                 <tbody>
                   {presences.map((p, index) => (
                     <tr key={index}>
-                      <td>{p.nom}</td>
-                      <td>{p.prenom}</td>
-                      <td>{p.email}</td>
-                      <td>
+                      <td data-label="Nom">{p.nom}</td>
+                      <td data-label="Prénom">{p.prenom}</td>
+                      <td data-label="Email">{p.email}</td>
+                      <td data-label="Statut">
                         <span className={`badge-statut badge-${p.statut}`}>
                           {p.statut === 'present' ? 'Présent' : 'Absent'}
                         </span>
                       </td>
-                      <td>{p.groupe_nom ?? '—'}</td>
-                      <td>{p.cours_nom}</td>
-                      <td>{formatDate(p.presence_date)}</td>
+                      <td data-label="Groupe">{p.groupe_nom ?? '—'}</td>
+                      <td data-label="Cours">{p.cours_nom}</td>
+                      <td data-label="Date / Heure">{formatDate(p.presence_date)}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -61,6 +61,7 @@
                     <th>Date de séance</th>
                     <th>Nom</th>
                     <th>Prénom</th>
+                    <th>Email</th>
                     <th>Groupe</th>
                     <th>Cours</th>
                     <th>Statut</th>
@@ -72,6 +73,7 @@
                         <td>{{ $item['presence_date'] ?? '' }}</td>
                         <td>{{ $item['nom'] ?? '' }}</td>
                         <td>{{ $item['prenom'] ?? '' }}</td>
+                        <td>{{ $item['email'] ?? '' }}</td>
                         <td>{{ $item['groupe_nom'] ?? '—' }}</td>
                         <td>{{ $item['cours_nom'] ?? '' }}</td>
                         <td>{{ $item['statut'] ?? '' }}</td>
