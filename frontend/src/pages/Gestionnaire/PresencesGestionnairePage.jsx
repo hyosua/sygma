@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './PresencesGestionnairePage.css';
 
 const STATUTS = [
+  { valeur: '', label: 'Tous' },
   { valeur: 'present', label: 'Présent' },
   { valeur: 'absent', label: 'Absent' },
 ];
 
 export default function PresencesGestionnairePage() {
-  // Filtres sélectionnés par l'utilisateur
-  const [date, setDate] = useState('');
-  const [statut, setStatut] = useState('present');
+  const aujourd_hui = new Date().toISOString().slice(0, 10);
+  const debutDuMois = aujourd_hui.slice(0, 8) + '01';
 
-  // État de la liste affichée
+  const [dateDebut, setDateDebut] = useState(debutDuMois);
+  const [dateFin, setDateFin] = useState(aujourd_hui);
+  const [statut, setStatut] = useState('');
+  const [groupeId, setGroupeId] = useState('');
+  const [coursId, setCoursId] = useState('');
+  const [etudiant, setEtudiant] = useState('');
+
+  const [groupes, setGroupes] = useState([]);
+  const [cours, setCours] = useState([]);
+
   const [presences, setPresences] = useState([]);
   const [chargement, setChargement] = useState(false);
   const [erreur, setErreur] = useState(null);
@@ -20,7 +29,33 @@ export default function PresencesGestionnairePage() {
   const token = localStorage.getItem('token');
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/json' };
 
-  // Recherche JSON → affiche le tableau
+  useEffect(() => {
+    const fetchFiltres = async () => {
+      try {
+        const [resGroupes, resCours] = await Promise.all([
+          fetch(`${import.meta.env.VITE_API_URL}/groupes`, { headers }),
+          fetch(`${import.meta.env.VITE_API_URL}/cours`, { headers }),
+        ]);
+        const [dataGroupes, dataCours] = await Promise.all([resGroupes.json(), resCours.json()]);
+        setGroupes(Array.isArray(dataGroupes) ? dataGroupes : []);
+        setCours(Array.isArray(dataCours) ? dataCours : []);
+      } catch {
+        // dropdowns resteront vides
+      }
+    };
+    fetchFiltres();
+  }, []);
+
+  const construireParams = (extras = {}) => {
+    const params = new URLSearchParams({ date_debut: dateDebut, date_fin: dateFin });
+    if (statut) params.set('statut', statut);
+    if (groupeId) params.set('groupe_id', groupeId);
+    if (coursId) params.set('cours_id', coursId);
+    if (etudiant.trim()) params.set('etudiant', etudiant.trim());
+    Object.entries(extras).forEach(([k, v]) => params.set(k, v));
+    return params;
+  };
+
   const rechercher = async (e) => {
     e.preventDefault();
     setChargement(true);
@@ -28,17 +63,16 @@ export default function PresencesGestionnairePage() {
     setRechercheFaite(true);
 
     try {
-      const params = new URLSearchParams({ date, statut });
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/getStatutAndByDate?${params}`, {
-        headers,
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/getStatutAndByDate?${construireParams()}`,
+        { headers }
+      );
       const data = await res.json();
       if (res.ok && data.success) {
         setPresences(data.data);
       } else {
         setPresences([]);
-        if (data.success === false)
-          setErreur(null); // Pas d'erreur, juste aucun résultat
+        if (!data.success) setErreur(null);
         else setErreur(data.message ?? 'Erreur lors de la recherche.');
       }
     } catch {
@@ -48,31 +82,25 @@ export default function PresencesGestionnairePage() {
     }
   };
 
-  // Télécharge un fichier (Excel ou PDF) via fetch + blob.
   // On utilise fetch plutôt que window.open car la route est protégée par un token Bearer
-  // que le navigateur ne peut pas envoyer automatiquement via une simple URL.
+  // que le navigateur ne peut pas envoyer via une simple URL.
   const telecharger = async (type) => {
     try {
-      const params = new URLSearchParams({ date, statut, type });
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/getStatutAndByDate?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/getStatutAndByDate?${construireParams({ type })}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       if (!res.ok) {
         setErreur("Erreur lors de l'export.");
         return;
       }
 
-      // On récupère le contenu binaire (fichier xlsx ou pdf)
       const blob = await res.blob();
-
-      // On crée un lien invisible qui pointe vers ce blob, puis on le "clique"
       const lienTemp = document.createElement('a');
       lienTemp.href = URL.createObjectURL(blob);
-      lienTemp.download = `presences_${statut}_${date}.${type === 'E' ? 'xlsx' : 'pdf'}`;
+      lienTemp.download = `presences_${statut}_${dateDebut}_${dateFin}.${type === 'E' ? 'xlsx' : 'pdf'}`;
       lienTemp.click();
-
-      // Nettoyage : libère la mémoire allouée au blob
       URL.revokeObjectURL(lienTemp.href);
     } catch {
       setErreur('Erreur lors du téléchargement.');
@@ -94,17 +122,27 @@ export default function PresencesGestionnairePage() {
     <div className="presences-page">
       <h1 className="page-titre">Présences</h1>
 
-      {/* Formulaire de filtres */}
       <section className="section-filtres">
         <form onSubmit={rechercher} className="form-filtres">
           <div className="filtre-groupe">
-            <label htmlFor="date">Date</label>
+            <label htmlFor="date-debut">Du</label>
             <input
-              id="date"
+              id="date-debut"
               type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
+              value={dateDebut}
+              onChange={(e) => setDateDebut(e.target.value)}
+              className="input-date"
+            />
+          </div>
+
+          <div className="filtre-groupe">
+            <label htmlFor="date-fin">Au</label>
+            <input
+              id="date-fin"
+              type="date"
+              value={dateFin}
+              onChange={(e) => setDateFin(e.target.value)}
+              min={dateDebut}
               className="input-date"
             />
           </div>
@@ -125,12 +163,57 @@ export default function PresencesGestionnairePage() {
             </select>
           </div>
 
+          <div className="filtre-groupe">
+            <label htmlFor="groupe">Groupe</label>
+            <select
+              id="groupe"
+              value={groupeId}
+              onChange={(e) => setGroupeId(e.target.value)}
+              className="select-statut"
+            >
+              <option value="">Tous</option>
+              {groupes.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.nom}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filtre-groupe">
+            <label htmlFor="cours">Cours</label>
+            <select
+              id="cours"
+              value={coursId}
+              onChange={(e) => setCoursId(e.target.value)}
+              className="select-statut"
+            >
+              <option value="">Tous</option>
+              {cours.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nom}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filtre-groupe">
+            <label htmlFor="etudiant">Étudiant</label>
+            <input
+              id="etudiant"
+              type="text"
+              value={etudiant}
+              onChange={(e) => setEtudiant(e.target.value)}
+              placeholder="Nom ou prénom…"
+              className="input-texte"
+            />
+          </div>
+
           <button type="submit" className="btn-rechercher" disabled={chargement}>
             {chargement ? 'Chargement...' : 'Rechercher'}
           </button>
         </form>
 
-        {/* Boutons d'export — disponibles seulement après une recherche avec résultats */}
         {presences.length > 0 && (
           <div className="export-actions">
             <button onClick={() => telecharger('E')} className="btn-export btn-excel">
@@ -145,7 +228,6 @@ export default function PresencesGestionnairePage() {
 
       {erreur && <p className="message-erreur">{erreur}</p>}
 
-      {/* Tableau des résultats */}
       {rechercheFaite && !chargement && (
         <section className="section-resultats">
           {presences.length === 0 ? (
@@ -159,6 +241,7 @@ export default function PresencesGestionnairePage() {
                     <th>Nom</th>
                     <th>Prénom</th>
                     <th>Email</th>
+                    <th>Statut</th>
                     <th>Groupe</th>
                     <th>Cours</th>
                     <th>Date / Heure</th>
@@ -170,6 +253,11 @@ export default function PresencesGestionnairePage() {
                       <td>{p.nom}</td>
                       <td>{p.prenom}</td>
                       <td>{p.email}</td>
+                      <td>
+                        <span className={`badge-statut badge-${p.statut}`}>
+                          {p.statut === 'present' ? 'Présent' : 'Absent'}
+                        </span>
+                      </td>
                       <td>{p.groupe_nom ?? '—'}</td>
                       <td>{p.cours_nom}</td>
                       <td>{formatDate(p.presence_date)}</td>

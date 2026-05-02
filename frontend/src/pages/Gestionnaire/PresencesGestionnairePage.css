@@ -41,6 +41,7 @@
 }
 
 .input-date,
+.input-texte,
 .select-statut {
   padding: 10px 14px;
   border-radius: 10px;
@@ -94,6 +95,24 @@
 
 .btn-export:hover {
   opacity: 0.8;
+}
+
+.badge-statut {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge-present {
+  background: #e8f5e9;
+  color: #27ae60;
+}
+
+.badge-absent {
+  background: #fde8e8;
+  color: #c0392b;
 }
 
 .message-erreur {
