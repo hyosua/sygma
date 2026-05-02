@@ -108,8 +108,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/seances/{seance}/sessions-emargement', [SeanceController::class, 'getSessions']);
 });
 
-// Export
-Route::middleware('auth:sanctum')->group(function () {
+// Export (réservé aux gestionnaires)
+Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
     Route::get('/getExport', [ExportController::class, 'getSessionByDate']);
     Route::get('/getByDay', [ExportController::class, 'getAbsencesToDay']);
     Route::get('/getStatutAndByDate', [ExportController::class, 'getStatutAndByDate']);

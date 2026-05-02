@@ -25,13 +25,14 @@ class StatutExport implements FromQuery, WithHeadings
             ->join('seances', 'sessions_emargement.seance_id', '=', 'seances.id')
             ->join('users', 'presences.etudiant_id', '=', 'users.id')
             ->join('cours', 'seances.cours_id', '=', 'cours.id')
+            ->leftJoin('groupes', 'users.groupe_id', '=', 'groupes.id')
             ->select(
-                'users.id',
                 'users.nom',
                 'users.prenom',
                 'users.email',
+                'groupes.nom as groupe',
                 'cours.nom as cours_nom',
-                'seances.debut_a as presence_date'
+                'seances.debut_a as date_seance'
             )
             ->whereDate('seances.debut_a', $this->date)
             ->where('presences.statut', $this->statut)
@@ -40,6 +41,6 @@ class StatutExport implements FromQuery, WithHeadings
 
     public function headings(): array
     {
-        return ['id', 'nom', 'prenom', 'email', 'cours', 'date_seance'];
+        return ['Nom', 'Prénom', 'Email', 'Groupe', 'Cours', 'Date de séance'];
     }
 }

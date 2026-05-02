@@ -16,6 +16,9 @@ export default function HeaderGestionnaire() {
       </div>
 
       <nav className="topbar-nav">
+        <NavLink to="/gestionnaire/presences" className="nav-link">
+          Présences
+        </NavLink>
         <button
           onClick={deconnecter}
           className="nav-link"

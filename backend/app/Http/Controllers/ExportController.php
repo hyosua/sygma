@@ -122,12 +122,14 @@ class ExportController extends Controller
                     users.prenom,
                     users.email,
                     cours.nom AS cours_nom,
-                    seances.debut_a AS presence_date
+                    seances.debut_a AS presence_date,
+                    groupes.nom AS groupe_nom
                 FROM presences
                 JOIN sessions_emargement ON presences.session_emargement_id = sessions_emargement.id
                 JOIN seances ON sessions_emargement.seance_id = seances.id
                 JOIN users ON presences.etudiant_id = users.id
                 JOIN cours ON seances.cours_id = cours.id
+                LEFT JOIN groupes ON users.groupe_id = groupes.id
                 WHERE seances.debut_a::date = ?
                   AND presences.statut = ?
             ', [$date, $statut]);

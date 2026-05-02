@@ -18,6 +18,7 @@ import GoogleSuccesPage from './pages/Auth/GoogleSuccesPage';
 import GestionnaireLayout from './layouts/GestionnaireLayout';
 import AccueilGestionnairePage from './pages/Gestionnaire/AccueilGestionnairePage';
 import DemandeGestionnairePage from './pages/Gestionnaire/DemandeGestionnairePage';
+import PresencesGestionnairePage from './pages/Gestionnaire/PresencesGestionnairePage';
 import './App.css';
 import './styles/variables.css';
 
@@ -40,6 +41,7 @@ function App() {
 
         <Route path="/gestionnaire" element={<GestionnaireLayout />}>
           <Route index element={<AccueilGestionnairePage />} />
+          <Route path="presences" element={<PresencesGestionnairePage />} />
         </Route>
 
         {/* Espace enseignant avec layout commun (Header/Sidebar) */}
