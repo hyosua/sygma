@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <img class="logo" src="{{ public_path('sygma-logo-noir.webp') }}" alt="Logo Sygma">
+    <img class="logo" src="{{ public_path('sygma-logo-noir.png') }}" alt="Logo Sygma">
 
     @php
         $labelStatut = $statut === 'present' ? 'présents' : 'absents';
