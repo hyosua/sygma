@@ -25,14 +25,13 @@ export default function ImportComptesPage() {
     formData.append('fichier', fichier);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/importer-comptes`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/gestionnaire/comptes/import`, {
         method: 'POST',
         headers,
         body: formData,
       });
 
       const data = await res.json();
-      console.log(data);
       if (res.ok) {
         setMessage(data);
       } else {
@@ -52,14 +51,21 @@ export default function ImportComptesPage() {
       <section className="section-import">
         <h2>Importer un fichier CSV ou Excel</h2>
         <p className="import-hint">
-          Colonnes attendues : <strong>email, nom, prenom, role</strong> (ex: enseignant ou
+          Colonnes attendues : <strong>nom, prenom, email, role</strong> (ex: enseignant ou
           etudiant).
           <br />
         </p>
         <form onSubmit={importerComptes} className="form-import">
-          <div
+          <button
+            type="button"
             className={`zone-depot${survol ? ' zone-depot--survol' : ''}`}
             onClick={() => inputRef.current.click()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                inputRef.current.click();
+              }
+            }}
             onDragOver={(e) => {
               e.preventDefault();
               setSurvol(true);
@@ -70,13 +76,17 @@ export default function ImportComptesPage() {
               setSurvol(false);
               const f = e.dataTransfer.files[0];
               if (f) setFichier(f);
+              setErreur(null);
             }}
           >
             <input
               ref={inputRef}
               type="file"
               accept=".csv,.xlsx"
-              onChange={(e) => setFichier(e.target.files[0])}
+              onChange={(e) => {
+                setFichier(e.target.files[0]);
+                setErreur(null);
+              }}
               className="input-fichier-cache"
             />
             {fichier ? (
@@ -86,7 +96,7 @@ export default function ImportComptesPage() {
                 Glissez un fichier ici ou <u>parcourir</u>
               </span>
             )}
-          </div>
+          </button>
           <button type="submit" disabled={envoi || !fichier} className="btn-importer">
             {envoi ? 'Importation en cours...' : 'Importer'}
           </button>

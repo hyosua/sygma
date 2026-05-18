@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Exceptions\Import\ExtensionInvalideException;
-use App\Exceptions\Import\FichierVolumineuxException;
 use App\Mail\ConfirmationEmail;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Reader\Csv as CsvReader;
@@ -38,35 +38,39 @@ class ImportCompteService
         }
 
         // création de comptes
-        $success = 0;
-        foreach ($lignes as $i => $ligne) {
-            if ($i === 0) {
-                continue;
+        $success = DB::transaction(function () use ($lignes) {
+            $compteur = 0;
+            foreach ($lignes as $i => $ligne) {
+                if ($i === 0) {
+                    continue;
+                }
+
+                $nom = $ligne[0];
+                $prenom = $ligne[1];
+                $email = $ligne[2];
+                $role = $ligne[3];
+
+                $tokenVerification = Str::uuid()->toString();
+
+                $user = User::create([
+                    'nom' => $nom,
+                    'prenom' => $prenom,
+                    'email' => $email,
+                    'password' => Hash::make(Str::random(12)),
+                    'verification_token' => $tokenVerification,
+                    'verification_token_expires_at' => now()->addHours(24),
+                ]);
+
+                $user->assignRole($role);
+
+                $lienVerification = config('app.frontend_url') . '/email/verify/' . $tokenVerification;
+                Mail::to($user->email)->send(new ConfirmationEmail($lienVerification));
+
+                $compteur++;
             }
 
-            $nom = $ligne[0];
-            $prenom = $ligne[1];
-            $email = $ligne[2];
-            $role = $ligne[3];
-
-            $tokenVerification = Str::uuid()->toString();
-
-            $user = User::create([
-                'nom' => $nom,
-                'prenom' => $prenom,
-                'email' => $email,
-                'password' => bcrypt(Str::random(16)),
-                'verification_token' => $tokenVerification,
-                'verification_token_expires_at' => now()->addHours(24),
-            ]);
-
-            $user->assignRole($role);
-
-            $lienVerification = config('app.frontend_url') . '/email/verify/' . $tokenVerification;
-            Mail::to($user->email)->send(new ConfirmationEmail($lienVerification));
-
-            $success++;
-        }
+            return $compteur;
+        });
 
         return ['success' => $success, 'erreurs' => $erreurs];
     }
@@ -75,19 +79,12 @@ class ImportCompteService
     {
         $cheminReel = $fichier->getRealPath();
         $extension = $fichier->getClientOriginalExtension();
-        $taille = $fichier->getSize();
-
-        if ($taille > 2 * 1024 * 1024) {
-            throw new FichierVolumineuxException();
-        }
 
         if ($extension === 'csv') {
             return $this->parseCSV($cheminReel);
-        } elseif ($extension === 'xlsx') {
-            return $this->parseExcel($cheminReel);
         }
 
-        throw new ExtensionInvalideException();
+        return $this->parseExcel($cheminReel);
     }
 
     private function parseCSV(string $chemin): array
@@ -121,6 +118,14 @@ class ImportCompteService
         // verifier que l'email n'est pas déjà en base
         if (User::where('email', $email)->exists()) {
             return "L'email $email est déjà utilisé.";
+        }
+
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return "L'email $email n'est pas valide.";
+        }
+
+        if ($donnees[0] === null || $donnees[1] === null || $donnees[2] === null || $donnees[3] === null) {
+            return "La ligne $numLigne contient des champs vides.";
         }
 
         if (! in_array($role, ['etudiant', 'enseignant'])) {

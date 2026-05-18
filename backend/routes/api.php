@@ -48,7 +48,7 @@ Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
     Route::get('/gestionnaire/demandes', [InvitationGestionnaireController::class, 'getDemandes']);
     Route::post('/gestionnaire/demandes/{invitation}/approuver', [InvitationGestionnaireController::class, 'approuver']);
     Route::delete('/gestionnaire/demandes/{invitation}', [InvitationGestionnaireController::class, 'refuser']);
-    Route::post('/importer-comptes', [ImportCompteController::class, 'importer']);
+    Route::post('/gestionnaire/comptes/import', [ImportCompteController::class, 'importer']);
 });
 
 /*
