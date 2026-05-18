@@ -61,7 +61,7 @@ Route::middleware('auth:sanctum', 'role:etudiant|gestionnaire')->group(function 
     Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
 
     // Présence
-Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
+// Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
 });
 
 /*

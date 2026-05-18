@@ -12,6 +12,14 @@ function MesPresences() {
     const [data, setData] = useState([]);
 
     const API_BASE = import.meta.env.VITE_API_URL;
+    function authHeaders() {
+        const token = localStorage.getItem('token');
+        return {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        };
+    }
 
     async function getData() {
 
@@ -24,8 +32,11 @@ function MesPresences() {
 
             }
             const user = JSON.parse(localStorage.getItem("user"));
+            const token = localStorage.getItem('token')
 
-            const api = await fetch(`${API_BASE}/mes-presences/${(user.id)}?statuts=${stat}`)
+            const api = await fetch(`${API_BASE}/mes-presences/${(user.id)}?statuts=${stat}`,{
+                 headers: authHeaders(),
+            })
 
             if (!api.ok) {
                 console.log(await api.body)
@@ -56,7 +67,7 @@ function MesPresences() {
                     <p>Consulte tes absences et présences par cours et par mois.</p>
                     <div className="tabs">
                         <button
-                            className={`tab ${statuts == false ? '' : 'active' }`}
+                            className={`tab ${statuts == false ? '' : 'active'}`}
                             onClick={() => setStatuts(true)}
                         >
                             Présent
