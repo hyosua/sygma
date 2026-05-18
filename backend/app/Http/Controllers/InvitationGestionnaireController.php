@@ -67,4 +67,36 @@ class InvitationGestionnaireController extends Controller
 
         return response()->json($invitation);
     }
+
+    public function demanderAcces(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $demande = $this->invitGestionnaireService->creerDemande($request->email);
+
+        return response()->json($demande, 201);
+    }
+
+    public function getDemandes()
+    {
+        $demandes = $this->invitGestionnaireService->getDemandes();
+
+        return InvitationResource::collection($demandes);
+    }
+
+    public function approuver(InvitationGestionnaire $invitation)
+    {
+        $this->invitGestionnaireService->creerInvitation($invitation->email);
+
+        return response()->json(['message' => 'Invitation envoyée.']);
+    }
+
+    public function refuser(InvitationGestionnaire $invitation)
+    {
+        $invitation->delete();
+
+        return response()->noContent();
+    }
 }

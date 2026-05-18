@@ -32,8 +32,8 @@ class ExportController extends Controller
                 ->whereDate('p.created_at', $date)
                 ->select(
                     'u.id as user_id',
-                    'u.nom as user_nom',           // Ajout du nom
-                    'u.prenom as user_prenom',      // Ajout du prénom
+                    'u.nom as user_nom',
+                    'u.prenom as user_prenom',
                     'u.email as user_email',
                     'u.created_at as user_created_at',
                     'u.updated_at as user_updated_at'
@@ -111,47 +111,65 @@ class ExportController extends Controller
     public function getStatutAndByDate(Request $request)
     {
         try {
-            $date = $request->input('date', Carbon::today()->format('Y-m-d'));
+            $dateDebut = $request->input('date_debut', Carbon::today()->format('Y-m-d'));
+            $dateFin = $request->input('date_fin', $dateDebut);
             $statut = $request->input('statut');
             $type = $request->input('type');
+            $groupeId = $request->input('groupe_id');
+            $coursId = $request->input('cours_id');
+            $etudiant = $request->input('etudiant');
 
-            $absences = DB::select('
-                SELECT
-                    users.id,
-                    users.nom,
-                    users.prenom,
-                    users.email,
-                    cours.nom AS cours_nom,
-                    seances.debut_a AS presence_date
-                FROM presences
-                JOIN sessions_emargement ON presences.session_emargement_id = sessions_emargement.id
-                JOIN seances ON sessions_emargement.seance_id = seances.id
-                JOIN users ON presences.etudiant_id = users.id
-                JOIN cours ON seances.cours_id = cours.id
-                WHERE seances.debut_a::date = ?
-                  AND presences.statut = ?
-            ', [$date, $statut]);
+            $query = DB::table('presences')
+                ->join('sessions_emargement', 'presences.session_emargement_id', '=', 'sessions_emargement.id')
+                ->join('seances', 'sessions_emargement.seance_id', '=', 'seances.id')
+                ->join('users', 'presences.etudiant_id', '=', 'users.id')
+                ->join('cours', 'seances.cours_id', '=', 'cours.id')
+                ->leftJoin('groupes', 'users.groupe_id', '=', 'groupes.id')
+                ->select(
+                    'users.id',
+                    'users.nom',
+                    'users.prenom',
+                    'users.email',
+                    'presences.statut',
+                    'cours.nom as cours_nom',
+                    'seances.debut_a as presence_date',
+                    'groupes.nom as groupe_nom'
+                )
+                ->when($statut, fn ($q) => $q->where('presences.statut', $statut))
+                ->whereRaw('seances.debut_a::date BETWEEN ? AND ?', [$dateDebut, $dateFin])
+                ->when($groupeId, fn ($q) => $q->where('users.groupe_id', $groupeId))
+                ->when($coursId, fn ($q) => $q->where('seances.cours_id', $coursId))
+                ->when($etudiant, fn ($q) => $q->where(function ($q2) use ($etudiant) {
+                    $q2->whereRaw('LOWER(users.nom) LIKE ?', ['%' . strtolower($etudiant) . '%'])
+                        ->orWhereRaw('LOWER(users.prenom) LIKE ?', ['%' . strtolower($etudiant) . '%']);
+                }))
+                ->orderBy('seances.debut_a');
 
-            $data = array_map(fn ($row) => (array) $row, $absences);
+            $suffixe = $statut ?: 'tous';
 
             if ($type === 'E') {
-                return Excel::download(new StatutExport($date, $statut), "statut_{$statut}_{$date}.xlsx");
+                return Excel::download(
+                    new StatutExport($dateDebut, $dateFin, $statut, $groupeId, $coursId, $etudiant),
+                    "statut_{$suffixe}_{$dateDebut}_{$dateFin}.xlsx"
+                );
             } elseif ($type === 'P') {
-                $nombre = count($data);
-
+                $data = $query->get()->map(fn ($row) => (array) $row)->all();
                 $pdf = Pdf::loadView('pdf.liste-personnes', [
                     'items' => $data,
-                    'date' => $date,
+                    'date' => "{$dateDebut} au {$dateFin}",
                     'statut' => $statut,
-                    'Nombre' => $nombre,
+                    'Nombre' => count($data),
                 ]);
 
-                return $pdf->stream("statut_{$statut}_{$date}.pdf");
+                return $pdf->stream("statut_{$suffixe}_{$dateDebut}_{$dateFin}.pdf");
             }
+
+            $data = $query->get()->map(fn ($row) => (array) $row)->all();
 
             return response()->json([
                 'success' => true,
-                'date' => $date,
+                'date_debut' => $dateDebut,
+                'date_fin' => $dateFin,
                 'statut' => $statut,
                 'count' => count($data),
                 'data' => $data,

@@ -1,0 +1,215 @@
+.presences-page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.page-titre {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1e1e1e;
+  margin: 0;
+}
+
+.section-filtres {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 12px rgba(69, 30, 208, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-filtres {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filtre-groupe {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filtre-groupe label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.input-date,
+.input-texte,
+.select-statut {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+  background: #fafafa;
+}
+
+.btn-rechercher {
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
+  background: #451ed0;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-rechercher:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.export-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-export {
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-excel {
+  background: #e8f5e9;
+  color: #27ae60;
+}
+
+.btn-pdf {
+  background: #fde8e8;
+  color: #c0392b;
+}
+
+.btn-export:hover {
+  opacity: 0.8;
+}
+
+.badge-statut {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge-present {
+  background: #e8f5e9;
+  color: #27ae60;
+}
+
+.badge-absent {
+  background: #fde8e8;
+  color: #c0392b;
+}
+
+.message-erreur {
+  color: #e53e3e;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.section-resultats {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 12px rgba(69, 30, 208, 0.07);
+}
+
+.compteur {
+  font-size: 0.9rem;
+  color: #888;
+  margin: 0 0 16px;
+}
+
+.message-info {
+  color: #888;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.tableau-presences {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tableau-presences th {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 2px solid #ececec;
+  font-weight: 700;
+  color: #555;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tableau-presences td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #1e1e1e;
+}
+
+.tableau-presences tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tableau-presences tbody tr:hover {
+  background: #fafafa;
+}
+
+@media (max-width: 768px) {
+  .section-filtres,
+  .section-resultats {
+    padding: 20px 18px;
+  }
+
+  .tableau-presences thead {
+    display: none;
+  }
+
+  .tableau-presences tbody tr {
+    display: block;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    padding: 4px 0;
+  }
+
+  .tableau-presences td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 0.88rem;
+  }
+
+  .tableau-presences tbody tr td:last-child {
+    border-bottom: none;
+  }
+
+  .tableau-presences td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #555;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+}
