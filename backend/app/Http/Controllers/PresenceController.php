@@ -11,8 +11,8 @@ class PresenceController extends Controller
 {
     public function getPresenceById(User $user, Request $request)
     {
-        if ($user->id !== Auth::id()) {
-            return response()->json('Accès non autorisé', 403);
+        if ($user->id != Auth::id()) {
+            return response()->json(['message' => 'Non autorisé'], 403);
         }
 
         $types = $request->input('statuts');
@@ -29,7 +29,7 @@ class PresenceController extends Controller
                 ->join('cours', 'seances.cours_id', '=', 'cours.id')
                 ->where('presences.etudiant_id', $user->id)
                 ->where('presences.statut', 'absent')
-                ->select('cours.nom', 'presences.statut', DB::raw("TO_CHAR(presences.created_at, 'FMMonth') as mois"))
+                ->select('cours.nom', 'presences.statut', 'presences.created_at as date')
                 ->paginate(10);
         } elseif ($types == 'P' || $types == 'p') {
             $presences = DB::table('presences')
@@ -39,7 +39,7 @@ class PresenceController extends Controller
                 ->join('cours', 'seances.cours_id', '=', 'cours.id')
                 ->where('presences.etudiant_id', $user->id)
                 ->where('presences.statut', 'present')
-                ->select('cours.nom', 'presences.statut', DB::raw("TO_CHAR(presences.created_at, 'FMMonth') as mois"))
+                ->select('cours.nom', 'presences.statut', 'presences.created_at as date')
                 ->paginate(10);
         } else {
             return response()->json('Aucun type défini: veuillez choisir entre A pour absent ou P pour présent', 422);

@@ -61,6 +61,9 @@ Route::middleware('auth:sanctum', 'role:etudiant|gestionnaire')->group(function 
 
     // Historique des présences
     Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
+
+    // Présence
+    // Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
 });
 
 /*
@@ -116,6 +119,3 @@ Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
     Route::get('/getByDay', [ExportController::class, 'getAbsencesToDay']);
     Route::get('/getStatutAndByDate', [ExportController::class, 'getStatutAndByDate']);
 });
-
-// Présence
-Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
