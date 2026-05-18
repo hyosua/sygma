@@ -23,6 +23,7 @@ import MesPresences from './pages/Etudiant/MesPresences';
 import './App.css';
 import './styles/variables.css';
 import EtudiantLayout from './layouts/EtudiantLayout';
+import ImportComptesPage from './pages/Gestionnaire/ImportComptesPage';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
 
         <Route path="/gestionnaire" element={<GestionnaireLayout />}>
           <Route index element={<AccueilGestionnairePage />} />
+          <Route path="import" element={<ImportComptesPage />} />
           <Route path="presences" element={<PresencesGestionnairePage />} />
         </Route>
 
@@ -55,7 +57,7 @@ function App() {
         </Route>
 
         {/* Route Étudiant */}
-        <Route path="/etudiant" element={<EtudiantLayout />} >
+        <Route path="/etudiant" element={<EtudiantLayout />}>
           <Route path="/etudiant/scan" element={<ScanPresence />} />
           <Route path="/etudiant/mes-cours" element={<MesCoursEtudiantPage />} />
           <Route path="/etudiant/mes-presences" element={<MesPresences />} />

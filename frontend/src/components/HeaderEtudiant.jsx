@@ -1,7 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useDeconnexion } from '../hooks/useDeconnexion';
 
 export default function HeaderEtudiant() {
+  const deconnecter = useDeconnexion();
+
   return (
     <header className="topbar">
       <div className="topbar-left">
@@ -31,6 +34,13 @@ export default function HeaderEtudiant() {
         >
           Mes présences
         </NavLink>
+        <button
+          onClick={deconnecter}
+          className="nav-link"
+          style={{ border: 'none', cursor: 'pointer', background: 'none' }}
+        >
+          Se déconnecter
+        </button>
       </nav>
     </header>
   );

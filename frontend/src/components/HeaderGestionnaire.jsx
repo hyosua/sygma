@@ -19,6 +19,9 @@ export default function HeaderGestionnaire() {
         <NavLink to="/gestionnaire/presences" className="nav-link">
           Présences
         </NavLink>
+        <NavLink to="/gestionnaire/import" className="nav-link">
+          Imports
+        </NavLink>
         <button
           onClick={deconnecter}
           className="nav-link"
