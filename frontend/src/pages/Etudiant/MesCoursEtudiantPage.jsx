@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './MesCoursEtudiantPage.css';
 import { useNavigate } from 'react-router-dom';
+import EtudiantLayout from '../../layouts/EtudiantLayout';
 
 const API_BASE = import.meta.env.VITE_API_URL;
 

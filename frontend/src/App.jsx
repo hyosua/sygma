@@ -19,8 +19,10 @@ import GestionnaireLayout from './layouts/GestionnaireLayout';
 import AccueilGestionnairePage from './pages/Gestionnaire/AccueilGestionnairePage';
 import DemandeGestionnairePage from './pages/Gestionnaire/DemandeGestionnairePage';
 import PresencesGestionnairePage from './pages/Gestionnaire/PresencesGestionnairePage';
+import MesPresences from './pages/Etudiant/MesPresences';
 import './App.css';
 import './styles/variables.css';
+import EtudiantLayout from './layouts/EtudiantLayout';
 
 function App() {
   return (
@@ -53,9 +55,11 @@ function App() {
         </Route>
 
         {/* Route Étudiant */}
-        <Route path="/etudiant/scan" element={<ScanPresence />} />
-        <Route path="/etudiant/mes-cours" element={<MesCoursEtudiantPage />} />
-
+        <Route path="/etudiant" element={<EtudiantLayout />} >
+          <Route path="/etudiant/scan" element={<ScanPresence />} />
+          <Route path="/etudiant/mes-cours" element={<MesCoursEtudiantPage />} />
+          <Route path="/etudiant/mes-presences" element={<MesPresences />} />
+        </Route>
         <Route
           path="/confidentialite"
           element={<div style={{ padding: '40px' }}>Page de confidentialité à compléter</div>}

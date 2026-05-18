@@ -1,0 +1,157 @@
+* {
+  box-sizing: border-box;
+}
+
+.mes-presences-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(69, 30, 208, 0.18), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(69, 30, 208, 0.12), transparent 24%),
+    #f7f7fb;
+  padding: 40px 20px;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.presences-content {
+  max-width: 1150px;
+  margin: 0 auto;
+}
+
+/* HERO */
+.presences-hero {
+  background: linear-gradient(135deg, #1e1e1e 0%, #2c2c2c 100%);
+  color: white;
+  border-radius: 28px;
+  padding: 32px;
+  margin-bottom: 28px;
+  box-shadow: 0 20px 60px rgba(30, 30, 30, 0.16);
+}
+
+.presences-hero h1 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 800;
+}
+
+.presences-hero p {
+  margin-top: 10px;
+  color: rgba(255,255,255,0.8);
+}
+
+/* PANEL */
+.presences-panel {
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 28px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 50px rgba(69, 30, 208, 0.08);
+}
+
+/* TABLE */
+.presences-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+}
+
+
+.tab {
+  border: none;
+  background: transparent;
+  color: var(--color-dark);
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.tab:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+.tabs {
+  display: inline-flex;
+  gap: 10px;
+  padding: 6px;
+  background: #ffffff;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.tab.active {
+  background: var(--color-primary);
+  color: var(--color-darks);
+  box-shadow: 0 8px 20px rgba(69, 30, 208, 0.28);
+}
+
+
+/* HEADER */
+.presences-table thead tr th {
+  text-align: left;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b6b6b;
+  padding: 12px 16px;
+}
+
+/* ROW */
+.presences-table tbody tr {
+  background: white;
+  box-shadow: 0 10px 30px rgba(30, 30, 30, 0.06);
+  border-radius: 16px;
+  transition: 0.2s ease;
+}
+
+.presences-table tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(30, 30, 30, 0.08);
+}
+
+.presences-table td {
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e1e1e;
+}
+
+/* BADGES statut */
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge.absent {
+  background: rgba(255, 80, 80, 0.12);
+  color: #d92d20;
+}
+
+.badge.present {
+  background: rgba(0, 200, 100, 0.12);
+  color: #12b76a;
+}
+
+/* EMPTY */
+.empty {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 20px;
+  border: 1px dashed rgba(69, 30, 208, 0.25);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .presences-hero h1 {
+    font-size: 28px;
+  }
+
+  .presences-table td {
+    font-size: 13px;
+  }
+}
