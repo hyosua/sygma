@@ -31,14 +31,36 @@
   align-items: center;
 }
 
-.input-fichier {
+.zone-depot {
   flex: 1;
   min-width: 220px;
-  padding: 11px 14px;
+  padding: 22px 18px;
   border-radius: 10px;
-  border: 1px solid #ddd;
-  font-size: 0.95rem;
-  background: #fafafa;
+  border: 2px dashed #c4b5f8;
+  background: #f8f6ff;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.zone-depot--survol {
+  border-color: #451ed0;
+  background: #ede9fb;
+}
+
+.input-fichier-cache {
+  display: none;
+}
+
+.zone-depot-texte {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.zone-depot-nom {
+  color: #451ed0;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .btn-importer {

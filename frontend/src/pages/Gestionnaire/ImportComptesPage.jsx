@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import './ImportComptesPage.css';
 
 export default function ImportComptesPage() {
   const [fichier, setFichier] = useState(null);
   const [envoi, setEnvoi] = useState(false);
   const [message, setMessage] = useState(null);
   const [erreur, setErreur] = useState(null);
+  const [survol, setSurvol] = useState(false);
+  const inputRef = useRef(null);
 
   const token = localStorage.getItem('token');
   const headers = {
@@ -54,13 +57,36 @@ export default function ImportComptesPage() {
           <br />
         </p>
         <form onSubmit={importerComptes} className="form-import">
-          <input
-            type="file"
-            accept=".csv,.xlsx"
-            onChange={(e) => setFichier(e.target.files[0])}
-            required
-            className="input-fichier"
-          />
+          <div
+            className={`zone-depot${survol ? ' zone-depot--survol' : ''}`}
+            onClick={() => inputRef.current.click()}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setSurvol(true);
+            }}
+            onDragLeave={() => setSurvol(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setSurvol(false);
+              const f = e.dataTransfer.files[0];
+              if (f) setFichier(f);
+            }}
+          >
+            <input
+              ref={inputRef}
+              type="file"
+              accept=".csv,.xlsx"
+              onChange={(e) => setFichier(e.target.files[0])}
+              className="input-fichier-cache"
+            />
+            {fichier ? (
+              <span className="zone-depot-nom">{fichier.name}</span>
+            ) : (
+              <span className="zone-depot-texte">
+                Glissez un fichier ici ou <u>parcourir</u>
+              </span>
+            )}
+          </div>
           <button type="submit" disabled={envoi || !fichier} className="btn-importer">
             {envoi ? 'Importation en cours...' : 'Importer'}
           </button>
@@ -71,7 +97,7 @@ export default function ImportComptesPage() {
       {message && (
         <section className="section-import">
           <h2>Résultat de l'importation</h2>
-          <p className="rapport-success">
+          <p className="rapport-succes">
             {message.success} compte{message.success > 1 ? 's' : ''} créé
             {message.success > 1 ? 's' : ''} :
           </p>
