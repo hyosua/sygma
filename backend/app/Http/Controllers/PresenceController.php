@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PresenceController extends Controller
 {
     public function getPresenceById(User $user, Request $request)
     {
-        if (auth()->id() !== $user->id) {
+        if ($user->id !== Auth::id()) {
             return response()->json('Accès non autorisé', 403);
         }
 

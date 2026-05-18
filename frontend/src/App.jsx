@@ -21,6 +21,7 @@ import DemandeGestionnairePage from './pages/Gestionnaire/DemandeGestionnairePag
 import PresencesGestionnairePage from './pages/Gestionnaire/PresencesGestionnairePage';
 import './App.css';
 import './styles/variables.css';
+import ImportComptesPage from './pages/Gestionnaire/ImportComptesPage';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
 
         <Route path="/gestionnaire" element={<GestionnaireLayout />}>
           <Route index element={<AccueilGestionnairePage />} />
+          <Route path="import" element={<ImportComptesPage />} />
           <Route path="presences" element={<PresencesGestionnairePage />} />
         </Route>
 

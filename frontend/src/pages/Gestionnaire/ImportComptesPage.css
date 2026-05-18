@@ -1,0 +1,102 @@
+.import-page {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.section-import {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 12px rgba(69, 30, 208, 0.07);
+}
+
+.section-import h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e1e1e;
+  margin: 0 0 8px;
+}
+
+.import-hint {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 18px;
+}
+
+.form-import {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.input-fichier {
+  flex: 1;
+  min-width: 220px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+  background: #fafafa;
+}
+
+.btn-importer {
+  padding: 11px 22px;
+  border-radius: 10px;
+  border: none;
+  background: #451ed0;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.btn-importer:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rapport-succes {
+  color: #27ae60;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.rapport-erreurs-titre {
+  color: #e53e3e;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.rapport-erreurs-liste {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rapport-erreur-item {
+  color: #e53e3e;
+  font-size: 0.9rem;
+}
+
+.message-erreur {
+  color: #e53e3e;
+  font-size: 0.9rem;
+  margin: 12px 0 0;
+}
+
+@media (max-width: 600px) {
+  .section-import {
+    padding: 20px 18px;
+  }
+
+  .form-import {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
