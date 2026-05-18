@@ -6,12 +6,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
 class PresenceController extends Controller
 {
     public function getPresenceById(User $user, Request $request)
     {
-    if ($user->id != Auth::id()) {
-            return response()->json(['message' => 'Non autorisé: '. $user->id .' et : '.Auth::id() ], 403);
+        if ($user->id != Auth::id()) {
+            return response()->json(['message' => 'Non autorisé'], 403);
         }
 
         $types = $request->input('statuts');
@@ -28,7 +29,7 @@ class PresenceController extends Controller
                 ->join('cours', 'seances.cours_id', '=', 'cours.id')
                 ->where('presences.etudiant_id', $user->id)
                 ->where('presences.statut', 'absent')
-                ->select('cours.nom', 'presences.statut', 'presences.created_at as date' )
+                ->select('cours.nom', 'presences.statut', 'presences.created_at as date')
                 ->paginate(10);
         } elseif ($types == 'P' || $types == 'p') {
             $presences = DB::table('presences')
