@@ -39,8 +39,8 @@ class ImportCompteService
         }
 
         // création de comptes
-        $success = DB::transaction(function () use ($lignes) {
-            $compteur = 0;
+        $comptesCreees = DB::transaction(function () use ($lignes) {
+            $comptes = [];
             foreach ($lignes as $i => $ligne) {
                 if ($i === 0) {
                     continue;
@@ -63,10 +63,12 @@ class ImportCompteService
                     'verification_token_expires_at' => now()->addHours(24),
                 ];
 
+                $groupeNomFinal = null;
                 if ($nomGroupe) {
                     $groupe = Groupe::whereRaw('LOWER(nom) = LOWER(?)', [$nomGroupe])->first()
                         ?? Groupe::create(['nom' => $nomGroupe]);
                     $donnees['groupe_id'] = $groupe->id;
+                    $groupeNomFinal = $groupe->nom;
                 }
 
                 $user = User::create($donnees);
@@ -75,13 +77,19 @@ class ImportCompteService
                 $lienVerification = config('app.frontend_url') . '/email/verify/' . $tokenVerification;
                 Mail::to($user->email)->send(new ConfirmationEmail($lienVerification));
 
-                $compteur++;
+                $comptes[] = [
+                    'nom' => $nom,
+                    'prenom' => $prenom,
+                    'email' => $email,
+                    'role' => $role,
+                    'groupe' => $groupeNomFinal,
+                ];
             }
 
-            return $compteur;
+            return $comptes;
         });
 
-        return ['success' => $success, 'erreurs' => $erreurs];
+        return ['success' => count($comptesCreees), 'comptes' => $comptesCreees, 'erreurs' => $erreurs];
     }
 
     private function parser(UploadedFile $fichier): array

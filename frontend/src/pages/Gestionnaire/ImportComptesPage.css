@@ -81,6 +81,32 @@
   cursor: not-allowed;
 }
 
+.rapport-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  margin-top: 12px;
+}
+
+.rapport-table th {
+  text-align: left;
+  padding: 8px 12px;
+  background: #f8f6ff;
+  color: #451ed0;
+  font-weight: 600;
+  border-bottom: 2px solid #ede9fb;
+}
+
+.rapport-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0eeff;
+  color: #333;
+}
+
+.rapport-table tr:last-child td {
+  border-bottom: none;
+}
+
 .rapport-succes {
   color: #27ae60;
   font-weight: 600;
