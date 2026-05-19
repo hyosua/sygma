@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import CookieBanner from './components/CookieBanner';
 import AccueilEnseignantPage from './pages/Enseignant/AccueilEnseignantPage';
+import PresencesEnseignantPage from './pages/Enseignant/PresencesEnseignantPage';
 import EnseignantLayout from './layouts/EnseignantLayout';
 import SessionQR from './pages/Enseignant/SessionQR';
 import MesCoursPage from './pages/Enseignant/MesCoursPage';
@@ -51,6 +52,7 @@ function App() {
         {/* Espace enseignant avec layout commun (Header/Sidebar) */}
         <Route path="/enseignant" element={<EnseignantLayout />}>
           <Route path="accueil" element={<AccueilEnseignantPage />} />
+          <Route path="archives" element={<PresencesEnseignantPage />} />
           <Route path="mes-cours" element={<MesCoursPage />} />
           <Route path="profil" element={<ProfilEnseignantPage />} />
           <Route path="session/:seanceId" element={<SessionQR />} />

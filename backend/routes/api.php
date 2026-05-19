@@ -5,6 +5,7 @@ use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\GroupeController;
 use App\Http\Controllers\ImportCompteController;
 use App\Http\Controllers\InvitationGestionnaireController;
 use App\Http\Controllers\PresenceController;
@@ -106,6 +107,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/groupes', function () {
         return \App\Models\Groupe::all(['id', 'nom', 'promotion']);
     });
+    Route::get('/groupes/{id}/etudiants', [GroupeController::class, 'etudiants']);
 
     // Seance
     Route::get('/seances', [SeanceController::class, 'getSeances']);
@@ -114,7 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Export (réservé aux gestionnaires)
-Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
+Route::middleware(['auth:sanctum', 'role:gestionnaire|enseignant'])->group(function () {
     Route::get('/getExport', [ExportController::class, 'getSessionByDate']);
     Route::get('/getByDay', [ExportController::class, 'getAbsencesToDay']);
     Route::get('/getStatutAndByDate', [ExportController::class, 'getStatutAndByDate']);

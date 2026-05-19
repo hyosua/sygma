@@ -1,8 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useDeconnexion } from '../hooks/useDeconnexion';
 import './HeaderEnseignant.css';
 
 export default function HeaderEnseignant() {
+  const deconnecter = useDeconnexion();
+
   return (
     <header className="topbar">
       <div className="topbar-left">
@@ -17,7 +20,14 @@ export default function HeaderEnseignant() {
           to="/enseignant/mes-cours"
           className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
         >
-          Mes cours
+          Mes séances
+        </NavLink>
+
+        <NavLink
+          to="/enseignant/archives"
+          className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+        >
+          Présences
         </NavLink>
 
         <NavLink
@@ -26,6 +36,14 @@ export default function HeaderEnseignant() {
         >
           Mon profil
         </NavLink>
+
+        <button
+          onClick={deconnecter}
+          className="nav-link logout-button"
+          style={{ border: 'none', cursor: 'pointer', background: 'none' }}
+        >
+          Se déconnecter
+        </button>
       </nav>
     </header>
   );
