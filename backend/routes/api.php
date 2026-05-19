@@ -5,6 +5,7 @@ use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\ImportCompteController;
 use App\Http\Controllers\InvitationGestionnaireController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\SeanceController;
@@ -49,6 +50,7 @@ Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
     Route::get('/gestionnaire/demandes', [InvitationGestionnaireController::class, 'getDemandes']);
     Route::post('/gestionnaire/demandes/{invitation}/approuver', [InvitationGestionnaireController::class, 'approuver']);
     Route::delete('/gestionnaire/demandes/{invitation}', [InvitationGestionnaireController::class, 'refuser']);
+    Route::post('/gestionnaire/comptes/import', [ImportCompteController::class, 'importer']);
 });
 
 /*
@@ -61,6 +63,9 @@ Route::middleware('auth:sanctum', 'role:etudiant|gestionnaire')->group(function 
 
     // Historique des présences
     Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
+
+    // Présence
+    // Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
 });
 
 /*
@@ -116,6 +121,3 @@ Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
     Route::get('/getByDay', [ExportController::class, 'getAbsencesToDay']);
     Route::get('/getStatutAndByDate', [ExportController::class, 'getStatutAndByDate']);
 });
-
-// Présence
-Route::get('/mes-presences/{user}', [PresenceController::class, 'getPresenceById']);
