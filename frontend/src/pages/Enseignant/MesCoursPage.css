@@ -109,7 +109,7 @@
 
 .tab.active {
     background: var(--color-primary);
-    color: var(--color-white);
+    color: var(--color-white) !important;
     box-shadow: 0 8px 20px rgba(69, 30, 208, 0.28);
 }
 
