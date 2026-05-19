@@ -7,4 +7,5 @@
 
 .profil-card h1 {
   margin-top: 0;
+  color: var(--color-dark);
 }

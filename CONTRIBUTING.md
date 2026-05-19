@@ -7,7 +7,8 @@ Pour que le projet reste propre et qu'on s'y retrouve, voici quelques règles du
 2. [Workflow au quotidien](#workflow-au-quotidien)
 3. [Tes Branches](#tes-branches)
 4. [Qualite & Pull Request](#qualite--pull-request)
-5. [Le Workflow Docker](#le-workflow-docker--la-regle-dor)
+5. [Hook pre-commit](#hook-pre-commit)
+6. [Le Workflow Docker](#le-workflow-docker--la-regle-dor)
     - [Commandes a connaitre](#commandes-a-connaitre)
     - [Les Interdits](#les-interdits)
 
@@ -82,6 +83,27 @@ git checkout -b "feat/ma-super-idee"
     make artisan test
     ```
 2.  **Fais une PR claire** vers `main` : un bon titre et une description simple de "quoi" et "pourquoi".
+
+---
+
+## Hook pre-commit
+
+Un hook Git se déclenche automatiquement a chaque `git commit`. Il corrige et formate le code avant d'enregistrer le commit :
+
+- **PHP** : Pint + PHPCBF reformatent les fichiers `.php` modifiés (via Docker)
+- **JS/JSX** : ESLint corrige les fichiers `.js/.jsx` modifiés (via Docker)
+
+> **Prérequis** : Docker doit tourner (`make start`) avant de commiter, sinon le hook echoue.
+
+### Bypasser le hook (cas exceptionnel)
+
+Si Docker n'est pas disponible ou que le hook bloque un commit urgent :
+
+```bash
+git commit --no-verify -m "ton message"
+```
+
+> A utiliser avec parcimonie. Le lint sera verifie de toute facon par la CI sur GitHub.
 
 ---
 

@@ -28,9 +28,7 @@ function SeanceCard({ course, onStart }) {
 
       <div className="seance-infos">
         <p>{course.classe}</p>
-
         <p>Salle {course.salle ?? '—'}</p>
-
         <p>
           {course.date} · {course.heureDebut} - {course.heureFin}
         </p>

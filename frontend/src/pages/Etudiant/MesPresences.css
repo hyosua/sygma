@@ -27,6 +27,7 @@
   margin: 0;
   font-size: 40px;
   font-weight: 800;
+  color: white;
 }
 
 .presences-hero p {
@@ -78,7 +79,7 @@
 
 .tab.active {
   background: var(--color-primary);
-  color: var(--color-darks);
+  color: var(--color-white);
   box-shadow: 0 8px 20px rgba(69, 30, 208, 0.28);
 }
 
