@@ -18,15 +18,15 @@ function formatHeure(isoString) {
 
 function SeanceCard({ course, onStart }) {
   return (
-    <div className="seance-card">
-      <div className="seance-top">
+    <div className="course-card">
+      <div className="course-top">
         <div>
-          <p className="seance-badge">{course.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
-          <h3 className="seance-title">{course.nom}</h3>
+          <p className="course-badge">{course.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
+          <h3 className="course-title">{course.nom}</h3>
         </div>
       </div>
 
-      <div className="seance-infos">
+      <div className="course-infos">
         <div className="info-box">
           <span className="info-label">Salle</span>
           <span className="info-value">{course.salle ?? '—'}</span>
@@ -45,8 +45,8 @@ function SeanceCard({ course, onStart }) {
         </div>
       </div>
 
-      <div className="seance-actions">
-        <button className="start-button" onClick={() => onStart(course)}>
+      <div className="course-actions">
+        <button className="emarger-button" onClick={() => onStart(course)}>
           Démarrer l'émargement
         </button>
       </div>

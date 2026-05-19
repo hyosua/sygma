@@ -15,7 +15,7 @@
 
 .session-header h1 {
     font-size: 2.5rem;
-    color: var(--text-main);
+    color: var(--color-dark);
     margin-bottom: 0.5rem;
 }
 
@@ -54,7 +54,7 @@
 .start-session-card h2 {
     font-size: 1.8rem;
     margin-bottom: 1rem;
-    color: var(--text-main);
+    color: var(--color-dark);
 }
 
 .start-session-card p {
@@ -73,7 +73,7 @@
 .qr-card h2 {
     font-size: 1.8rem;
     margin-bottom: 2rem;
-    color: var(--text-main);
+    color: var(--color-dark);
 }
 
 .qr-wrapper {
@@ -154,6 +154,7 @@
     font-size: 1.4rem;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 1rem;
+    color: var(--color-dark);
 }
 
 .stat-item {
