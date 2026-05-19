@@ -6,23 +6,26 @@
     background-color: var(--bg-main);
 }
 
-.session-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 1.5rem;
+.session-header{
+    background: linear-gradient(135deg, var(--color-dark) 0%, #2c2c2c 100%);
+    color: var(--color-white);
+    border-radius: 28px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(30, 30, 30, 0.16);
+    margin-bottom: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .session-header h1 {
-    font-size: 2.5rem;
-    color: var(--text-main);
-    margin-bottom: 0.5rem;
+  margin: 0 0 12px;
+  font-size: 32px;
+  color: white;
 }
 
 .session-header p {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    margin: 0.25rem 0;
+  margin: 6px 0;
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
 }
 
 .session-main {
@@ -233,4 +236,431 @@
     .start-session-card, .qr-card, .status-card {
         padding: 1.5rem;
     }
+}
+
+.manual-card {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  flex: 1;
+}
+
+.students-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.student-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+  border-radius: 14px;
+  background: #f8f8fb;
+}
+
+.validate-button {
+  border: none;
+  background: var(--color-primary);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.start-button.secondary {
+  background: #1e1e1e;
+}
+
+.presence-choice {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.presence-choice label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.presence-choice label:first-child {
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.presence-choice label:last-child {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.22);
+}
+
+.presence-choice input[type="radio"] {
+  accent-color: currentColor;
+}
+
+.validate-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.presence-choice {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.presence-choice label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.validate-all-button {
+  margin-top: 18px;
+  width: 100%;
+  border: none;
+  background: var(--color-primary);
+  color: white;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.validate-all-button:hover {
+  background: var(--color-primary-hover);
+}
+
+.session-qr-container {
+  min-height: 100vh;
+  padding: 32px;
+  background:
+    radial-gradient(circle at top left, rgba(69, 30, 208, 0.12), transparent 28%),
+    #f7f7fb;
+  color: var(--color-dark);
+}
+
+.session-header h1 {
+  margin: 0 0 12px;
+  font-size: 32px;
+  color: var(--color-white);
+}
+
+.session-header p {
+  margin: 6px 0;
+  color: var(--color-text-light);
+  font-weight: 600;
+}
+
+.session-main {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+.start-session-card,
+.qr-card,
+.manual-card,
+.status-card {
+  background: var(--color-white);
+  border: 1px solid rgba(69, 30, 208, 0.08);
+  border-radius: 24px;
+  padding: 26px;
+  box-shadow: var(--shadow-soft);
+}
+
+.start-session-card {
+  grid-column: 1 / -1;
+  max-width: 620px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.start-session-card h2,
+.qr-card h2,
+.manual-card h2,
+.status-card h3 {
+  margin-top: 0;
+  color: var(--color-dark);
+}
+
+.start-session-card p {
+  color: var(--color-text-light);
+  line-height: 1.6;
+}
+
+.start-button {
+  width: 100%;
+  margin-top: 12px;
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-primary);
+}
+
+.start-button.secondary {
+  background: var(--color-white);
+  color: var(--color-primary);
+  border: 1px solid rgba(69, 30, 208, 0.18);
+  box-shadow: none;
+}
+
+.start-button:hover,
+.validate-all-button:hover,
+.stop-button:hover {
+  transform: translateY(-1px);
+}
+
+.qr-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 320px;
+  background: #faf9ff;
+  border: 1px dashed rgba(69, 30, 208, 0.25);
+  border-radius: 20px;
+  margin-top: 18px;
+}
+
+.qr-image {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+}
+
+.qr-placeholder {
+  color: var(--color-text-light);
+  font-weight: 700;
+}
+
+.countdown-container {
+  margin-top: 18px;
+  background: #faf9ff;
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.countdown-container p {
+  margin: 0 0 10px;
+  color: var(--color-dark);
+  font-weight: 600;
+}
+
+.countdown-container.warning p {
+  color: #e53e3e;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 9px;
+  background: #ece8ff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.status-card {
+  position: sticky;
+  top: 100px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #faf9ff;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.stat-label {
+  color: var(--color-text-light);
+  font-weight: 700;
+}
+
+.stat-value {
+  color: var(--color-primary);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.stop-button {
+  width: 100%;
+  margin-top: 10px;
+  border: none;
+  background: #1e1e1e;
+  color: var(--color-white);
+  padding: 13px 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.manual-card {
+  min-width: 0;
+}
+
+.students-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.student-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  background: #faf9ff;
+  border: 1px solid rgba(69, 30, 208, 0.08);
+  border-radius: 16px;
+  padding: 15px 16px;
+}
+
+.student-row strong {
+  color: var(--color-dark);
+}
+
+.presence-choice {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.presence-choice label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: var(--color-white);
+  border: 1px solid rgba(69, 30, 208, 0.12);
+  color: var(--color-dark);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.presence-choice input {
+  accent-color: var(--color-primary);
+}
+
+.validate-all-button {
+  margin-top: 18px;
+  width: 100%;
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: 15px 18px;
+  border-radius: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--shadow-primary);
+}
+
+.error-message {
+  grid-column: 1 / -1;
+  background: #fff5f5;
+  color: #c53030;
+  border: 1px solid #fed7d7;
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .session-main {
+    grid-template-columns: 1fr;
+  }
+
+  .status-card {
+    position: static;
+  }
+
+  .student-row {
+    grid-template-columns: 1fr;
+  }
+
+  .presence-choice {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 600px) {
+  .session-qr-container {
+    padding: 18px;
+  }
+
+  .session-header,
+  .start-session-card,
+  .qr-card,
+  .manual-card,
+  .status-card {
+    border-radius: 20px;
+    padding: 20px;
+  }
+
+  .session-header h1 {
+    font-size: 26px;
+  }
+
+  .presence-choice {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .presence-choice label {
+    justify-content: center;
+  }
+}
+
+.presence-present-button {
+  border: none;
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.presence-present-button:hover {
+  background: rgba(34, 197, 94, 0.18);
+}
+
+.presence-present-button.validated {
+  background: #22c55e;
+  color: white;
+}
+
+.presence-present-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
 }

@@ -11,9 +11,11 @@ use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GroupeController;
 
 // Publique
 Route::post('login', [AuthController::class, 'login']);
+Route::get('/groupes/{id}/etudiants', [GroupeController::class, 'etudiants']);
 Route::post('register', [AuthController::class, 'register']);
 Route::get('email/verify/{token}', [AuthController::class, 'verifierEmail']);
 Route::post('auth/google/finaliser', [GoogleAuthController::class, 'finaliser']);
