@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Html5Qrcode } from 'html5-qrcode';
 import './ScanPresence.css';
 
@@ -89,6 +89,13 @@ const ScanPresence = () => {
     }
   }, []);
 
+  useLayoutEffect(() => {
+    if (jetonNatif && !token) {
+      sessionStorage.setItem('redirectApresLogin', '/etudiant/scan');
+      window.location.replace('/login');
+    }
+  }, []);
+
   // Scan natif : jeton dans l'URL + étudiant déjà connecté
   useEffect(() => {
     if (!jetonNatif || !token) return;
@@ -148,12 +155,6 @@ const ScanPresence = () => {
       stopScanner();
     };
   }, [handleEmargement, jetonNatif]);
-
-  // Scan natif sans session : redirection login (après tous les hooks)
-  if (jetonNatif && !token) {
-    sessionStorage.setItem('redirectApresLogin', '/etudiant/scan');
-    return <Navigate to="/login" replace />;
-  }
 
   return (
     <div className="scan-container">
