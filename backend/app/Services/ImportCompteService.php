@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Mail\ConfirmationEmail;
+use App\Models\Groupe;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -49,18 +50,26 @@ class ImportCompteService
                 $prenom = $ligne[1];
                 $email = $ligne[2];
                 $role = $ligne[3];
+                $nomGroupe = isset($ligne[4]) ? trim($ligne[4]) : null;
 
                 $tokenVerification = Str::uuid()->toString();
 
-                $user = User::create([
+                $donnees = [
                     'nom' => $nom,
                     'prenom' => $prenom,
                     'email' => $email,
                     'password' => Hash::make(Str::random(12)),
                     'verification_token' => $tokenVerification,
                     'verification_token_expires_at' => now()->addHours(24),
-                ]);
+                ];
 
+                if ($nomGroupe) {
+                    $groupe = Groupe::whereRaw('LOWER(nom) = LOWER(?)', [$nomGroupe])->first()
+                        ?? Groupe::create(['nom' => $nomGroupe]);
+                    $donnees['groupe_id'] = $groupe->id;
+                }
+
+                $user = User::create($donnees);
                 $user->assignRole($role);
 
                 $lienVerification = config('app.frontend_url') . '/email/verify/' . $tokenVerification;
@@ -115,17 +124,16 @@ class ImportCompteService
         $email = $donnees[2];
         $role = $donnees[3];
 
-        // verifier que l'email n'est pas déjà en base
-        if (User::where('email', $email)->exists()) {
-            return "L'email $email est déjà utilisé.";
+        if ($donnees[0] === null || $donnees[1] === null || $donnees[2] === null || $donnees[3] === null) {
+            return "La ligne $numLigne contient des champs vides.";
         }
 
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return "L'email $email n'est pas valide.";
         }
 
-        if ($donnees[0] === null || $donnees[1] === null || $donnees[2] === null || $donnees[3] === null) {
-            return "La ligne $numLigne contient des champs vides.";
+        if (User::where('email', $email)->exists()) {
+            return "L'email $email est déjà utilisé.";
         }
 
         if (! in_array($role, ['etudiant', 'enseignant'])) {
