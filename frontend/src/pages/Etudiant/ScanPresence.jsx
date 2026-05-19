@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Html5Qrcode } from 'html5-qrcode';
 import './ScanPresence.css';
 
 const ScanPresence = () => {
+  const [searchParams] = useSearchParams();
+  const jetonNatif = searchParams.get('jeton');
+
   const [statut, setStatut] = useState('chargement'); // chargement, lecture, validation, succes, erreur
   const [message, setMessage] = useState('');
   const scannerRef = useRef(null);
@@ -46,10 +50,10 @@ const ScanPresence = () => {
 
     let jeton = donnees;
     try {
-      const parsed = JSON.parse(donnees);
-      if (parsed.jeton) jeton = parsed.jeton;
+      const url = new URL(donnees);
+      jeton = url.searchParams.get('jeton') || donnees;
     } catch {
-      console.warn('Données scannées non JSON, utilisation brute:', donnees);
+      // fallback: valeur brute du QR si ce n'est pas une URL
     }
 
     try {
@@ -84,7 +88,27 @@ const ScanPresence = () => {
     }
   }, []);
 
+  // redirect vers login si pas de token d'authentification
   useEffect(() => {
+    if (!jetonNatif) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      sessionStorage.setItem(
+        'redirectApresLogin',
+        window.location.pathname + window.location.search
+      );
+      window.location.href = '/login';
+      return;
+    }
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    handleEmargement(jetonNatif);
+  }, [jetonNatif, handleEmargement]);
+
+  useEffect(() => {
+    if (jetonNatif) return; // Ne pas démarrer le scanner si on a déjà un jeton à traiter
+
     const html5QrCode = new Html5Qrcode('reader');
     scannerRef.current = html5QrCode;
     let monte = true;
@@ -133,7 +157,7 @@ const ScanPresence = () => {
       };
       stopScanner();
     };
-  }, [handleEmargement]);
+  }, [handleEmargement, jetonNatif]);
 
   return (
     <div className="scan-container">

@@ -150,7 +150,7 @@ const SessionQR = () => {
   };
 
   const urlQR = jeton
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(JSON.stringify({ idSession: session?.id, jeton }))}`
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(`${window.location.origin}/etudiant/scan?jeton=${jeton}`)}`
     : '';
 
   return (
