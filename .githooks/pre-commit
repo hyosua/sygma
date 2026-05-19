@@ -5,8 +5,9 @@ set -euo pipefail
 PHP_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep '\.php$' || true)
 if [ -n "$PHP_FILES" ]; then
   echo "[pre-commit] Pint fix..."
-  ./backend/vendor/bin/pint $PHP_FILES
-  ./backend/vendor/bin/phpcbf --standard=backend/phpcs.xml $PHP_FILES || true
+  BACKEND_FILES=$(echo "$PHP_FILES" | sed 's|backend/||g')
+  docker compose exec -T backend ./vendor/bin/pint $BACKEND_FILES
+  docker compose exec -T backend ./vendor/bin/phpcbf --standard=phpcs.xml $BACKEND_FILES || true
   git add $PHP_FILES
 fi
 
