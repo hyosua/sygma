@@ -16,7 +16,6 @@ const SessionQR = () => {
   const [loading, setLoading] = useState(false);
 
   const [etudiants, setEtudiants] = useState([]);
-  const [presencesManuelles, setPresencesManuelles] = useState({});
 
   const [presencesValidees, setPresencesValidees] = useState({});
   const [validationEnCours, setValidationEnCours] = useState({});
@@ -135,9 +134,6 @@ const SessionQR = () => {
 
       const groupeId = seance?.groupe_id || seance?.groupe?.id;
 
-      console.log("Séance récupérée :", seance);
-      console.log("Groupe ID utilisé :", groupeId);
-
       if (!groupeId) {
         setErreur('Impossible de récupérer le groupe de cette séance.');
         return;
@@ -155,16 +151,9 @@ const SessionQR = () => {
 
       const dataEtudiants = await resEtudiants.json();
 
-      console.log("Réponse étudiants :", dataEtudiants);
-
-      const users = Array.isArray(dataEtudiants)
-        ? dataEtudiants
-        : dataEtudiants.data ?? [];
-
-      console.log("Users transformés :", users);
+      const users = Array.isArray(dataEtudiants) ? dataEtudiants : (dataEtudiants.data ?? []);
 
       setEtudiants(users);
-
     } catch (err) {
       console.error('Erreur lors du démarrage de la session:', err);
       setErreur('Impossible de contacter le serveur.');
@@ -187,11 +176,11 @@ const SessionQR = () => {
 
     try {
       const reponse = await fetch(`${import.meta.env.VITE_API_URL}/presences/valider-manuel`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          Accept: "application/json",
+          Accept: 'application/json',
         },
         body: JSON.stringify({
           session_emargement_id: session.id,
@@ -209,11 +198,11 @@ const SessionQR = () => {
 
         await fetchStatut();
       } else {
-        alert(donnees.message || "Erreur lors de la validation.");
+        alert(donnees.message || 'Erreur lors de la validation.');
       }
     } catch (err) {
       console.error(err);
-      alert("Impossible de contacter le serveur.");
+      alert('Impossible de contacter le serveur.');
     } finally {
       setValidationEnCours((prev) => ({
         ...prev,
@@ -221,49 +210,6 @@ const SessionQR = () => {
       }));
     }
   };
-
-  // const handleManualPresence = async (etudiantId) => {
-  //   if (!session) return;
-
-  //   const statut = presencesManuelles[etudiantId];
-
-  //   if (!statut) {
-  //     alert("Veuillez choisir Présent ou Absent.");
-  //     return;
-  //   }
-
-  //   if (statut === "absent") {
-  //     alert("Absence enregistrée côté interface.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const reponse = await fetch(`${import.meta.env.VITE_API_URL}/presences/valider-manuel`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //         Accept: "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         session_emargement_id: session.id,
-  //         etudiant_id: etudiantId,
-  //       }),
-  //     });
-
-  //     const donnees = await reponse.json();
-
-  //     if (reponse.ok) {
-  //       fetchStatut();
-  //       alert("Présence validée");
-  //     } else {
-  //       alert(donnees.message || "Erreur lors de la validation.");
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Impossible de contacter le serveur.");
-  //   }
-  // };
 
   useEffect(() => {
     if (!session) return;
@@ -302,29 +248,33 @@ const SessionQR = () => {
   const chargerEtudiantsDuGroupe = async (groupeId) => {
     if (!groupeId) return;
 
-    const resEtudiants = await fetch(
-      `${import.meta.env.VITE_API_URL}/groupes/${groupeId}/etudiants`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
-        },
-      }
-    );
+    try {
+      const resEtudiants = await fetch(
+        `${import.meta.env.VITE_API_URL}/groupes/${groupeId}/etudiants`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
+        }
+      );
 
-    const dataEtudiants = await resEtudiants.json();
+      if (!resEtudiants.ok) return;
 
-    const users = Array.isArray(dataEtudiants)
-      ? dataEtudiants
-      : dataEtudiants.data ?? [];
+      const dataEtudiants = await resEtudiants.json();
 
-    setEtudiants(users);
+      const users = Array.isArray(dataEtudiants) ? dataEtudiants : (dataEtudiants.data ?? []);
+
+      setEtudiants(users);
+    } catch (err) {
+      console.error('Erreur lors du chargement des étudiants:', err);
+    }
   };
 
   const urlQR = jeton
     ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
-      JSON.stringify({ idSession: session?.id, jeton })
-    )}`
+        JSON.stringify({ idSession: session?.id, jeton })
+      )}`
     : '';
 
   const listeEtudiants = Array.isArray(etudiants) ? etudiants : [];
@@ -382,20 +332,20 @@ const SessionQR = () => {
 
                       <button
                         type="button"
-                        className={`presence-present-button ${presencesValidees[etudiant.id] ? "validated" : ""
-                          }`}
-                        onClick={() => handleChoixPresence(etudiant.id, "present")}
+                        className={`presence-present-button ${
+                          presencesValidees[etudiant.id] ? 'validated' : ''
+                        }`}
+                        onClick={() => handleChoixPresence(etudiant.id)}
                         disabled={presencesValidees[etudiant.id] || validationEnCours[etudiant.id]}
                       >
                         {validationEnCours[etudiant.id]
-                          ? "Validation..."
+                          ? 'Validation...'
                           : presencesValidees[etudiant.id]
-                            ? "Présence validée"
-                            : "Présent"}
+                            ? 'Présence validée'
+                            : 'Présent'}
                       </button>
                     </div>
                   ))}
-
                 </div>
               ) : (
                 <p>Aucun étudiant trouvé pour ce groupe.</p>

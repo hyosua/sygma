@@ -5,6 +5,7 @@ use App\Http\Controllers\ControllerCours;
 use App\Http\Controllers\EmargementController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\GroupeController;
 use App\Http\Controllers\ImportCompteController;
 use App\Http\Controllers\InvitationGestionnaireController;
 use App\Http\Controllers\PresenceController;
@@ -12,11 +13,9 @@ use App\Http\Controllers\SeanceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\GroupeController;
 
 // Publique
 Route::post('login', [AuthController::class, 'login']);
-Route::get('/groupes/{id}/etudiants', [GroupeController::class, 'etudiants']);
 Route::post('register', [AuthController::class, 'register']);
 Route::get('email/verify/{token}', [AuthController::class, 'verifierEmail']);
 Route::post('auth/google/finaliser', [GoogleAuthController::class, 'finaliser']);
@@ -108,6 +107,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/groupes', function () {
         return \App\Models\Groupe::all(['id', 'nom', 'promotion']);
     });
+    Route::get('/groupes/{id}/etudiants', [GroupeController::class, 'etudiants']);
 
     // Seance
     Route::get('/seances', [SeanceController::class, 'getSeances']);

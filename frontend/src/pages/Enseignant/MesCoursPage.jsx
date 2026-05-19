@@ -27,12 +27,12 @@ function SeanceCard({ course, onStart }) {
       </div>
 
       <div className="seance-infos">
-        <p>👥 {course.classe}</p>
+        <p>{course.classe}</p>
 
-        <p>📍 Salle {course.salle ?? '—'}</p>
+        <p>Salle {course.salle ?? '—'}</p>
 
         <p>
-          🕒 {course.date} · {course.heureDebut} - {course.heureFin}
+          {course.date} · {course.heureDebut} - {course.heureFin}
         </p>
       </div>
 

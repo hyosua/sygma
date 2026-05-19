@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import './AccueilEnseignantPage.css';
-import {  Link, useParams, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function AccueilEnseignantPage() {
-
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [seancesEnCours, setSeancesEnCours] = useState([]);
 
@@ -14,26 +12,23 @@ export default function AccueilEnseignantPage() {
 
   const handleStartEmargement = async (seanceId) => {
     try {
-      const reponse = await fetch(
-        `${import.meta.env.VITE_API_URL}/sessions-emargement`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({
-            seance_id: seanceId,
-            is_methode_qr: true,
-          }),
-        }
-      );
+      const reponse = await fetch(`${import.meta.env.VITE_API_URL}/sessions-emargement`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          seance_id: seanceId,
+          is_methode_qr: true,
+        }),
+      });
 
       const donnees = await reponse.json();
 
       if (!reponse.ok) {
-        alert(donnees.message || "Erreur lors du démarrage.");
+        alert(donnees.message || 'Erreur lors du démarrage.');
         return;
       }
 
@@ -43,22 +38,11 @@ export default function AccueilEnseignantPage() {
           sessionData: donnees,
         },
       });
-
     } catch (err) {
       console.error(err);
-      alert("Impossible de contacter le serveur.");
+      alert('Impossible de contacter le serveur.');
     }
   };
-
-  useEffect(() => {
-    if (location.state?.sessionDemarree && location.state?.sessionData) {
-      const sessionData = location.state.sessionData;
-
-      setSession(sessionData);
-      setJeton(sessionData.jeton);
-      setJetonExpireA(sessionData.jeton_expire_a);
-    }
-  }, [location.state]);
 
   useEffect(() => {
     const fetchSeances = async () => {
@@ -75,9 +59,7 @@ export default function AccueilEnseignantPage() {
 
         const donnees = await reponse.json();
 
-        const seances = (donnees.data ?? []).filter(
-          (seance) => seance.statut === 'en_cours'
-        );
+        const seances = (donnees.data ?? []).filter((seance) => seance.statut === 'en_cours');
 
         setSeancesEnCours(seances);
       } catch (err) {
@@ -106,13 +88,8 @@ export default function AccueilEnseignantPage() {
           <h2>Accès rapides</h2>
 
           <div className="quick-grid">
-
             {seancesEnCours.map((seance) => (
-              <div
-                key={seance.id}
-                className="quick-card session-quick-card"
-              >
-
+              <div key={seance.id} className="quick-card session-quick-card">
                 <div className="session-card-content">
                   <span className="session-badge">Séance en cours</span>
 
@@ -124,7 +101,8 @@ export default function AccueilEnseignantPage() {
                   </div>
                   <button
                     className="start-emargement-button"
-                    onClick={() => handleStartEmargement(seance.id)}                  >
+                    onClick={() => handleStartEmargement(seance.id)}
+                  >
                     Démarrer l’émargement
                   </button>
                 </div>
@@ -136,9 +114,7 @@ export default function AccueilEnseignantPage() {
 
               <h3>Mon profil</h3>
 
-              <p>
-                Accédez à vos informations personnelles et à votre espace enseignant.
-              </p>
+              <p>Accédez à vos informations personnelles et à votre espace enseignant.</p>
             </Link>
           </div>
         </section>
