@@ -65,6 +65,14 @@ L'environnement de développement est entièrement conteneurisé. **Toutes les i
 | `sygma-adminer` | `adminer` | `8080` | Interface d'administration BDD |
 | `sygma-mailpit` | `axllent/mailpit` | `8025` (web) / `1025` (SMTP) | Interception des emails en dev |
 
+**Outils de monitoring (dev uniquement) :**
+
+| Outil | URL | Rôle |
+|---|---|---|
+| **Laravel Telescope** | `http://localhost:8000/telescope` | Inspecte en temps réel les requêtes HTTP, queries SQL, exceptions et emails envoyés |
+| **Adminer** | `http://localhost:8080` | Interface graphique de gestion de la base PostgreSQL |
+| **Mailpit** | `http://localhost:8025` | Capture tous les emails envoyés par l'application (pas de vrai envoi en dev) |
+
 **Commandes Makefile principales :**
 
 | Commande | Action |
