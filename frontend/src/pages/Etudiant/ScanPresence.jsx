@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { Html5Qrcode } from 'html5-qrcode';
 import './ScanPresence.css';
 
 const ScanPresence = () => {
   const [searchParams] = useSearchParams();
   const jetonNatif = searchParams.get('jeton');
+  const token = localStorage.getItem('token');
 
   const [statut, setStatut] = useState('chargement'); // chargement, lecture, validation, succes, erreur
   const [message, setMessage] = useState('');
@@ -57,12 +58,12 @@ const ScanPresence = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const authToken = localStorage.getItem('token');
       const reponse = await fetch(`${import.meta.env.VITE_API_URL}/presences/valider-qr`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authToken}`,
           Accept: 'application/json',
         },
         body: JSON.stringify({
@@ -88,26 +89,15 @@ const ScanPresence = () => {
     }
   }, []);
 
-  // redirect vers login si pas de token d'authentification
+  // Scan natif : jeton dans l'URL + étudiant déjà connecté
   useEffect(() => {
-    if (!jetonNatif) return;
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      sessionStorage.setItem(
-        'redirectApresLogin',
-        window.location.pathname + window.location.search
-      );
-      window.location.href = '/login';
-      return;
-    }
-
+    if (!jetonNatif || !token) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     handleEmargement(jetonNatif);
-  }, [jetonNatif, handleEmargement]);
+  }, [jetonNatif, token, handleEmargement]);
 
   useEffect(() => {
-    if (jetonNatif) return; // Ne pas démarrer le scanner si on a déjà un jeton à traiter
+    if (jetonNatif) return;
 
     const html5QrCode = new Html5Qrcode('reader');
     scannerRef.current = html5QrCode;
@@ -158,6 +148,12 @@ const ScanPresence = () => {
       stopScanner();
     };
   }, [handleEmargement, jetonNatif]);
+
+  // Scan natif sans session : redirection login (après tous les hooks)
+  if (jetonNatif && !token) {
+    sessionStorage.setItem('redirectApresLogin', '/etudiant/scan');
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="scan-container">
