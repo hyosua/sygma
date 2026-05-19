@@ -27,22 +27,13 @@ function SeanceCard({ course, onStart }) {
       </div>
 
       <div className="seance-infos">
-        <div className="info-box">
-          <span className="info-label">Salle</span>
-          <span className="info-value">{course.salle ?? '—'}</span>
-        </div>
+        <p>👥 {course.classe}</p>
 
-        <div className="info-box">
-          <span className="info-label">Classe</span>
-          <span className="info-value">{course.classe}</span>
-        </div>
+        <p>📍 Salle {course.salle ?? '—'}</p>
 
-        <div className="info-box">
-          <span className="info-label">Horaire prévu</span>
-          <span className="info-value">
-            {course.date} · {course.heureDebut} - {course.heureFin}
-          </span>
-        </div>
+        <p>
+          🕒 {course.date} · {course.heureDebut} - {course.heureFin}
+        </p>
       </div>
 
       <div className="seance-actions">

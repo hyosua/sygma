@@ -24,6 +24,13 @@ export default function HeaderEnseignant() {
         </NavLink>
 
         <NavLink
+          to="/enseignant/archives"
+          className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+        >
+          Présences
+        </NavLink>
+
+        <NavLink
           to="/enseignant/profil"
           className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
         >

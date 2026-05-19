@@ -116,7 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Export (réservé aux gestionnaires)
-Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
+Route::middleware(['auth:sanctum', 'role:gestionnaire|enseignant'])->group(function () {
     Route::get('/getExport', [ExportController::class, 'getSessionByDate']);
     Route::get('/getByDay', [ExportController::class, 'getAbsencesToDay']);
     Route::get('/getStatutAndByDate', [ExportController::class, 'getStatutAndByDate']);
