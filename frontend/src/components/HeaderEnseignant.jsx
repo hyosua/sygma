@@ -30,6 +30,7 @@ export default function HeaderEnseignant() {
         <NavLink
           to="/enseignant/mes-cours"
           className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          onClick={() => setMenuOuvert(false)}
         >
           Mes séances
         </NavLink>
@@ -37,6 +38,7 @@ export default function HeaderEnseignant() {
         <NavLink
           to="/enseignant/archives"
           className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          onClick={() => setMenuOuvert(false)}
         >
           Présences
         </NavLink>
@@ -44,6 +46,7 @@ export default function HeaderEnseignant() {
         <NavLink
           to="/enseignant/profil"
           className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          onClick={() => setMenuOuvert(false)}
         >
           Mon profil
         </NavLink>

@@ -27,13 +27,25 @@ export default function HeaderGestionnaire() {
       </button>
 
       <nav className={`topbar-nav ${menuOuvert ? 'ouvert' : ''}`}>
-        <NavLink to="/gestionnaire/presences" className="nav-link">
+        <NavLink
+          to="/gestionnaire/presences"
+          className="nav-link"
+          onClick={() => setMenuOuvert(false)}
+        >
           Présences
         </NavLink>
-        <NavLink to="/gestionnaire/groupes" className="nav-link">
+        <NavLink
+          to="/gestionnaire/groupes"
+          className="nav-link"
+          onClick={() => setMenuOuvert(false)}
+        >
           Groupes
         </NavLink>
-        <NavLink to="/gestionnaire/import" className="nav-link">
+        <NavLink
+          to="/gestionnaire/import"
+          className="nav-link"
+          onClick={() => setMenuOuvert(false)}
+        >
           Imports
         </NavLink>
         <button
