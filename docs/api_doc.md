@@ -366,7 +366,7 @@ GET /Cours
 ### Créer un cours
 
 ```
-POST /Cours/Ajouter
+POST /cours
 ```
 
 **Corps (JSON)**
@@ -383,7 +383,7 @@ POST /Cours/Ajouter
 ### Modifier un cours
 
 ```
-PATCH /Cours/Modifier/{id}
+PATCH /cours/{id}
 ```
 
 **Corps (JSON)** : `nom`
@@ -397,7 +397,7 @@ PATCH /Cours/Modifier/{id}
 ### Supprimer un cours
 
 ```
-DELETE /Cours/Supprimer/{id}
+DELETE /cours/{id}
 ```
 
 **Réponse 200** — `"Le cours a bien été supprimé"`

@@ -30,13 +30,13 @@ class CoursControllerTest extends FeatureTestCase
             ->assertJson([]);
     }
 
-    // POST /Cours/Ajouter
+    // POST /cours
 
     public function test_peut_creer_un_cours(): void
     {
         $enseignant = User::factory()->enseignant()->create();
 
-        $response = $this->actingAs($enseignant)->postJson('/api/Cours/Ajouter', [
+        $response = $this->actingAs($enseignant)->postJson('/api/cours', [
             'nom' => 'GraphQL',
         ]);
 
@@ -51,21 +51,21 @@ class CoursControllerTest extends FeatureTestCase
         $enseignant = User::factory()->enseignant()->create();
         Cours::factory()->create(['nom' => 'SQL']);
 
-        $response = $this->actingAs($enseignant)->postJson('/api/Cours/Ajouter', [
+        $response = $this->actingAs($enseignant)->postJson('/api/cours', [
             'nom' => 'SQL',
         ]);
 
         $response->assertStatus(409);
     }
 
-    // PATCH /Cours/Modifier/{id}
+    // PATCH /cours/{id}
 
     public function test_peut_modifier_un_cours(): void
     {
         $enseignant = User::factory()->enseignant()->create();
         $cours = Cours::factory()->create(['nom' => 'PHP', 'enseignant_id' => $enseignant->id]);
 
-        $response = $this->actingAs($enseignant)->patchJson("/api/Cours/Modifier/{$cours->id}", [
+        $response = $this->actingAs($enseignant)->patchJson("/api/cours/{$cours->id}", [
             'nom' => 'PHP avancé',
         ]);
 
@@ -81,7 +81,7 @@ class CoursControllerTest extends FeatureTestCase
         Cours::factory()->create(['nom' => 'Java']);
         $cours = Cours::factory()->create(['nom' => 'Python', 'enseignant_id' => $enseignant->id]);
 
-        $response = $this->actingAs($enseignant)->patchJson("/api/Cours/Modifier/{$cours->id}", [
+        $response = $this->actingAs($enseignant)->patchJson("/api/cours/{$cours->id}", [
             'nom' => 'Java',
         ]);
 
@@ -93,7 +93,7 @@ class CoursControllerTest extends FeatureTestCase
         $enseignant = User::factory()->enseignant()->create();
         $cours = Cours::factory()->create();
 
-        $response = $this->actingAs($enseignant)->patchJson("/api/Cours/Modifier/{$cours->id}", []);
+        $response = $this->actingAs($enseignant)->patchJson("/api/cours/{$cours->id}", []);
 
         $response->assertStatus(400);
     }
@@ -104,7 +104,7 @@ class CoursControllerTest extends FeatureTestCase
         $autreEnseignant = User::factory()->enseignant()->create();
         $cours = Cours::factory()->create(['nom' => 'PHP', 'enseignant_id' => $proprietaire->id]);
 
-        $response = $this->actingAs($autreEnseignant)->patchJson("/api/Cours/Modifier/{$cours->id}", [
+        $response = $this->actingAs($autreEnseignant)->patchJson("/api/cours/{$cours->id}", [
             'nom' => 'PHP avancé',
         ]);
 
@@ -115,21 +115,21 @@ class CoursControllerTest extends FeatureTestCase
     {
         $enseignant = User::factory()->enseignant()->create();
 
-        $response = $this->actingAs($enseignant)->patchJson('/api/Cours/Modifier/99999', [
+        $response = $this->actingAs($enseignant)->patchJson('/api/cours/99999', [
             'nom' => 'Test',
         ]);
 
         $response->assertStatus(404);
     }
 
-    // DELETE /Cours/Supprimer/{id}
+    // DELETE /cours/{id}
 
     public function test_peut_supprimer_un_cours(): void
     {
         $enseignant = User::factory()->enseignant()->create();
         $cours = Cours::factory()->create(['enseignant_id' => $enseignant->id]);
 
-        $response = $this->actingAs($enseignant)->deleteJson("/api/Cours/Supprimer/{$cours->id}");
+        $response = $this->actingAs($enseignant)->deleteJson("/api/cours/{$cours->id}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('cours', ['id' => $cours->id]);
@@ -141,7 +141,7 @@ class CoursControllerTest extends FeatureTestCase
         $autreEnseignant = User::factory()->enseignant()->create();
         $cours = Cours::factory()->create(['enseignant_id' => $proprietaire->id]);
 
-        $response = $this->actingAs($autreEnseignant)->deleteJson("/api/Cours/Supprimer/{$cours->id}");
+        $response = $this->actingAs($autreEnseignant)->deleteJson("/api/cours/{$cours->id}");
 
         $response->assertStatus(403);
     }
@@ -150,7 +150,7 @@ class CoursControllerTest extends FeatureTestCase
     {
         $enseignant = User::factory()->enseignant()->create();
 
-        $response = $this->actingAs($enseignant)->deleteJson('/api/Cours/Supprimer/99999');
+        $response = $this->actingAs($enseignant)->deleteJson('/api/cours/99999');
 
         $response->assertStatus(404);
     }

@@ -4,7 +4,7 @@ import '../Login/LoginChoicePage.css';
 import './InscriptionPage.css';
 
 const REDIRECTIONS = {
-  etudiant: '/etudiant/mes-cours',
+  etudiant: '/etudiant/mes-seances',
   enseignant: '/enseignant/mes-seances',
 };
 

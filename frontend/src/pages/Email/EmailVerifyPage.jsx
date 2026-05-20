@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import '../Login/LoginChoicePage.css';
 
 const REDIRECTIONS = {
-  etudiant: '/etudiant/mes-cours',
+  etudiant: '/etudiant/mes-seances',
   enseignant: '/enseignant/mes-seances',
   gestionnaire: '/gestionnaire',
 };

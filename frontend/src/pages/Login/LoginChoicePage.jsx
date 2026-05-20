@@ -13,7 +13,7 @@ const ROLES = {
     label: 'Étudiant',
     email: 'etudiant@sygma.com',
     password: 'sygma',
-    redirect: '/etudiant/mes-cours',
+    redirect: '/etudiant/mes-seances',
   },
   gestionnaire: {
     label: 'Gestionnaire',

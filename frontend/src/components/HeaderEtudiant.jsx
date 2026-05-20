@@ -12,7 +12,6 @@ export default function HeaderEtudiant() {
       <div className="topbar-left">
         <NavLink className="container-logo" to="/etudiant/accueil">
           <img src="/sygma-logo-noir.webp" alt="Logo SYGMA" className="header-logo" />
-          <span className="brand-name">SYGMA</span>
         </NavLink>
       </div>
 
@@ -28,11 +27,11 @@ export default function HeaderEtudiant() {
 
       <nav className={`topbar-nav ${menuOuvert ? 'ouvert' : ''}`}>
         <NavLink
-          to="/etudiant/mes-cours"
+          to="/etudiant/mes-seances"
           className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
           onClick={() => setMenuOuvert(false)}
         >
-          Mes cours
+          Mes séances
         </NavLink>
 
         <NavLink

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './MesCoursPage.css';
+import './MesSeancesEnseignantPage.css';
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -16,26 +16,26 @@ function formatHeure(isoString) {
   return new Date(isoString).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 }
 
-function SeanceCard({ course, onStart }) {
+function SeanceCard({ seance, onStart }) {
   return (
     <div className="seance-card">
       <div className="seance-top">
         <div>
-          <p className="seance-badge">{course.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
-          <h3 className="seance-title">{course.nom}</h3>
+          <p className="seance-badge">{seance.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
+          <h3 className="seance-title">{seance.nom}</h3>
         </div>
       </div>
 
       <div className="seance-infos">
-        <p>{course.classe}</p>
-        <p>Salle {course.salle ?? '—'}</p>
+        <p>{seance.classe}</p>
+        <p>Salle {seance.salle ?? '—'}</p>
         <p>
-          {course.date} · {course.heureDebut} - {course.heureFin}
+          {seance.date} · {seance.heureDebut} - {seance.heureFin}
         </p>
       </div>
 
       <div className="seance-actions">
-        <button className="start-button" onClick={() => onStart(course)}>
+        <button className="start-button" onClick={() => onStart(seance)}>
           Démarrer l'émargement
         </button>
       </div>
@@ -52,7 +52,7 @@ function authHeaders() {
   };
 }
 
-export default function MesCoursPage() {
+export default function MesSeancesEnseignantPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('en_cours');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,7 +83,6 @@ export default function MesCoursPage() {
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  // Chargement des séances de l'enseignant
   useEffect(() => {
     const chargerSeances = async () => {
       try {
@@ -109,7 +108,6 @@ export default function MesCoursPage() {
     chargerSeances();
   }, [user.id]);
 
-  // Chargement des cours et groupes pour le modal
   useEffect(() => {
     if (!isModalOpen) return;
     const fetchReferentiels = async () => {
@@ -132,8 +130,8 @@ export default function MesCoursPage() {
     [seances, activeTab]
   );
 
-  const handleStartAttendance = (course) => {
-    navigate(`/enseignant/session/${course.id}`);
+  const handleStartAttendance = (seance) => {
+    navigate(`/enseignant/session/${seance.id}`);
   };
 
   const handleCloseModal = () => {
@@ -153,17 +151,15 @@ export default function MesCoursPage() {
 
     let coursId = parseInt(formData.selectedCoursId);
 
-    // Si le nom est renseigné, créer le cours d'abord
     if (formData.nomCours) {
       try {
-        const resCours = await fetch(`${API_BASE}/Cours/Ajouter`, {
+        const resCours = await fetch(`${API_BASE}/cours`, {
           method: 'POST',
           headers: authHeaders(),
           body: JSON.stringify({ nom: formData.nomCours }),
         });
         const dataCours = await resCours.json();
         if (!resCours.ok) {
-          // Si le cours existe déjà, on réutilise son ID depuis la liste chargée
           const coursExistant = cours.find(
             (c) => c.nom.toLowerCase() === formData.nomCours.toLowerCase()
           );
@@ -217,7 +213,7 @@ export default function MesCoursPage() {
   };
 
   return (
-    <div className="mes-cours-page">
+    <div className="mes-seances-page">
       <div className="overlay" />
 
       <div className="content">
@@ -226,8 +222,7 @@ export default function MesCoursPage() {
             <p className="hero-tag">Espace enseignant</p>
             <h1>Mes séances</h1>
             <p className="hero-subtitle">
-              Retrouvez vos cours en cours et à venir, puis lancez rapidement l’émargement de votre
-              séance.
+              Retrouvez vos séances en cours et à venir, puis lancez rapidement l'émargement.
             </p>
           </div>
         </header>
@@ -249,10 +244,10 @@ export default function MesCoursPage() {
             </button>
           </div>
 
-          <div className="courses-list">
+          <div className="seances-list">
             {filteredSeances.length > 0 ? (
-              filteredSeances.map((course) => (
-                <SeanceCard key={course.id} course={course} onStart={handleStartAttendance} />
+              filteredSeances.map((seance) => (
+                <SeanceCard key={seance.id} seance={seance} onStart={handleStartAttendance} />
               ))
             ) : (
               <div className="empty-state">

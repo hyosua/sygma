@@ -5,9 +5,9 @@ import AccueilEnseignantPage from './pages/Enseignant/AccueilEnseignantPage';
 import PresencesEnseignantPage from './pages/Enseignant/PresencesEnseignantPage';
 import EnseignantLayout from './layouts/EnseignantLayout';
 import SessionQR from './pages/Enseignant/SessionQR';
-import MesCoursPage from './pages/Enseignant/MesCoursPage';
+import MesSeancesEnseignantPage from './pages/Enseignant/MesSeancesEnseignantPage';
 import ProfilEnseignantPage from './pages/Enseignant/ProfilEnseignantPage';
-import MesCoursEtudiantPage from './pages/Etudiant/MesCoursEtudiantPage';
+import MesSeancesEtudiantPage from './pages/Etudiant/MesSeancesEtudiantPage';
 import ScanPresence from './pages/Etudiant/ScanPresence';
 import LoginChoicePage from './pages/Login/LoginChoicePage';
 import InscriptionPage from './pages/Inscription/InscriptionPage';
@@ -55,7 +55,7 @@ function App() {
         <Route path="/enseignant" element={<EnseignantLayout />}>
           <Route path="accueil" element={<AccueilEnseignantPage />} />
           <Route path="archives" element={<PresencesEnseignantPage />} />
-          <Route path="mes-cours" element={<MesCoursPage />} />
+          <Route path="mes-seances" element={<MesSeancesEnseignantPage />} />
           <Route path="profil" element={<ProfilEnseignantPage />} />
           <Route path="session/:seanceId" element={<SessionQR />} />
         </Route>
@@ -63,7 +63,7 @@ function App() {
         {/* Route Étudiant */}
         <Route path="/etudiant" element={<EtudiantLayout />}>
           <Route path="/etudiant/scan" element={<ScanPresence />} />
-          <Route path="/etudiant/mes-cours" element={<MesCoursEtudiantPage />} />
+          <Route path="/etudiant/mes-seances" element={<MesSeancesEtudiantPage />} />
           <Route path="/etudiant/mes-presences" element={<MesPresences />} />
         </Route>
         <Route

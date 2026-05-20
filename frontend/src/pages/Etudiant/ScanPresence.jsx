@@ -91,7 +91,7 @@ const ScanPresence = () => {
     if (statut !== 'succes') return;
 
     const timer = setTimeout(() => {
-      navigate('/etudiant/mes-cours');
+      navigate('/etudiant/mes-seances');
     }, 2000); // ajuste ici (2s conseillé)
 
     return () => clearTimeout(timer);

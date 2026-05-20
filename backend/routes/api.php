@@ -83,9 +83,9 @@ Route::middleware('auth:sanctum', 'role:enseignant|gestionnaire')->group(functio
     Route::delete('/seances/{seance}', [SeanceController::class, 'supprimer']);
 
     // Cours
-    Route::post('/Cours/Ajouter', [ControllerCours::class, 'createCours']);
-    Route::patch('/Cours/Modifier/{id}', [ControllerCours::class, 'updateCours']);
-    Route::delete('/Cours/Supprimer/{id}', [ControllerCours::class, 'deleteCours']);
+    Route::post('/cours', [ControllerCours::class, 'createCours']);
+    Route::patch('/cours/{id}', [ControllerCours::class, 'updateCours']);
+    Route::delete('/cours/{id}', [ControllerCours::class, 'deleteCours']);
 
     // Émargement
     Route::post('/presences/valider-manuel', [EmargementController::class, 'validerPresenceManuellement']);

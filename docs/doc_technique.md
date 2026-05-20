@@ -278,12 +278,12 @@ frontend/src/
 │   │   ├── AccueilEnseignantPage.jsx   # Liste des séances
 │   │   ├── SessionQR.jsx               # Gestion session QR en direct
 │   │   ├── PresencesEnseignantPage.jsx # Archives
-│   │   ├── MesCoursPage.jsx
+│   │   ├── MesSeancesEnseignantPage.jsx
 │   │   └── ProfilEnseignantPage.jsx
 │   ├── Etudiant/          # Espace étudiant
 │   │   ├── ScanPresence.jsx            # Scanner QR Code
 │   │   ├── MesPresences.jsx
-│   │   └── MesCoursEtudiantPage.jsx
+│   │   └── MesSeancesEtudiantPage.jsx
 │   ├── Gestionnaire/      # Espace gestionnaire
 │   │   ├── AccueilGestionnairePage.jsx
 │   │   ├── PresencesGestionnairePage.jsx
@@ -310,13 +310,13 @@ frontend/src/
 | `/enseignant/accueil` | `AccueilEnseignantPage` | Enseignant |
 | `/enseignant/session/:seanceId` | `SessionQR` | Enseignant |
 | `/enseignant/archives` | `PresencesEnseignantPage` | Enseignant |
-| `/enseignant/mes-cours` | `MesCoursPage` | Enseignant |
+| `/enseignant/mes-seances` | `MesSeancesEnseignantPage` | Enseignant |
 | `/gestionnaire/` | `AccueilGestionnairePage` | Gestionnaire |
 | `/gestionnaire/presences` | `PresencesGestionnairePage` | Gestionnaire |
 | `/gestionnaire/import` | `ImportComptesPage` | Gestionnaire |
 | `/etudiant/scan` | `ScanPresence` | Étudiant |
 | `/etudiant/mes-presences` | `MesPresences` | Étudiant |
-| `/etudiant/mes-cours` | `MesCoursEtudiantPage` | Étudiant |
+| `/etudiant/mes-seances` | `MesSeancesEtudiantPage` | Étudiant |
 
 ---
 
@@ -488,11 +488,11 @@ Les dates sont en **ISO 8601 UTC** (`2026-03-12T10:41:12.000000Z`).
 | Méthode | Endpoint | Auth | Description |
 |---|---|---|---|
 | `GET` | `/cours` | Oui | Liste de tous les cours |
-| `POST` | `/Cours/Ajouter` | Enseignant/Gestionnaire | Créer un cours |
-| `PATCH` | `/Cours/Modifier/{id}` | Enseignant/Gestionnaire | Modifier un cours |
-| `DELETE` | `/Cours/Supprimer/{id}` | Enseignant/Gestionnaire | Supprimer un cours |
+| `POST` | `/cours` | Enseignant/Gestionnaire | Créer un cours |
+| `PATCH` | `/cours/{id}` | Enseignant/Gestionnaire | Modifier un cours |
+| `DELETE` | `/cours/{id}` | Enseignant/Gestionnaire | Supprimer un cours |
 
-**Corps `POST /Cours/Ajouter` :** `nom` (string, requis, unique)
+**Corps `POST /cours` :** `nom` (string, requis, unique)
 
 **Erreurs cours :** `409` si le nom existe déjà.
 

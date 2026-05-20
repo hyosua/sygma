@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import './MesCoursEtudiantPage.css';
+import './MesSeancesEtudiantPage.css';
 import { useNavigate } from 'react-router-dom';
 
 const API_BASE = import.meta.env.VITE_API_URL;
@@ -25,43 +25,43 @@ function authHeaders() {
   };
 }
 
-function CourseCard({ course, onEmarger }) {
+function SeanceCard({ seance, onEmarger }) {
   return (
-    <div className="course-card">
-      <div className="course-top">
+    <div className="seance-card">
+      <div className="seance-top">
         <div>
-          <p className="course-badge">{course.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
-          <h3 className="course-title">{course.nom}</h3>
+          <p className="seance-badge">{seance.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
+          <h3 className="seance-title">{seance.nom}</h3>
         </div>
       </div>
 
-      <div className="course-infos">
+      <div className="seance-infos">
         <div className="info-box">
           <span className="info-label">Salle</span>
-          <span className="info-value">{course.salle ?? '—'}</span>
+          <span className="info-value">{seance.salle ?? '—'}</span>
         </div>
 
         <div className="info-box">
           <span className="info-label">Classe</span>
-          <span className="info-value">{course.classe}</span>
+          <span className="info-value">{seance.classe}</span>
         </div>
 
         <div className="info-box">
           <span className="info-label">Professeur</span>
-          <span className="info-value">{course.professeur}</span>
+          <span className="info-value">{seance.professeur}</span>
         </div>
 
         <div className="info-box">
           <span className="info-label">Horaire prévu</span>
           <span className="info-value">
-            {course.date} · {course.heureDebut} - {course.heureFin}
+            {seance.date} · {seance.heureDebut} - {seance.heureFin}
           </span>
         </div>
       </div>
 
-      {course.statut === 'en_cours' && (
-        <div className="course-actions">
-          <button className="emarger-button" onClick={() => onEmarger(course)}>
+      {seance.statut === 'en_cours' && (
+        <div className="seance-actions">
+          <button className="emarger-button" onClick={() => onEmarger(seance)}>
             Émarger
           </button>
         </div>
@@ -70,7 +70,7 @@ function CourseCard({ course, onEmarger }) {
   );
 }
 
-export default function MesCoursEtudiantPage() {
+export default function MesSeancesEtudiantPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('en_cours');
   const [seances, setSeances] = useState([]);
@@ -109,21 +109,21 @@ export default function MesCoursEtudiantPage() {
     navigate(`/etudiant/scan`);
   };
 
-  const filteredCourses = useMemo(() => {
-    return seances.filter((course) => course.statut === activeTab);
+  const filteredSeances = useMemo(() => {
+    return seances.filter((seance) => seance.statut === activeTab);
   }, [seances, activeTab]);
 
   return (
-    <div className="mes-cours-page">
+    <div className="mes-seances-page">
       <div className="overlay" />
 
       <div className="content">
         <header className="hero">
           <div>
             <p className="hero-tag">Espace étudiant</p>
-            <h1>Mes cours</h1>
+            <h1>Mes séances</h1>
             <p className="hero-subtitle">
-              Consultez vos cours en cours et à venir, avec les informations de salle, classe,
+              Consultez vos séances en cours et à venir, avec les informations de salle, classe,
               professeur et horaire.
             </p>
           </div>
@@ -135,30 +135,30 @@ export default function MesCoursEtudiantPage() {
               className={`tab ${activeTab === 'en_cours' ? 'active' : ''}`}
               onClick={() => setActiveTab('en_cours')}
             >
-              Cours en cours
+              Séances en cours
             </button>
 
             <button
               className={`tab ${activeTab === 'a_venir' ? 'active' : ''}`}
               onClick={() => setActiveTab('a_venir')}
             >
-              Cours à venir
+              Séances à venir
             </button>
           </div>
 
-          <div className="courses-list">
+          <div className="seances-list">
             {loading ? (
               <div className="empty-state">
-                <p>Chargement de vos cours...</p>
+                <p>Chargement de vos séances...</p>
               </div>
-            ) : filteredCourses.length > 0 ? (
-              filteredCourses.map((course) => (
-                <CourseCard key={course.id} course={course} onEmarger={handleEmarger} />
+            ) : filteredSeances.length > 0 ? (
+              filteredSeances.map((seance) => (
+                <SeanceCard key={seance.id} seance={seance} onEmarger={handleEmarger} />
               ))
             ) : (
               <div className="empty-state">
-                <h3>Aucun cours disponible</h3>
-                <p>Il n’y a aucun cours dans cet onglet pour le moment.</p>
+                <h3>Aucune séance disponible</h3>
+                <p>Il n'y a aucune séance dans cet onglet pour le moment.</p>
               </div>
             )}
           </div>
