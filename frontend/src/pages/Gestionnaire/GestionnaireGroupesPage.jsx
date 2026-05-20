@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './GestionnaireGroupesPage.css';
+
+const token = localStorage.getItem('token');
+const headers = { Authorization: `Bearer ${token}`, Accept: 'application/json' };
 
 export default function GestionnaireGroupesPage() {
   const [groupes, setGroupes] = useState([]);
@@ -11,10 +14,7 @@ export default function GestionnaireGroupesPage() {
   const [succes, setSucces] = useState(null);
   const [edition, setEdition] = useState(null); // { id, nom, promotion }
 
-  const token = localStorage.getItem('token');
-  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/json' };
-
-  const chargerGroupes = async () => {
+  const chargerGroupes = useCallback(async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/groupes`, { headers });
       const data = await res.json();
@@ -24,11 +24,11 @@ export default function GestionnaireGroupesPage() {
     } finally {
       setChargement(false);
     }
-  };
+  });
 
   useEffect(() => {
     chargerGroupes();
-  }, [chargerGroupes]);
+  }, []);
 
   const creer = async (e) => {
     e.preventDefault();
