@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../Gestionnaire/PresencesGestionnairePage.css';
+import './PresencesEnseignantPage.css';
 
 const STATUTS = [
   { valeur: '', label: 'Tous' },

@@ -1,0 +1,30 @@
+/* Fixer les couleurs des filtres de la page presences pour empecher le dark mode du systeme de les modifier */
+
+.presences-page .section-filtres {
+  background: #ffffff !important;
+  box-shadow: 0 2px 12px rgba(69, 30, 208, 0.07) !important;
+}
+
+.presences-page .filtre-groupe label {
+  color: #555555 !important;
+}
+
+.presences-page .input-date,
+.presences-page .input-texte,
+.presences-page .select-statut {
+  color: #1e1e1e !important;
+  background-color: #fafafa !important;
+  border: 1px solid #ddd !important;
+}
+
+/* Fixer la couleur du placeholder */
+.presences-page .input-texte::placeholder {
+  color: #888888 !important;
+  opacity: 1 !important;
+}
+
+/* Fixer la couleur des options des listes deroulantes */
+.presences-page .select-statut option {
+  color: #1e1e1e !important;
+  background-color: #ffffff !important;
+}
