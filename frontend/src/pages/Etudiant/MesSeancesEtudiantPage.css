@@ -143,7 +143,7 @@
   margin: 0 0 10px 0;
   padding: 7px 12px;
   border-radius: 999px;
-  background: var(--color-primary-hover);
+  background: var(--color-primary-light);
   color: var(--color-primary);
   font-size: 12px;
   font-weight: 700;
