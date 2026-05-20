@@ -89,12 +89,15 @@ const ScanPresence = () => {
     }
   }, []);
 
-  useState(() => {
-    setTimeout(() => {
-      navigate('/etudiant/mes-cours');
-    }, 5550);
+ useEffect(() => {
+  if (statut !== 'succes') return;
 
-  }, [statut])
+  const timer = setTimeout(() => {
+    navigate('/etudiant/mes-cours');
+  }, 2000); // ajuste ici (2s conseillé)
+
+  return () => clearTimeout(timer);
+}, [statut, navigate]);
 
   useEffect(() => {
     const html5QrCode = new Html5Qrcode('reader');
