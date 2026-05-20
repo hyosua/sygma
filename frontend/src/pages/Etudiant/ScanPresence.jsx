@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import './ScanPresence.css';
+import { useNavigate } from 'react-router-dom';
 
 const ScanPresence = () => {
   const [statut, setStatut] = useState('chargement'); // chargement, lecture, validation, succes, erreur
   const [message, setMessage] = useState('');
   const scannerRef = useRef(null);
+  const [success, setSuccess] = useState(false);
   // Ref miroir pour éviter la closure stale sur localisation
   const localisationRef = useRef(null);
   // Garde-fou : empêche handleEmargement de s'exécuter plusieurs fois
   const dejaTraiteRef = useRef(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -73,9 +76,11 @@ const ScanPresence = () => {
       if (reponse.ok) {
         setStatut('succes');
         setMessage(resultat.message || 'Présence validée avec succès !');
+
       } else {
         setStatut('erreur');
         setMessage(resultat.message || 'Erreur lors de la validation.');
+        setStatut(true)
       }
     } catch (error) {
       setStatut('erreur');
@@ -83,6 +88,16 @@ const ScanPresence = () => {
       console.error("Erreur lors de la validation de l'émargement", error);
     }
   }, []);
+
+ useEffect(() => {
+  if (statut !== 'succes') return;
+
+  const timer = setTimeout(() => {
+    navigate('/etudiant/mes-cours');
+  }, 2000); // ajuste ici (2s conseillé)
+
+  return () => clearTimeout(timer);
+}, [statut, navigate]);
 
   useEffect(() => {
     const html5QrCode = new Html5Qrcode('reader');
@@ -97,7 +112,7 @@ const ScanPresence = () => {
           { facingMode: 'environment' },
           config,
           (decodedText) => handleEmargement(decodedText),
-          () => {}
+          () => { }
         );
         if (monte) setStatut('lecture');
       } catch (err) {
