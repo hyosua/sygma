@@ -94,7 +94,7 @@ const ScanPresence = () => {
       navigate('/etudiant/mes-cours');
     }, 5550);
 
-  }, [true])
+  }, [statut])
 
   useEffect(() => {
     const html5QrCode = new Html5Qrcode('reader');
