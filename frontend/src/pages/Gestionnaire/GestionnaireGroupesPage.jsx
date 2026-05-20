@@ -24,11 +24,11 @@ export default function GestionnaireGroupesPage() {
     } finally {
       setChargement(false);
     }
-  });
+  }, []);
 
   useEffect(() => {
     chargerGroupes();
-  }, []);
+  }, [chargerGroupes]);
 
   const creer = async (e) => {
     e.preventDefault();
