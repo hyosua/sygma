@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import './GestionnaireGroupesPage.css';
 
-const token = localStorage.getItem('token');
-const headers = { Authorization: `Bearer ${token}`, Accept: 'application/json' };
+const getHeaders = () => ({
+  Authorization: `Bearer ${localStorage.getItem('token')}`,
+  Accept: 'application/json',
+});
 
 export default function GestionnaireGroupesPage() {
   const [groupes, setGroupes] = useState([]);
@@ -16,7 +18,7 @@ export default function GestionnaireGroupesPage() {
 
   const chargerGroupes = useCallback(async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/groupes`, { headers });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/groupes`, { headers: getHeaders() });
       const data = await res.json();
       if (res.ok) setGroupes(data.data ?? data);
     } catch {
@@ -38,7 +40,7 @@ export default function GestionnaireGroupesPage() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/gestionnaire/groupes`, {
         method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json' },
+        headers: { ...getHeaders(), 'Content-Type': 'application/json' },
         body: JSON.stringify({ nom, promotion }),
       });
       const data = await res.json();
@@ -63,7 +65,7 @@ export default function GestionnaireGroupesPage() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/gestionnaire/groupes/${id}`, {
         method: 'PATCH',
-        headers: { ...headers, 'Content-Type': 'application/json' },
+        headers: { ...getHeaders(), 'Content-Type': 'application/json' },
         body: JSON.stringify({ nom: edition.nom, promotion: edition.promotion }),
       });
       const data = await res.json();
@@ -85,7 +87,7 @@ export default function GestionnaireGroupesPage() {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/gestionnaire/groupes/${id}`, {
         method: 'DELETE',
-        headers,
+        headers: getHeaders(),
       });
       if (res.ok) {
         chargerGroupes();
