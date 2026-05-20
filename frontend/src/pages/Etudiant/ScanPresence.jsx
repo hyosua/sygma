@@ -7,6 +7,7 @@ const ScanPresence = () => {
   const [statut, setStatut] = useState('chargement'); // chargement, lecture, validation, succes, erreur
   const [message, setMessage] = useState('');
   const scannerRef = useRef(null);
+  const [success, setSuccess] = useState(false);
   // Ref miroir pour éviter la closure stale sur localisation
   const localisationRef = useRef(null);
   // Garde-fou : empêche handleEmargement de s'exécuter plusieurs fois
@@ -75,12 +76,11 @@ const ScanPresence = () => {
       if (reponse.ok) {
         setStatut('succes');
         setMessage(resultat.message || 'Présence validée avec succès !');
-       setTimeout(() => {
-        navigate('/etudiant/mes-cours');
-       }, 2550);
+
       } else {
         setStatut('erreur');
         setMessage(resultat.message || 'Erreur lors de la validation.');
+        setStatut(true)
       }
     } catch (error) {
       setStatut('erreur');
@@ -88,6 +88,13 @@ const ScanPresence = () => {
       console.error("Erreur lors de la validation de l'émargement", error);
     }
   }, []);
+
+  useState(() => {
+    setTimeout(() => {
+      navigate('/etudiant/mes-cours');
+    }, 5550);
+
+  }, [true])
 
   useEffect(() => {
     const html5QrCode = new Html5Qrcode('reader');
