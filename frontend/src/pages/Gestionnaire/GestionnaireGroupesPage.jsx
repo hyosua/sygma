@@ -28,7 +28,7 @@ export default function GestionnaireGroupesPage() {
 
   useEffect(() => {
     chargerGroupes();
-  }, []);
+  }, [chargerGroupes]);
 
   const creer = async (e) => {
     e.preventDefault();

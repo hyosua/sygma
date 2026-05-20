@@ -65,8 +65,9 @@ class ImportCompteService
 
                 $groupeNomFinal = null;
                 if ($nomGroupe) {
-                    $groupe = Groupe::whereRaw('LOWER(nom) = LOWER(?)', [$nomGroupe])->first()
-                        ?? Groupe::create(['nom' => $nomGroupe]);
+                    $groupe = Groupe::whereRaw('LOWER(nom) = LOWER(?)', [$nomGroupe])->firstOr(
+                        fn () => Groupe::create(['nom' => $nomGroupe])
+                    );
                     $donnees['groupe_id'] = $groupe->id;
                     $groupeNomFinal = $groupe->nom;
                 }

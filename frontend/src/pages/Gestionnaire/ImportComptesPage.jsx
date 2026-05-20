@@ -125,7 +125,7 @@ export default function ImportComptesPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {message.comptes.map((c, i) => (
+                  {message.comptes?.map((c, i) => (
                     <tr key={i}>
                       <td>{c.nom}</td>
                       <td>{c.prenom}</td>
