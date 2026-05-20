@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useDeconnexion } from '../hooks/useDeconnexion';
+import './HeaderEnseignant.css';
 
 export default function HeaderEtudiant() {
   const deconnecter = useDeconnexion();
+  const [menuOuvert, setMenuOuvert] = useState(false);
 
   return (
     <header className="topbar">
@@ -14,7 +16,17 @@ export default function HeaderEtudiant() {
         </NavLink>
       </div>
 
-      <nav className="topbar-nav">
+      <button
+        className={`menu-toggle ${menuOuvert ? 'ouvert' : ''}`}
+        onClick={() => setMenuOuvert(!menuOuvert)}
+        aria-label="Menu"
+      >
+        <span className="hamburger-line"></span>
+        <span className="hamburger-line"></span>
+        <span className="hamburger-line"></span>
+      </button>
+
+      <nav className={`topbar-nav ${menuOuvert ? 'ouvert' : ''}`}>
         <NavLink
           to="/etudiant/mes-cours"
           className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
