@@ -52,7 +52,8 @@ export default function ImportComptesPage() {
         <h2>Importer un fichier CSV ou Excel</h2>
         <p className="import-hint">
           Colonnes attendues : <strong>nom, prenom, email, role</strong> (ex: enseignant ou
-          etudiant).
+          etudiant) et optionnellement <strong>groupe</strong> pour affecter un étudiant à un groupe
+          (créé automatiquement si inexistant).
           <br />
         </p>
         <form onSubmit={importerComptes} className="form-import">
@@ -107,17 +108,48 @@ export default function ImportComptesPage() {
       {message && (
         <section className="section-import">
           <h2>Résultat de l'importation</h2>
-          <p className="rapport-succes">
-            {message.success} compte{message.success > 1 ? 's' : ''} créé
-            {message.success > 1 ? 's' : ''} :
-          </p>
-          <ul className="rapport-erreurs-liste">
-            {message.erreurs.map((err, index) => (
-              <li key={index} className="rapport-erreur-item">
-                {err}
-              </li>
-            ))}
-          </ul>
+          {message.success > 0 && (
+            <>
+              <p className="rapport-succes">
+                {message.success} compte{message.success > 1 ? 's' : ''} créé
+                {message.success > 1 ? 's' : ''} :
+              </p>
+              <table className="rapport-table">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Groupe</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {message.comptes?.map((c, i) => (
+                    <tr key={i}>
+                      <td>{c.nom}</td>
+                      <td>{c.prenom}</td>
+                      <td>{c.email}</td>
+                      <td>{c.role}</td>
+                      <td>{c.groupe ?? '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+          {message.erreurs.length > 0 && (
+            <>
+              <p className="rapport-erreurs-titre">Erreurs :</p>
+              <ul className="rapport-erreurs-liste">
+                {message.erreurs.map((err, index) => (
+                  <li key={index} className="rapport-erreur-item">
+                    {err}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </section>
       )}
     </div>

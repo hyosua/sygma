@@ -25,6 +25,7 @@ import './App.css';
 import './styles/variables.css';
 import EtudiantLayout from './layouts/EtudiantLayout';
 import ImportComptesPage from './pages/Gestionnaire/ImportComptesPage';
+import GestionnaireGroupesPage from './pages/Gestionnaire/GestionnaireGroupesPage';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
 
         <Route path="/gestionnaire" element={<GestionnaireLayout />}>
           <Route index element={<AccueilGestionnairePage />} />
+          <Route path="groupes" element={<GestionnaireGroupesPage />} />
           <Route path="import" element={<ImportComptesPage />} />
           <Route path="presences" element={<PresencesGestionnairePage />} />
         </Route>

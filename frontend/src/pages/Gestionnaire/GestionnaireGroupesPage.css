@@ -1,0 +1,179 @@
+.groupes-page {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.section-groupes {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 12px rgba(69, 30, 208, 0.07);
+}
+
+.section-groupes h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e1e1e;
+  margin: 0 0 16px;
+}
+
+.form-groupe {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.input-groupe {
+  flex: 1;
+  min-width: 180px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #e0d9f8;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input-groupe:focus {
+  border-color: #451ed0;
+}
+
+.btn-creer {
+  padding: 10px 22px;
+  border-radius: 10px;
+  border: none;
+  background: #451ed0;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.btn-creer:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.liste-groupes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.carte-groupe {
+  border: 1.5px solid #ede9fb;
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.carte-edition {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.carte-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.carte-nom {
+  font-weight: 600;
+  color: #1e1e1e;
+  font-size: 0.95rem;
+}
+
+.carte-promotion {
+  font-size: 0.85rem;
+  color: #888;
+  background: #f0eeff;
+  padding: 2px 10px;
+  border-radius: 20px;
+}
+
+.carte-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-action {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-modifier {
+  background: #f0eeff;
+  color: #451ed0;
+}
+
+.btn-sauvegarder {
+  background: #451ed0;
+  color: #fff;
+}
+
+.btn-supprimer {
+  background: #fce8e8;
+  color: #e53e3e;
+}
+
+.btn-annuler {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.btn-action:hover {
+  opacity: 0.8;
+}
+
+.message-succes {
+  color: #27ae60;
+  font-size: 0.9rem;
+  margin: 12px 0 0;
+  font-weight: 600;
+}
+
+.message-erreur {
+  color: #e53e3e;
+  font-size: 0.9rem;
+  margin: 12px 0 0;
+}
+
+.message-info {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .section-groupes {
+    padding: 20px 18px;
+  }
+
+  .form-groupe {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .carte-groupe {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

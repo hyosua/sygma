@@ -1,3 +1,3 @@
-nom,prenom,email,role
-Dupont,Jean,jean.dupont@test.com,etudiant
-Martin,Paul,paul.martin@test.com,enseignant
+nom,prenom,email,role,groupe
+Dupont,Jean,jean.dupont@test.com,etudiant,LP Dawii
+Martin,Paul,paul.martin@test.com,enseignant,

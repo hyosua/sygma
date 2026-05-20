@@ -50,6 +50,11 @@ Route::middleware('auth:sanctum', 'role:gestionnaire')->group(function () {
     Route::post('/gestionnaire/demandes/{invitation}/approuver', [InvitationGestionnaireController::class, 'approuver']);
     Route::delete('/gestionnaire/demandes/{invitation}', [InvitationGestionnaireController::class, 'refuser']);
     Route::post('/gestionnaire/comptes/import', [ImportCompteController::class, 'importer']);
+
+    // Groupes
+    Route::post('/gestionnaire/groupes', [GroupeController::class, 'store']);
+    Route::patch('/gestionnaire/groupes/{groupe}', [GroupeController::class, 'update']);
+    Route::delete('/gestionnaire/groupes/{groupe}', [GroupeController::class, 'destroy']);
 });
 
 /*
@@ -104,9 +109,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cours', [ControllerCours::class, 'getCours']);
 
     // Groupes
-    Route::get('/groupes', function () {
-        return \App\Models\Groupe::all(['id', 'nom', 'promotion']);
-    });
+    Route::get('/groupes', [GroupeController::class, 'index']);
     Route::get('/groupes/{id}/etudiants', [GroupeController::class, 'etudiants']);
 
     // Seance
