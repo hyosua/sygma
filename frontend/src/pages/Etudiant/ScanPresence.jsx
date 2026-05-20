@@ -75,7 +75,9 @@ const ScanPresence = () => {
       if (reponse.ok) {
         setStatut('succes');
         setMessage(resultat.message || 'Présence validée avec succès !');
-       navigate('/etudiant/mes-cours');
+       setTimeout(() => {
+        navigate('/etudiant/mes-cours');
+       }, 2550);
       } else {
         setStatut('erreur');
         setMessage(resultat.message || 'Erreur lors de la validation.');
