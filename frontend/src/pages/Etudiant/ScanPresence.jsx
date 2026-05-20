@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Html5Qrcode } from 'html5-qrcode';
+import { useNavigate } from 'react-router-dom';
 import './ScanPresence.css';
 
 const ScanPresence = () => {
@@ -15,6 +16,7 @@ const ScanPresence = () => {
   const localisationRef = useRef(null);
   // Garde-fou : empêche handleEmargement de s'exécuter plusieurs fois
   const dejaTraiteRef = useRef(false);
+  const routeur = useNavigate();
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -78,6 +80,8 @@ const ScanPresence = () => {
       if (reponse.ok) {
         setStatut('succes');
         setMessage(resultat.message || 'Présence validée avec succès !');
+        navigate("/etudiant/mes-cours");
+        
       } else {
         setStatut('erreur');
         setMessage(resultat.message || 'Erreur lors de la validation.');
