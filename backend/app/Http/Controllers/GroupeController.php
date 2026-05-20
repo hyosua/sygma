@@ -30,7 +30,7 @@ class GroupeController extends Controller
     public function update(Request $request, Groupe $groupe)
     {
         $donnees = $request->validate([
-            'nom' => 'sometimes|required|string|max:255|unique:groupes,nom,'.$groupe->id,
+            'nom' => 'sometimes|required|string|max:255|unique:groupes,nom,' . $groupe->id,
             'promotion' => 'nullable|string|max:255',
         ]);
 
@@ -48,7 +48,7 @@ class GroupeController extends Controller
 
     public function etudiants($id)
     {
-        return new EtudiantResource(
+        return EtudiantResource::collection(
             User::where('groupe_id', $id)->get()
         );
     }
