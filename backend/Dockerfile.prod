@@ -25,4 +25,8 @@ RUN mkdir -p storage/framework/sessions storage/framework/views storage/framewor
 
 EXPOSE 8000
 
-CMD php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
+CMD if [ "${SEED_ON_DEPLOY}" = "true" ]; then \
+      php artisan migrate:fresh --seed --force; \
+    else \
+      php artisan migrate --force; \
+    fi && php artisan serve --host=0.0.0.0 --port=8000
