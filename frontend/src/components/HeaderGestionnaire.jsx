@@ -12,7 +12,6 @@ export default function HeaderGestionnaire() {
       <div className="topbar-left">
         <NavLink className="container-logo" to="/gestionnaire">
           <img src="/sygma-logo-noir.webp" alt="Logo SYGMA" className="header-logo" />
-          <span className="brand-name">SYGMA</span>
         </NavLink>
       </div>
 
