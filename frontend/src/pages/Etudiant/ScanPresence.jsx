@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Html5Qrcode } from 'html5-qrcode';
 import './ScanPresence.css';
 
 const ScanPresence = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const jetonNatif = searchParams.get('jeton');
   const token = localStorage.getItem('token');
 
@@ -91,7 +92,7 @@ const ScanPresence = () => {
 
   useLayoutEffect(() => {
     if (jetonNatif && !token) {
-      sessionStorage.setItem('redirectApresLogin', '/etudiant/scan');
+      sessionStorage.setItem('redirectApresLogin', `/etudiant/scan?jeton=${jetonNatif}`);
       window.location.replace('/login');
     }
   }, []);
@@ -189,7 +190,7 @@ const ScanPresence = () => {
             <div className="icon">✓</div>
             <h2>Validé !</h2>
             <p>{message}</p>
-            <button onClick={() => window.location.reload()} className="retry-button">
+            <button onClick={() => navigate('/etudiant/scan')} className="retry-button">
               Scanner à nouveau
             </button>
           </div>
@@ -200,7 +201,7 @@ const ScanPresence = () => {
             <div className="icon">✕</div>
             <h2>Échec</h2>
             <p>{message}</p>
-            <button onClick={() => window.location.reload()} className="retry-button">
+            <button onClick={() => navigate('/etudiant/scan')} className="retry-button">
               Réessayer
             </button>
           </div>
