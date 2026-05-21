@@ -1,14 +1,14 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "builder": "RAILPACK",
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile.prod",
     "watchPatterns": ["backend/**"]
   },
   "deploy": {
     "numReplicas": 1,
     "sleepApplication": false,
     "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 10,
-    "startCommand": "php artisan migrate --force && frankenphp run --config /Caddyfile"
+    "restartPolicyMaxRetries": 10
   }
 }
