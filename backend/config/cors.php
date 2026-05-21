@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:5173')],
+    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:5173', 'https://sygma-eight.vercel.app')],
 
     'max_age' => 0,
 
