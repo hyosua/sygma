@@ -59,10 +59,7 @@ export default function LoginChoicePage() {
       if (res.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        // redirection si jamais scan natif d'un étudiant:
-        const scanRedirect = sessionStorage.getItem('redirectApresLogin');
-        sessionStorage.removeItem('redirectApresLogin');
-        navigate(scanRedirect || ROLES[role].redirect);
+        navigate(ROLES[role].redirect);
       } else {
         setErreur(data.message || 'Identifiants incorrects');
       }
