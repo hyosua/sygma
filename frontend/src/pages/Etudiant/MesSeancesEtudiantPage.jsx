@@ -30,42 +30,59 @@ function SeanceCard({ seance, onEmarger }) {
     <div className="seance-card">
       <div className="seance-top">
         <div>
-          <p className="seance-badge">{seance.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
           <h3 className="seance-title">{seance.nom}</h3>
         </div>
       </div>
 
       <div className="seance-infos">
-        <div className="info-box">
-          <span className="info-label">Salle</span>
-          <span className="info-value">{seance.salle ?? '—'}</span>
-        </div>
-
-        <div className="info-box">
-          <span className="info-label">Classe</span>
-          <span className="info-value">{seance.classe}</span>
-        </div>
-
-        <div className="info-box">
-          <span className="info-label">Professeur</span>
-          <span className="info-value">{seance.professeur}</span>
-        </div>
-
-        <div className="info-box">
-          <span className="info-label">Horaire prévu</span>
-          <span className="info-value">
-            {seance.date} · {seance.heureDebut} - {seance.heureFin}
-          </span>
-        </div>
+        <p>
+          {' '}
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            strokeWidth="2"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="info-icon"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>{' '}
+          {seance.classe}
+        </p>
+        <p>
+          {' '}
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            strokeWidth="2"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="info-icon"
+          >
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>{' '}
+          Salle {seance.salle ?? '—'}
+        </p>
+        <p>
+          {seance.date} · {seance.heureDebut} - {seance.heureFin}
+        </p>
       </div>
 
-      {seance.statut === 'en_cours' && (
-        <div className="seance-actions">
-          <button className="emarger-button" onClick={() => onEmarger(seance)}>
-            Émarger
-          </button>
-        </div>
-      )}
+      <div className="seance-actions">
+        <button className="start-button" onClick={() => onStart(seance)}>
+          Démarrer l'émargement
+        </button>
+      </div>
     </div>
   );
 }
@@ -118,11 +135,10 @@ export default function MesSeancesEtudiantPage() {
       <div className="overlay" />
 
       <div className="content">
-        <header className="hero">
+        <header className="hero-card">
           <div>
-            <p className="hero-tag">Espace étudiant</p>
             <h1>Mes séances</h1>
-            <p className="hero-subtitle">
+            <p className="hero-text">
               Consultez vos séances en cours et à venir, avec les informations de salle, classe,
               professeur et horaire.
             </p>

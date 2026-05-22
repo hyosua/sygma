@@ -50,7 +50,7 @@ function MesPresences() {
   return (
     <div className="mes-presences-page">
       <div className="presences-content">
-        <div className="presences-hero">
+        <div className="hero-card">
           <h1>Mes présences</h1>
           <p>Consulte tes absences et présences par cours et par mois.</p>
           <div className="tabs">

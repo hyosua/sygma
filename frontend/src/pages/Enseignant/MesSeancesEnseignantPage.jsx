@@ -268,7 +268,7 @@ export default function MesSeancesEnseignantPage() {
               className={`tab ${activeTab === 'en_cours' ? 'active' : ''}`}
               onClick={() => setActiveTab('en_cours')}
             >
-              Séances en cours
+              Séance en cours
             </button>
 
             <button
