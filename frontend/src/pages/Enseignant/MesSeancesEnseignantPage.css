@@ -25,6 +25,35 @@
 }
 
 /* HERO comme accueil */
+
+.hero-card {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #2b2b2b 100%);
+  color: var(--color-white);
+  border-radius: 28px;
+  padding: 34px;
+  box-shadow: 0 20px 50px rgba(30, 30, 30, 0.14);
+  margin-bottom: 28px;
+}
+
+.hero-badge {
+  display: inline-block;
+  margin: 0 0 14px 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--color-white);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.hero-text {
+  margin: auto;
+  max-width: 760px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
 .hero {
   background: linear-gradient(135deg, var(--color-dark) 0%, #2b2b2b 100%);
   color: var(--color-white);
@@ -50,6 +79,14 @@
   line-height: 1.1;
   font-weight: 800;
   color: var(--color-white);
+}
+
+.hero-text {
+  margin: auto;
+  max-width: 760px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-text);
 }
 
 .hero-subtitle {

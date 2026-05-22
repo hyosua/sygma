@@ -5,7 +5,7 @@
 }
 
 .hero-card {
-  background: linear-gradient(135deg, var(--color-dark) 0%, #2b2b2b 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #2b2b2b 100%);
   color: var(--color-white);
   border-radius: 28px;
   padding: 34px;
@@ -18,9 +18,10 @@
   margin: 0 0 14px 0;
   padding: 8px 14px;
   border-radius: 999px;
-  background: rgba(69, 30, 208, 0.25);
+  background: var(--color-white);
   font-size: 13px;
   font-weight: 700;
+  color: var(--color-primary);
 }
 
 .hero-card h1 {
@@ -28,7 +29,7 @@
   font-size: 40px;
   line-height: 1.1;
   font-weight: 800;
-  color: var(--color-white);
+  color: var(--color-dark);
 }
 
 .hero-text {
@@ -36,7 +37,7 @@
   max-width: 760px;
   font-size: 16px;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--color-text);
 }
 
 .quick-access h2 {

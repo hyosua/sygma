@@ -21,14 +21,49 @@ function SeanceCard({ seance, onStart }) {
     <div className="seance-card">
       <div className="seance-top">
         <div>
-          <p className="seance-badge">{seance.statut === 'en_cours' ? 'En cours' : 'À venir'}</p>
           <h3 className="seance-title">{seance.nom}</h3>
         </div>
       </div>
 
       <div className="seance-infos">
-        <p>{seance.classe}</p>
-        <p>Salle {seance.salle ?? '—'}</p>
+        <p>
+          {' '}
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            strokeWidth="2"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="info-icon"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>{' '}
+          {seance.classe}
+        </p>
+        <p>
+          {' '}
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            strokeWidth="2"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="info-icon"
+          >
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>{' '}
+          Salle {seance.salle ?? '—'}
+        </p>
         <p>
           {seance.date} · {seance.heureDebut} - {seance.heureFin}
         </p>
@@ -217,11 +252,11 @@ export default function MesSeancesEnseignantPage() {
       <div className="overlay" />
 
       <div className="content">
-        <header className="hero">
+        <header className="hero-card">
           <div>
-            <p className="hero-tag">Espace enseignant</p>
+            {/* <p className="hero-badge">Espace enseignant</p> */}
             <h1>Mes séances</h1>
-            <p className="hero-subtitle">
+            <p className="hero-text">
               Retrouvez vos séances en cours et à venir, puis lancez rapidement l'émargement.
             </p>
           </div>
