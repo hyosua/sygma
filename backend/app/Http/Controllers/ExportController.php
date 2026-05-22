@@ -143,7 +143,7 @@ class ExportController extends Controller
                     $q2->whereRaw('LOWER(users.nom) LIKE ?', ['%' . strtolower($etudiant) . '%'])
                         ->orWhereRaw('LOWER(users.prenom) LIKE ?', ['%' . strtolower($etudiant) . '%']);
                 }))
-                ->orderBy('seances.debut_a');
+                ->orderBy('seances.debut_a', 'desc');
 
             $suffixe = $statut ?: 'tous';
 
