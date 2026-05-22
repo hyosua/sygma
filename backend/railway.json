@@ -7,8 +7,7 @@
   },
   "deploy": {
     "numReplicas": 1,
-    "startCommand": "cd /var/www/html && php artisan migrate --force && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=$PORT",
-    "sleepApplication": false,
+"sleepApplication": false,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
