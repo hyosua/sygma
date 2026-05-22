@@ -47,7 +47,7 @@ export default function InscriptionPage() {
     <div className="login-choice-page">
       <div className="login-card">
         <div className="logo-container">
-          <img src="/logo.png" alt="Logo SYGMA" className="logo-image" />
+          <img src="/sygma-logo.webp" alt="Logo SYGMA" className="logo-image" />
         </div>
         <h1 className="login-title">Créer un compte</h1>
         <p className="login-subtitle">Rejoignez SYGMA en quelques secondes.</p>
