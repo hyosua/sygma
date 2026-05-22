@@ -79,8 +79,8 @@ function SeanceCard({ seance, onEmarger }) {
       </div>
 
       <div className="seance-actions">
-        <button className="start-button" onClick={() => onStart(seance)}>
-          Démarrer l'émargement
+        <button className="start-button" onClick={() => onEmarger(seance)}>
+          Émarger
         </button>
       </div>
     </div>
@@ -122,8 +122,13 @@ export default function MesSeancesEtudiantPage() {
     chargerSeances();
   }, []);
 
-  const handleEmarger = () => {
-    navigate(`/etudiant/scan`);
+  const handleEmarger = (seance) => {
+    navigate(`/etudiant/scan`, {
+      state: {
+        seanceId: seance.id,
+        seance,
+      },
+    });
   };
 
   const filteredSeances = useMemo(() => {
