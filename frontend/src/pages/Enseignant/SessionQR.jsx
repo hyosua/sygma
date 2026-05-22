@@ -80,6 +80,16 @@ const SessionQR = () => {
         setNombrePresents(donnees.nombre_presents);
         setJeton(donnees.jeton);
         setJetonExpireA(donnees.jeton_expire_a);
+
+        const nouvellesPresences = {};
+
+        donnees.liste_etudiants.forEach((e) => {
+          if (e.statut === 'present') {
+            nouvellesPresences[e.etudiant_id] = true;
+          }
+        });
+
+        setPresencesValidees(nouvellesPresences);
       }
     } catch (err) {
       console.error('Échec de la récupération du statut', err);
@@ -340,7 +350,7 @@ const SessionQR = () => {
                           ? 'Validation...'
                           : presencesValidees[etudiant.id]
                             ? 'Présence validée'
-                            : 'Présent'}
+                            : 'Absent'}
                       </button>
                     </div>
                   ))}
