@@ -147,11 +147,13 @@ class ExportController extends Controller
 
             $suffixe = $statut ?: 'tous';
 
+            $origineAutorisee = env('FRONTEND_URL', 'http://localhost:3000');
+
             if ($type === 'E') {
                 return Excel::download(
                     new StatutExport($dateDebut, $dateFin, $statut, $groupeId, $coursId, $etudiant),
                     "statut_{$suffixe}_{$dateDebut}_{$dateFin}.xlsx"
-                );
+                )->header('Access-Control-Allow-Origin', $origineAutorisee);
             } elseif ($type === 'P') {
                 $data = $query->get()->map(fn ($row) => (array) $row)->all();
                 $pdf = Pdf::loadView('pdf.liste-personnes', [
@@ -161,7 +163,8 @@ class ExportController extends Controller
                     'Nombre' => count($data),
                 ]);
 
-                return $pdf->stream("statut_{$suffixe}_{$dateDebut}_{$dateFin}.pdf");
+                return $pdf->download("statut_{$suffixe}_{$dateDebut}_{$dateFin}.pdf")
+                    ->header('Access-Control-Allow-Origin', $origineAutorisee);
             }
 
             $data = $query->get()->map(fn ($row) => (array) $row)->all();
