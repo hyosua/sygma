@@ -21,6 +21,9 @@ class SeanceService
             $query->where('enseignant_id', $utilisateur->id);
         } elseif ($utilisateur && $utilisateur->hasRole('etudiant')) {
             $query->where('groupe_id', $utilisateur->groupe_id);
+            $query->withExists(['sessionsEmargement as emarge' => function ($q) use ($utilisateur) {
+                $q->whereHas('presences', fn ($p) => $p->where('etudiant_id', $utilisateur->id));
+            }]);
         } else {
             // gestionnaire : filtres optionnels fournis par le client
             if (isset($filtres['enseignant_id'])) {

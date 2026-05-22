@@ -79,9 +79,13 @@ function SeanceCard({ seance, onEmarger }) {
       </div>
 
       <div className="seance-actions">
-        <button className="start-button" onClick={() => onEmarger(seance)}>
-          Émarger
-        </button>
+        {seance.emarge ? (
+          <span className="emarge-badge">Émargée</span>
+        ) : (
+          <button className="start-button" onClick={() => onEmarger(seance)}>
+            Émarger
+          </button>
+        )}
       </div>
     </div>
   );
@@ -111,6 +115,7 @@ export default function MesSeancesEtudiantPage() {
           heureDebut: formatHeure(s.debut_a),
           heureFin: formatHeure(s.fin_a),
           statut: s.statut,
+          emarge: s.emarge ?? false,
         }));
         setSeances(liste);
       } catch (err) {

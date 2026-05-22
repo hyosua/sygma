@@ -221,6 +221,16 @@
   box-shadow: 0 14px 28px rgba(69, 30, 208, 0.28);
 }
 
+.emarge-badge {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 14px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .empty-state {
   background: var(--color-white);
   border-radius: 22px;
