@@ -60,7 +60,7 @@ export default function ChoisirRolePage() {
     <div className="login-choice-page">
       <div className="login-card">
         <div className="logo-container">
-          <img src="/sygma-logo.webp" alt="Logo SYGMA" className="logo-image" />
+          <img src="/sygma-logo-noir.webp" alt="Logo SYGMA" className="logo-image" />
         </div>
         <h1 className="login-title">Choisir votre profil</h1>
         <p className="login-subtitle">Une dernière étape avant d'accéder à SYGMA.</p>
