@@ -41,6 +41,13 @@ export default function HeaderGestionnaire() {
           Groupes
         </NavLink>
         <NavLink
+          to="/gestionnaire/invitations"
+          className="nav-link"
+          onClick={() => setMenuOuvert(false)}
+        >
+          Invitations
+        </NavLink>
+        <NavLink
           to="/gestionnaire/import"
           className="nav-link"
           onClick={() => setMenuOuvert(false)}

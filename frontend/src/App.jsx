@@ -18,7 +18,7 @@ import EmailConfirmerPage from './pages/Email/EmailConfirmerPage';
 import EmailVerifyPage from './pages/Email/EmailVerifyPage';
 import GoogleSuccesPage from './pages/Auth/GoogleSuccesPage';
 import GestionnaireLayout from './layouts/GestionnaireLayout';
-import AccueilGestionnairePage from './pages/Gestionnaire/AccueilGestionnairePage';
+import InvitationsGestionnairePage from './pages/Gestionnaire/InvitationsGestionnairePage';
 import DemandeGestionnairePage from './pages/Gestionnaire/DemandeGestionnairePage';
 import PresencesGestionnairePage from './pages/Gestionnaire/PresencesGestionnairePage';
 import MesPresences from './pages/Etudiant/MesPresences';
@@ -46,7 +46,8 @@ function App() {
         <Route path="/email/verify/:token" element={<EmailVerifyPage />} />
 
         <Route path="/gestionnaire" element={<GestionnaireLayout />}>
-          <Route index element={<AccueilGestionnairePage />} />
+          <Route index element={<Navigate to="/gestionnaire/presences" replace />} />
+          <Route path="invitations" element={<InvitationsGestionnairePage />} />
           <Route path="groupes" element={<GestionnaireGroupesPage />} />
           <Route path="import" element={<ImportComptesPage />} />
           <Route path="presences" element={<PresencesGestionnairePage />} />

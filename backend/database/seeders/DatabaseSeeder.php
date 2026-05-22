@@ -21,17 +21,18 @@ class DatabaseSeeder extends Seeder
     /*
      * Comptes de test disponibles après make fresh :
      *
-     *  admin@sygma.com     / sygma  → gestionnaire (voit tout)
-     *  enseignant@sygma.com / sygma → Jean Dupont (voit ses séances du groupeDemo)
-     *  etudiant@sygma.com  / sygma  → Alice Martin (voit les séances de son groupe)
+     *  admin@sygma.com      / sygma  → gestionnaire (voit tout)
+     *  enseignant@sygma.com / sygma  → Jean Dupont (voit ses séances du groupeDemo)
+     *  etudiant@sygma.com   / sygma  → Alice Martin (groupeDemo, peut valider en live dans la démo)
+     *  etudiant2@sygma.com  / sygma  → Bob Leroy   (groupeDemo, peut valider en live dans la démo)
      *
      * Ce que voit enseignant@sygma.com :
      *   - 4 cours × 3 séances passées (avec émargement clôturé + présences)
      *   - 4 cours × 2 séances à venir
-     *   - 1 séance en cours avec session active + 1 présence enregistrée (etudiant@sygma.com)
+     *   - 1 séance de démo en cours avec session ouverte (0 présence enregistrée)
      *
-     * Ce que voit etudiant@sygma.com :
-     *   - Les mêmes séances que son groupe (groupeDemo)
+     * Ce que voient etudiant@sygma.com et etudiant2@sygma.com :
+     *   - Les mêmes séances que leur groupe (groupeDemo)
      *   - Présences enregistrées sur les séances passées
      */
     public function run(): void
@@ -111,9 +112,10 @@ class DatabaseSeeder extends Seeder
                 // Créer 20 étudiants pour ce groupe
                 $etudiants = User::factory(20)->etudiant()->create(['groupe_id' => $groupe->id]);
 
-                // Dans le premier groupe : ajouter etudiant@sygma.com
+                // Dans le premier groupe : ajouter etudiant@sygma.com et etudiant2@sygma.com
                 if ($estPremierGroupe) {
                     $groupeDemo = $groupe;
+
                     $etudiantFixe = User::firstOrCreate(['email' => 'etudiant@sygma.com'], [
                         'nom' => 'Martin',
                         'prenom' => 'Alice',
@@ -122,7 +124,17 @@ class DatabaseSeeder extends Seeder
                         'groupe_id' => $groupe->id,
                     ]);
                     $etudiantFixe->assignRole('etudiant');
-                    $etudiants = $etudiants->prepend($etudiantFixe);
+
+                    $etudiantFixe2 = User::firstOrCreate(['email' => 'etudiant2@sygma.com'], [
+                        'nom' => 'Leroy',
+                        'prenom' => 'Bob',
+                        'password' => Hash::make('sygma'),
+                        'premiere_connexion' => false,
+                        'groupe_id' => $groupe->id,
+                    ]);
+                    $etudiantFixe2->assignRole('etudiant');
+
+                    $etudiants = $etudiants->prepend($etudiantFixe2)->prepend($etudiantFixe);
                     $estPremierGroupe = false;
                 }
 
@@ -253,23 +265,18 @@ class DatabaseSeeder extends Seeder
             'fin_a' => now()->addMinutes(90),
         ]);
 
-        $sessionDemo = SessionEmargement::factory()->create([
+        SessionEmargement::factory()->create([
             'seance_id' => $seanceDemo->id,
             'jeton_expire_a' => now()->addMinutes(10),
         ]);
 
-        $etudiantFixe = User::where('email', 'etudiant@sygma.com')->first();
-        Presence::factory()->create([
-            'session_emargement_id' => $sessionDemo->id,
-            'etudiant_id' => $etudiantFixe->id,
-        ]);
-
-        $this->command->info('-> Séance de démo créée (en cours, avec session + 1 présence enregistrée pour etudiant@sygma.com).');
+        $this->command->info('-> Séance de démo créée (en cours, avec session ouverte - aucune présence pré-enregistrée).');
 
         $this->command->info('');
         $this->command->info('✓ Comptes de test :');
         $this->command->info('  admin@sygma.com      / sygma  → gestionnaire');
         $this->command->info('  enseignant@sygma.com / sygma  → Jean Dupont (séances groupeDemo)');
-        $this->command->info('  etudiant@sygma.com   / sygma  → Alice Martin (groupeDemo)');
+        $this->command->info('  etudiant@sygma.com   / sygma  → Alice Martin (groupeDemo, valide en live)');
+        $this->command->info('  etudiant2@sygma.com  / sygma  → Bob Leroy   (groupeDemo, valide en live)');
     }
 }

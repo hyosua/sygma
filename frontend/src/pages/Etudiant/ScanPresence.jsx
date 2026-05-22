@@ -1,11 +1,25 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import './ScanPresence.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const ScanPresence = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const jetonNatif = searchParams.get('jeton');
+  const tokenRaw = localStorage.getItem('token');
+  const token = tokenRaw && tokenRaw !== 'null' && tokenRaw !== 'undefined' ? tokenRaw : null;
+
+  // Sur iOS Safari, <Navigate> ne redirige pas au chargement initial (scan natif)
+  useLayoutEffect(() => {
+    if (jetonNatif && !token) {
+      window.location.replace('/login');
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [statut, setStatut] = useState('chargement'); // chargement, lecture, validation, succes, erreur
   const [message, setMessage] = useState('');
+  const [scanKey, setScanKey] = useState(0);
   const scannerRef = useRef(null);
   // Ref miroir pour éviter la closure stale sur localisation
   const localisationRef = useRef(null);
@@ -52,19 +66,19 @@ const ScanPresence = () => {
 
     let jeton = donnees;
     try {
-      const parsed = JSON.parse(donnees);
-      if (parsed.jeton) jeton = parsed.jeton;
+      const url = new URL(donnees);
+      jeton = url.searchParams.get('jeton') || donnees;
     } catch {
-      console.warn('Données scannées non JSON, utilisation brute:', donnees);
+      // fallback: valeur brute du QR si ce n'est pas une URL
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const authToken = localStorage.getItem('token');
       const reponse = await fetch(`${import.meta.env.VITE_API_URL}/presences/valider-qr`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authToken}`,
           Accept: 'application/json',
         },
         body: JSON.stringify({
@@ -76,13 +90,19 @@ const ScanPresence = () => {
 
       const resultat = await reponse.json();
 
+      if (reponse.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.replace('/login');
+        return;
+      }
+
       if (reponse.ok) {
         setStatut('succes');
         setMessage(resultat.message || 'Présence validée avec succès !');
       } else {
         setStatut('erreur');
         setMessage(resultat.message || 'Erreur lors de la validation.');
-        setStatut(true);
       }
     } catch (error) {
       setStatut('erreur');
@@ -96,19 +116,32 @@ const ScanPresence = () => {
 
     const timer = setTimeout(() => {
       navigate('/etudiant/mes-seances');
-    }, 2000); // ajuste ici (2s conseillé)
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [statut, navigate]);
 
+  // Scan natif : jeton dans l'URL + étudiant déjà connecté
   useEffect(() => {
-    const html5QrCode = new Html5Qrcode('reader');
-    scannerRef.current = html5QrCode;
+    if (!jetonNatif || !token) return;
+
+    handleEmargement(jetonNatif);
+  }, [jetonNatif, token, handleEmargement]);
+
+  useEffect(() => {
+    if (jetonNatif) return;
+
+    let html5QrCode = null;
     let monte = true;
 
-    const startScanner = async () => {
-      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    const demarrerScanner = async () => {
+      const { Html5Qrcode } = await import('html5-qrcode');
+      if (!monte) return;
 
+      html5QrCode = new Html5Qrcode('reader');
+      scannerRef.current = html5QrCode;
+
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
       try {
         await html5QrCode.start(
           { facingMode: 'environment' },
@@ -129,10 +162,11 @@ const ScanPresence = () => {
       }
     };
 
-    startScanner();
+    demarrerScanner();
 
     return () => {
       monte = false;
+      if (!html5QrCode) return;
       const stopScanner = async () => {
         if (html5QrCode.isScanning) {
           try {
@@ -141,7 +175,6 @@ const ScanPresence = () => {
             console.warn("Erreur lors de l'arrêt du scanner:", e);
           }
         }
-        // Nettoie le DOM pour éviter le double rendu en StrictMode
         try {
           html5QrCode.clear();
         } catch (e) {
@@ -150,7 +183,11 @@ const ScanPresence = () => {
       };
       stopScanner();
     };
-  }, [handleEmargement]);
+  }, [handleEmargement, jetonNatif, scanKey]);
+
+  if (jetonNatif && !token) {
+    return null;
+  }
 
   return (
     <div className="scan-container">
@@ -234,9 +271,6 @@ const ScanPresence = () => {
             <div className="icon">✓</div>
             <h2>Validé !</h2>
             <p>{message}</p>
-            <button onClick={() => window.location.reload()} className="retry-button">
-              Scanner à nouveau
-            </button>
           </div>
         )}
 
@@ -245,7 +279,15 @@ const ScanPresence = () => {
             <div className="icon">✕</div>
             <h2>Échec</h2>
             <p>{message}</p>
-            <button onClick={() => window.location.reload()} className="retry-button">
+            <button
+              onClick={() => {
+                dejaTraiteRef.current = false;
+                setStatut('chargement');
+                setMessage('');
+                setScanKey((k) => k + 1);
+              }}
+              className="retry-button"
+            >
               Réessayer
             </button>
           </div>

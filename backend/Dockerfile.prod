@@ -1,0 +1,31 @@
+FROM php:8.3-cli-alpine
+
+RUN apk add --no-cache \
+    git curl bash \
+    libpng-dev oniguruma-dev libxml2-dev \
+    zip unzip \
+    postgresql-dev libzip-dev \
+    icu-dev icu-libs
+
+RUN docker-php-ext-configure intl && \
+    docker-php-ext-install \
+    pdo_pgsql mbstring exif pcntl bcmath gd intl zip
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+COPY . .
+
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache \
+        storage/logs bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache
+
+EXPOSE 8000
+
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]

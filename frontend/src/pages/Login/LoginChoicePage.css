@@ -1,3 +1,22 @@
+.login-choice-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-white);
+  padding: 24px 16px;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.logo-container .logo-image {
+  width: 120px;
+}
+
 .login-split-page {
   min-height: 100vh;
   display: flex;

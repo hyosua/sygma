@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './AccueilGestionnairePage.css';
+import './InvitationsGestionnairePage.css';
 
 function statutInvitation(inv) {
   if (inv.used_at) return { label: 'Utilisée', classe: 'statut-utilisee' };
@@ -7,7 +7,7 @@ function statutInvitation(inv) {
   return { label: 'En attente', classe: 'statut-attente' };
 }
 
-export default function AccueilGestionnairePage() {
+export default function InvitationsGestionnairePage() {
   const [invitations, setInvitations] = useState([]);
   const [demandes, setDemandes] = useState([]);
   const [email, setEmail] = useState('');

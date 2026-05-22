@@ -1,9 +1,18 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
+// Supprime l'attribut crossorigin des balises script/link du build
+function removeCrossOrigin() {
+  return {
+    name: 'remove-crossorigin',
+    transformIndexHtml(html) {
+      return html.replace(/ crossorigin/g, '');
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), removeCrossOrigin()],
   server: {
     port: 3000,
     host: true,
@@ -26,9 +35,17 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    modulePreload: false,
+  },
   preview: {
     port: 3000,
     host: true,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+    },
     proxy: {
       '/api': {
         target: 'http://backend:8000',

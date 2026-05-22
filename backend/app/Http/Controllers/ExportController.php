@@ -143,15 +143,20 @@ class ExportController extends Controller
                     $q2->whereRaw('LOWER(users.nom) LIKE ?', ['%' . strtolower($etudiant) . '%'])
                         ->orWhereRaw('LOWER(users.prenom) LIKE ?', ['%' . strtolower($etudiant) . '%']);
                 }))
-                ->orderBy('seances.debut_a');
+                ->orderBy('seances.debut_a', 'desc');
 
             $suffixe = $statut ?: 'tous';
 
+            $origineAutorisee = env('FRONTEND_URL', 'http://localhost:3000');
+
             if ($type === 'E') {
-                return Excel::download(
+                $response = Excel::download(
                     new StatutExport($dateDebut, $dateFin, $statut, $groupeId, $coursId, $etudiant),
                     "statut_{$suffixe}_{$dateDebut}_{$dateFin}.xlsx"
                 );
+                $response->headers->set('Access-Control-Allow-Origin', $origineAutorisee);
+
+                return $response;
             } elseif ($type === 'P') {
                 $data = $query->get()->map(fn ($row) => (array) $row)->all();
                 $pdf = Pdf::loadView('pdf.liste-personnes', [
@@ -160,8 +165,10 @@ class ExportController extends Controller
                     'statut' => $statut,
                     'Nombre' => count($data),
                 ]);
+                $response = $pdf->download("statut_{$suffixe}_{$dateDebut}_{$dateFin}.pdf");
+                $response->headers->set('Access-Control-Allow-Origin', $origineAutorisee);
 
-                return $pdf->stream("statut_{$suffixe}_{$dateDebut}_{$dateFin}.pdf");
+                return $response;
             }
 
             $data = $query->get()->map(fn ($row) => (array) $row)->all();
