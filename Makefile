@@ -8,7 +8,7 @@ DOCKER_USER := -u $(SYGMA_UID):$(SYGMA_GID)
 GREEN := \033[0;32m
 NC    := \033[0m
 
-.PHONY: install start stop restart mobile mobile-stop demo-start demo-stop repair update fresh test lint-check lint-fix composer artisan npm-back npm-front help %
+.PHONY: install start stop restart mobile mobile-stop demo-start demo-stop repair update fresh test lint-check lint-fix composer artisan npm-back npm-front deploy help %
 
 install:
 	@echo "$(GREEN)1. Construction des images...$(NC)"
@@ -114,6 +114,9 @@ npm-back:
 npm-front:
 	docker compose exec $(DOCKER_USER) frontend npm $(filter-out $@,$(MAKECMDGOALS))
 
+deploy:
+	cd backend && railway up --service backend
+
 %:
 	@:
 
@@ -139,3 +142,5 @@ help:
 	@echo "  make artisan  migrate --seed"
 	@echo "  make npm-back run build"
 	@echo "  make npm-front run build"
+	@echo ""
+	@echo "  deploy       Deployer le backend sur Railway"
