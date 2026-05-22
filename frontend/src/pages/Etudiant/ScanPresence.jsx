@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import './ScanPresence.css';
-import { useNavigate, useLocation } from 'react-router-dom';
 
 const ScanPresence = () => {
   const [searchParams] = useSearchParams();
@@ -25,7 +24,6 @@ const ScanPresence = () => {
   const localisationRef = useRef(null);
   // Garde-fou : empêche handleEmargement de s'exécuter plusieurs fois
   const dejaTraiteRef = useRef(false);
-  const navigate = useNavigate();
   const location = useLocation();
 
   const seance = location.state?.seance;
