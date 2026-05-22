@@ -117,6 +117,9 @@ npm-front:
 deploy:
 	cd backend && railway up --service backend
 
+seed-prod:
+	cd backend && railway redeploy --service backend --yes
+
 %:
 	@:
 
