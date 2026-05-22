@@ -136,7 +136,7 @@ export default function PresencesEnseignantPage() {
 
   return (
     <div className="presences-page">
-      <h1 className="page-titre">Archives de mes cours</h1>
+      <h1 className="page-titre">Archives de mes séances</h1>
 
       <section className="section-filtres">
         <form onSubmit={rechercher} className="form-filtres">

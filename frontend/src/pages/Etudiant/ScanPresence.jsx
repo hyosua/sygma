@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import './ScanPresence.css';
 
 const ScanPresence = () => {
@@ -24,6 +24,10 @@ const ScanPresence = () => {
   const localisationRef = useRef(null);
   // Garde-fou : empêche handleEmargement de s'exécuter plusieurs fois
   const dejaTraiteRef = useRef(false);
+  const location = useLocation();
+
+  const seance = location.state?.seance;
+  // const seanceId = location.state?.seanceId;
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -186,6 +190,55 @@ const ScanPresence = () => {
   return (
     <div className="scan-container">
       <header className="scan-header">
+        {seance && (
+          <div className="scan-session-card">
+            <span className="scan-badge">Séance en cours</span>
+
+            <h2>{seance.nom}</h2>
+
+            <div className="scan-session-infos">
+              <p>
+                {' '}
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="info-icon"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>{' '}
+                {seance.professeur}
+              </p>
+              <p>
+                {' '}
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="info-icon"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>{' '}
+                {seance.classe}
+              </p>
+              <p> Salle {seance.salle ?? '—'}</p>
+            </div>
+          </div>
+        )}
         <h1>Émargement</h1>
         {statut === 'lecture' && <p>Placez le QR Code dans le cadre</p>}
       </header>
