@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import CookieBanner from './components/CookieBanner';
+import ConditionsPage from './pages/Conditions/ConditionPage';
 import AccueilEnseignantPage from './pages/Enseignant/AccueilEnseignantPage';
-import AccueilEtudiantPage from './pages/Etudiant/AccueilEtudiantPage';import PresencesEnseignantPage from './pages/Enseignant/PresencesEnseignantPage';
+import AccueilEtudiantPage from './pages/Etudiant/AccueilEtudiantPage';
+import PresencesEnseignantPage from './pages/Enseignant/PresencesEnseignantPage';
 import EnseignantLayout from './layouts/EnseignantLayout';
 import SessionQR from './pages/Enseignant/SessionQR';
 import MesSeancesEnseignantPage from './pages/Enseignant/MesSeancesEnseignantPage';
@@ -44,6 +45,7 @@ function App() {
         <Route path="/auth/google/succes" element={<GoogleSuccesPage />} />
         <Route path="/email/confirmer" element={<EmailConfirmerPage />} />
         <Route path="/email/verify/:token" element={<EmailVerifyPage />} />
+        <Route path="/conditions" element={<ConditionsPage />} />
 
         <Route path="/gestionnaire" element={<GestionnaireLayout />}>
           <Route index element={<Navigate to="/gestionnaire/presences" replace />} />
@@ -86,8 +88,6 @@ function App() {
           }
         />
       </Routes>
-
-      <CookieBanner />
     </Router>
   );
 }

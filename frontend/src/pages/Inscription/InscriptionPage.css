@@ -29,6 +29,11 @@
   min-width: 0;
 }
 
+.disabled-button {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 480px) {
   .inscription-row {
     flex-direction: column;
@@ -54,6 +59,8 @@
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 0.95rem;
+  background: var(--color-white);
+  color: var(--color-dark);
 }
 
 .role-radio-group {

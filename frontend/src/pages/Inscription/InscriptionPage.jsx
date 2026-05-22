@@ -12,12 +12,18 @@ export default function InscriptionPage() {
     password: '',
     confirmPassword: '',
     role: 'etudiant',
+    conditions: false,
   });
   const [erreur, setErreur] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value, type, checked } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -152,7 +158,25 @@ export default function InscriptionPage() {
 
           {erreur && <p className="inscription-erreur">{erreur}</p>}
 
-          <button type="submit" disabled={loading} className="role-button">
+          {/* EN cochant cette case, vous acceptez les conditions d'utilisation de SYGMA */}
+          <div className="form-field checkbox-field">
+            <label>
+              <input
+                type="checkbox"
+                name="conditions"
+                checked={form.conditions}
+                onChange={handleChange}
+                required
+              />
+              J'accepte les{' '}
+              <a href="/conditions" target="_blank" rel="noopener noreferrer">
+                conditions d'utilisation
+              </a>{' '}
+              de SYGMA et les cookies
+            </label>
+          </div>
+
+          <button type="submit" disabled={loading || !form.conditions} className="role-button">
             {loading ? 'Inscription...' : 'Créer mon compte'}
           </button>
 
@@ -161,8 +185,15 @@ export default function InscriptionPage() {
           </div>
 
           <a
-            href={`${import.meta.env.VITE_BACKEND_URL ?? ''}/auth/google/redirect`}
-            className="role-button secondary google-button"
+            href={form.conditions ? '/auth/google/redirect' : undefined}
+            className={`role-button secondary google-button ${
+              !form.conditions ? 'disabled-button' : ''
+            }`}
+            onClick={(e) => {
+              if (!form.conditions) {
+                e.preventDefault();
+              }
+            }}
           >
             <img src="/google-icon.svg" alt="" width="18" height="18" />
             Continuer avec Google
