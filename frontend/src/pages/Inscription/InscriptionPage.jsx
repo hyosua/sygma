@@ -185,7 +185,11 @@ export default function InscriptionPage() {
           </div>
 
           <a
-            href={form.conditions ? '/auth/google/redirect' : undefined}
+            href={
+              form.conditions
+                ? `${import.meta.env.VITE_BACKEND_URL ?? ''}/auth/google/redirect`
+                : undefined
+            }
             className={`role-button secondary google-button ${
               !form.conditions ? 'disabled-button' : ''
             }`}
