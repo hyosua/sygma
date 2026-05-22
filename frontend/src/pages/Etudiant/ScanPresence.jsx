@@ -18,6 +18,7 @@ const ScanPresence = () => {
 
   const [statut, setStatut] = useState('chargement'); // chargement, lecture, validation, succes, erreur
   const [message, setMessage] = useState('');
+  const [scanKey, setScanKey] = useState(0);
   const scannerRef = useRef(null);
   // Ref miroir pour éviter la closure stale sur localisation
   const localisationRef = useRef(null);
@@ -176,7 +177,7 @@ const ScanPresence = () => {
       };
       stopScanner();
     };
-  }, [handleEmargement, jetonNatif]);
+  }, [handleEmargement, jetonNatif, scanKey]);
 
   if (jetonNatif && !token) {
     return null;
@@ -223,7 +224,15 @@ const ScanPresence = () => {
             <div className="icon">✕</div>
             <h2>Échec</h2>
             <p>{message}</p>
-            <button onClick={() => navigate('/etudiant/scan')} className="retry-button">
+            <button
+              onClick={() => {
+                dejaTraiteRef.current = false;
+                setStatut('chargement');
+                setMessage('');
+                setScanKey((k) => k + 1);
+              }}
+              className="retry-button"
+            >
               Réessayer
             </button>
           </div>
