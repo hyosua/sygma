@@ -106,7 +106,10 @@ export default function LoginChoicePage() {
                   <span>ou</span>
                 </div>
 
-                <a href="/auth/google/redirect" className="role-button secondary google-button">
+                <a
+                  href={`${import.meta.env.VITE_BACKEND_URL ?? ''}/auth/google/redirect`}
+                  className="role-button secondary google-button"
+                >
                   <img src="/google-icon.svg" alt="Google" width="18" height="18" />
                   Continuer avec Google
                 </a>
