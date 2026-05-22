@@ -20,6 +20,8 @@ const SessionQR = () => {
   const [presencesValidees, setPresencesValidees] = useState({});
   const [validationEnCours, setValidationEnCours] = useState({});
 
+  const [listEtudian, setEtudiantList] = useState([]);
+
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -64,6 +66,7 @@ const SessionQR = () => {
     if (!session) return;
 
     try {
+      console.log("LA SEANCE:", session.id)
       const reponse = await fetch(
         `${import.meta.env.VITE_API_URL}/sessions-emargement/${session.id}/statut`,
         {
@@ -75,11 +78,37 @@ const SessionQR = () => {
       );
 
       const donnees = await reponse.json();
+      //
 
       if (reponse.ok) {
         setNombrePresents(donnees.nombre_presents);
         setJeton(donnees.jeton);
         setJetonExpireA(donnees.jeton_expire_a);
+        setEtudiantList(donnees.liste_etudiants);
+
+
+        const nouvellesPresences = {};
+
+        donnees.liste_etudiants.forEach((e) => {
+          if (e.statut === "present") {
+            nouvellesPresences[e.etudiant_id] = true;
+          }
+        });
+
+        setPresencesValidees(nouvellesPresences);
+
+
+        // listEtudian.forEach((etudiant) => {
+        //   console.log("étudiant :", etudiant);
+        //   if (etudiant.statut == "present") {
+        //     setPresencesValidees((prev) => ({
+        //       ...prev,
+        //       [etudiant.etudiant_id]: true,
+        //     }));
+
+
+        //   }
+        // });
       }
     } catch (err) {
       console.error('Échec de la récupération du statut', err);
@@ -222,6 +251,7 @@ const SessionQR = () => {
   const handleStopSession = async () => {
     if (!session) return;
 
+    console.log("la session: ", session.id)
     try {
       const reponse = await fetch(
         `${import.meta.env.VITE_API_URL}/sessions-emargement/${session.id}/cloturer`,
@@ -273,11 +303,110 @@ const SessionQR = () => {
 
   const urlQR = jeton
     ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(
-        JSON.stringify({ idSession: session?.id, jeton })
-      )}`
+      JSON.stringify({ idSession: session?.id, jeton })
+    )}`
     : '';
 
   const listeEtudiants = Array.isArray(etudiants) ? etudiants : [];
+
+
+  useEffect(() => {
+    console.log("validationEnCours :", validationEnCours);
+    console.log("entries :", Object.entries(validationEnCours));
+  }, [validationEnCours]);
+
+  useEffect(() => {
+    console.log("presencesValidees :", presencesValidees);
+    console.log("entries :", Object.entries(presencesValidees));
+  }, [presencesValidees]);
+
+  function EmargementManuelle() {
+    const [, forcerRendu] = useState(0);
+
+    const rafraichir = useCallback(() => {
+      forcerRendu(prev => prev + 1);
+    }, []);
+
+
+    return (
+      <div className="manual-card">
+        <h2>Émargement manuel</h2>
+
+        {listeEtudiants.length > 0 ? (
+          <div className="students-list">
+
+            {listeEtudiants.map((etudiant) => {
+
+              const presence = listEtudian?.find(
+                (v) => v.etudiant_id === etudiant.id
+              );
+
+              const statut = presence?.statut;
+
+              return (
+                <div key={etudiant.id} className="student-row">
+
+                  <strong>
+                    {etudiant.prenom} {etudiant.nom}
+                  </strong>
+
+                  <button
+                    type="button"
+                    className={`presence-present-button ${presencesValidees[etudiant.id] ? 'validated' : ''
+                      }`}
+                    onClick={() => handleChoixPresence(etudiant.id)}
+                    disabled={
+                      presencesValidees[etudiant.id] ||
+                      validationEnCours[etudiant.id]
+                    }
+                  >
+                    {validationEnCours[etudiant.id]
+                      ? 'Validation...'
+                      : presencesValidees[etudiant.id]
+                        ? 'Présence validée'
+                        : statut === "present"
+                          ? 'Présent'
+                          : 'Absent'}
+                  </button>
+
+                </div>
+              );
+            })}
+
+          </div>
+        ) : (
+          <p>Aucun étudiant trouvé pour ce groupe.</p>
+        )}
+      </div>
+    );
+
+  }
+
+
+
+
+  function StatutEmergement() {
+
+    return (
+      <aside className="status-card" style={{ marginBottom: "20px" }}>
+        <h3>Statut de la session</h3>
+
+        <div className="stat-item">
+          <span className="stat-label">Présents :</span>
+          <span className="stat-value">{nombrePresents}</span>
+        </div>
+
+        <div className="stat-item">
+          <span className="stat-label">Inscrits :</span>
+          <span className="stat-value">{seance?.nombre_inscrits || 0}</span>
+        </div>
+
+        <button onClick={handleStopSession} className="stop-button">
+          Terminer la session
+        </button>
+      </aside>
+    )
+  }
 
   return (
     <div className="session-qr-container">
@@ -287,19 +416,25 @@ const SessionQR = () => {
         <p>Groupe : {seance?.groupe?.nom || 'Non spécifié'}</p>
       </header>
 
+              {session && <StatutEmergement />}
+
       <main className="session-main">
         {erreur && <div className="error-message">{erreur}</div>}
 
         {session ? (
           <>
+
             <div className="qr-card">
               <h2>Scanner pour valider votre présence</h2>
 
               <div className="qr-wrapper">
                 {jeton ? (
                   <img src={urlQR} alt="QR Code d'émargement" className="qr-image" />
+
                 ) : (
-                  <div className="qr-placeholder">Session terminée</div>
+                  <div className="qr-placeholder">Session terminée
+                  </div>
+
                 )}
               </div>
 
@@ -319,56 +454,9 @@ const SessionQR = () => {
               )}
             </div>
 
-            <div className="manual-card">
-              <h2>Émargement manuel</h2>
+            <EmargementManuelle />
 
-              {listeEtudiants.length > 0 ? (
-                <div className="students-list">
-                  {listeEtudiants.map((etudiant) => (
-                    <div key={etudiant.id} className="student-row">
-                      <strong>
-                        {etudiant.prenom} {etudiant.nom}
-                      </strong>
 
-                      <button
-                        type="button"
-                        className={`presence-present-button ${
-                          presencesValidees[etudiant.id] ? 'validated' : ''
-                        }`}
-                        onClick={() => handleChoixPresence(etudiant.id)}
-                        disabled={presencesValidees[etudiant.id] || validationEnCours[etudiant.id]}
-                      >
-                        {validationEnCours[etudiant.id]
-                          ? 'Validation...'
-                          : presencesValidees[etudiant.id]
-                            ? 'Présence validée'
-                            : 'Présent'}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p>Aucun étudiant trouvé pour ce groupe.</p>
-              )}
-            </div>
-
-            <aside className="status-card">
-              <h3>Statut de la session</h3>
-
-              <div className="stat-item">
-                <span className="stat-label">Présents :</span>
-                <span className="stat-value">{nombrePresents}</span>
-              </div>
-
-              <div className="stat-item">
-                <span className="stat-label">Inscrits :</span>
-                <span className="stat-value">{seance?.nombre_inscrits || 0}</span>
-              </div>
-
-              <button onClick={handleStopSession} className="stop-button">
-                Terminer la session
-              </button>
-            </aside>
           </>
         ) : (
           <div className="start-session-card">

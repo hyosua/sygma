@@ -485,7 +485,7 @@
 }
 
 .status-card {
-  position: sticky;
+  /* position: sticky; */
   top: 100px;
 }
 
