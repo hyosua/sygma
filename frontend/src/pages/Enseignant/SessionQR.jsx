@@ -327,6 +327,24 @@ const SessionQR = () => {
               )}
             </div>
 
+            <aside className="status-card">
+              <h3>Statut de la session</h3>
+
+              <div className="stat-item">
+                <span className="stat-label">Présents :</span>
+                <span className="stat-value">{nombrePresents}</span>
+              </div>
+
+              <div className="stat-item">
+                <span className="stat-label">Inscrits :</span>
+                <span className="stat-value">{seance?.nombre_inscrits || 0}</span>
+              </div>
+
+              <button onClick={handleStopSession} className="stop-button">
+                Terminer la session
+              </button>
+            </aside>
+
             <div className="manual-card">
               <h2>Émargement manuel</h2>
 
@@ -359,24 +377,6 @@ const SessionQR = () => {
                 <p>Aucun étudiant trouvé pour ce groupe.</p>
               )}
             </div>
-
-            <aside className="status-card">
-              <h3>Statut de la session</h3>
-
-              <div className="stat-item">
-                <span className="stat-label">Présents :</span>
-                <span className="stat-value">{nombrePresents}</span>
-              </div>
-
-              <div className="stat-item">
-                <span className="stat-label">Inscrits :</span>
-                <span className="stat-value">{seance?.nombre_inscrits || 0}</span>
-              </div>
-
-              <button onClick={handleStopSession} className="stop-button">
-                Terminer la session
-              </button>
-            </aside>
           </>
         ) : (
           <div className="start-session-card">
