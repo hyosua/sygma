@@ -217,6 +217,25 @@
 
 .seance-actions {
   margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.modifier-button {
+  width: 100%;
+  border: 1px solid rgba(69, 30, 208, 0.25);
+  background: transparent;
+  color: var(--color-primary);
+  padding: 12px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.modifier-button:hover {
+  background: rgba(69, 30, 208, 0.06);
 }
 
 .start-button {

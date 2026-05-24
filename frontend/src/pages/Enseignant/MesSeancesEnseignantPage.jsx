@@ -16,7 +16,7 @@ function formatHeure(isoString) {
   return new Date(isoString).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 }
 
-function SeanceCard({ seance, onStart }) {
+function SeanceCard({ seance, onStart, onModifier }) {
   return (
     <div className="seance-card">
       <div className="seance-top">
@@ -69,13 +69,16 @@ function SeanceCard({ seance, onStart }) {
         </p>
       </div>
 
-      {seance.statut === 'en_cours' && (
-        <div className="seance-actions">
+      <div className="seance-actions">
+        <button className="modifier-button" onClick={() => onModifier(seance)}>
+          Modifier
+        </button>
+        {seance.statut === 'en_cours' && (
           <button className="start-button" onClick={() => onStart(seance)}>
             Démarrer l'émargement
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -93,6 +96,7 @@ export default function MesSeancesEnseignantPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('en_cours');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [seanceEnEdition, setSeanceEnEdition] = useState(null);
   const [seances, setSeances] = useState([]);
   const [cours, setCours] = useState([]);
   const [groupes, setGroupes] = useState([]);
@@ -136,6 +140,10 @@ export default function MesSeancesEnseignantPage() {
           heureDebut: formatHeure(s.debut_a),
           heureFin: formatHeure(s.fin_a),
           statut: s.statut,
+          cours_id: s.cours?.id ?? null,
+          groupe_id: s.groupe?.id ?? null,
+          debutRaw: s.debut_a,
+          finRaw: s.fin_a,
         }));
         setSeances(liste);
       } catch (err) {
@@ -175,6 +183,30 @@ export default function MesSeancesEnseignantPage() {
     setIsModalOpen(false);
     setErreurCreation(null);
     setFormData(defaultsFormulaire());
+    setSeanceEnEdition(null);
+  };
+
+  const handleModifier = (seance) => {
+    const pad = (n) => String(n).padStart(2, '0');
+    const toLocalDate = (iso) => {
+      const d = new Date(iso);
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    };
+    const toLocalTime = (iso) => {
+      const d = new Date(iso);
+      return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    };
+    setSeanceEnEdition(seance);
+    setFormData({
+      selectedCoursId: String(seance.cours_id ?? ''),
+      selectedGroupeId: String(seance.groupe_id ?? ''),
+      nomCours: '',
+      date: toLocalDate(seance.debutRaw),
+      heureDebut: toLocalTime(seance.debutRaw),
+      heureFin: toLocalTime(seance.finRaw),
+      salle: seance.salle ? String(seance.salle) : '',
+    });
+    setIsModalOpen(true);
   };
 
   const handleChange = (e) => {
@@ -231,18 +263,52 @@ export default function MesSeancesEnseignantPage() {
     };
 
     try {
-      const res = await fetch(`${API_BASE}/seances`, {
-        method: 'POST',
+      const url = seanceEnEdition
+        ? `${API_BASE}/seances/${seanceEnEdition.id}`
+        : `${API_BASE}/seances`;
+      const method = seanceEnEdition ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: authHeaders(),
         body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (res.ok) {
-        handleCloseModal();
-        navigate(`/enseignant/session/${data.id}`);
+        if (seanceEnEdition) {
+          setSeances((prev) =>
+            prev.map((s) =>
+              s.id === data.id
+                ? {
+                    ...s,
+                    nom: data.cours?.nom ?? 'Cours inconnu',
+                    salle: data.salle,
+                    classe: data.groupe?.nom ?? '—',
+                    date: formatDate(data.debut_a),
+                    heureDebut: formatHeure(data.debut_a),
+                    heureFin: formatHeure(data.fin_a),
+                    statut: data.statut,
+                    cours_id: data.cours?.id ?? null,
+                    groupe_id: data.groupe?.id ?? null,
+                    debutRaw: data.debut_a,
+                    finRaw: data.fin_a,
+                  }
+                : s
+            )
+          );
+          handleCloseModal();
+        } else {
+          handleCloseModal();
+          navigate(`/enseignant/session/${data.id}`);
+        }
       } else {
         const messages = data.errors ? Object.values(data.errors).flat().join(' ') : data.message;
-        setErreurCreation(messages || 'Erreur lors de la création de la séance.');
+        setErreurCreation(
+          messages ||
+            (seanceEnEdition
+              ? 'Erreur lors de la modification de la séance.'
+              : 'Erreur lors de la création de la séance.')
+        );
       }
     } catch {
       setErreurCreation('Impossible de contacter le serveur.');
@@ -284,7 +350,12 @@ export default function MesSeancesEnseignantPage() {
           <div className="seances-list">
             {filteredSeances.length > 0 ? (
               filteredSeances.map((seance) => (
-                <SeanceCard key={seance.id} seance={seance} onStart={handleStartAttendance} />
+                <SeanceCard
+                  key={seance.id}
+                  seance={seance}
+                  onStart={handleStartAttendance}
+                  onModifier={handleModifier}
+                />
               ))
             ) : (
               <div className="empty-state">
@@ -299,7 +370,7 @@ export default function MesSeancesEnseignantPage() {
           <div className="modal-overlay" onClick={handleCloseModal}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h2>Créer une séance</h2>
+                <h2>{seanceEnEdition ? 'Modifier la séance' : 'Créer une séance'}</h2>
                 <button className="close-btn" onClick={handleCloseModal}>
                   ×
                 </button>
@@ -408,7 +479,7 @@ export default function MesSeancesEnseignantPage() {
                     Annuler
                   </button>
                   <button type="submit" className="primary-btn">
-                    Créer la séance
+                    {seanceEnEdition ? 'Enregistrer' : 'Créer la séance'}
                   </button>
                 </div>
               </form>
