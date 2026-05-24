@@ -18,6 +18,11 @@ class SeanceResource extends JsonResource
             'salle' => $this->salle,
             'statut' => $this->statut,
             'nombre_inscrits' => $this->nombre_inscrits,
+            'statut_session' => match (true) {
+                $this->session_ouverte > 0 => 'ouverte',
+                $this->session_existe > 0 => 'cloturee',
+                default => 'non_demarree',
+            },
             'cours' => new CoursResource($this->cours),
             'enseignant' => new EnseignantResource($this->enseignant),
             'groupe' => new GroupeResource($this->groupe),

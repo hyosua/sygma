@@ -56,7 +56,15 @@ class SeanceService
 
         $parPage = min((int) ($filtres['par_page'] ?? 15), 50);
 
-        return $query->withCount('etudiants as nombre_inscrits')->with(['cours', 'enseignant', 'groupe'])->orderBy('debut_a', 'asc')->paginate($parPage);
+        return $query
+            ->withCount('etudiants as nombre_inscrits')
+            ->with(['cours', 'enseignant', 'groupe'])
+            ->withCount([
+                'sessionsEmargement as session_ouverte' => fn ($q) => $q->whereNull('cloture_a'),
+                'sessionsEmargement as session_existe',
+            ])
+            ->orderBy('debut_a', 'asc')
+            ->paginate($parPage);
     }
 
     // Récupère une séance spécifique avec ses relations et le nombre d'inscrits
@@ -64,6 +72,8 @@ class SeanceService
     {
         $seance->load(['cours', 'enseignant', 'groupe']);
         $seance->loadCount('etudiants as nombre_inscrits');
+        $seance->session_ouverte = $seance->sessionsEmargement()->whereNull('cloture_a')->count();
+        $seance->session_existe = $seance->sessionsEmargement()->count();
 
         return $seance;
     }
@@ -85,6 +95,8 @@ class SeanceService
         $seance = Seance::create($data);
         $seance->load(['cours', 'enseignant', 'groupe']);
         $seance->loadCount('etudiants as nombre_inscrits');
+        $seance->session_ouverte = 0;
+        $seance->session_existe = 0;
 
         return $seance;
     }
@@ -108,6 +120,8 @@ class SeanceService
         $seance->update($data);
         $seance->load(['cours', 'enseignant', 'groupe']);
         $seance->loadCount('etudiants as nombre_inscrits');
+        $seance->session_ouverte = $seance->sessionsEmargement()->whereNull('cloture_a')->count();
+        $seance->session_existe = $seance->sessionsEmargement()->count();
 
         return $seance;
     }

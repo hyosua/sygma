@@ -31,6 +31,14 @@ function SeanceCard({ seance, onEmarger }) {
       <div className="seance-top">
         <div>
           <h3 className="seance-title">{seance.nom}</h3>
+          {seance.statut === 'en_cours' && (
+            <span className={`statut-emargement ${seance.statut_session}`}>
+              <span className="statut-dot" />
+              {seance.statut_session === 'ouverte' && 'Émargement ouvert'}
+              {seance.statut_session === 'cloturee' && 'Émargement terminé'}
+              {seance.statut_session === 'non_demarree' && "En attente d'ouverture"}
+            </span>
+          )}
         </div>
       </div>
 
@@ -113,6 +121,7 @@ export default function MesSeancesEtudiantPage() {
           heureDebut: formatHeure(s.debut_a),
           heureFin: formatHeure(s.fin_a),
           statut: s.statut,
+          statut_session: s.statut_session ?? 'non_demarree',
         }));
         setSeances(liste);
       } catch (err) {

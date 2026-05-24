@@ -22,6 +22,14 @@ function SeanceCard({ seance, onStart, onModifier }) {
       <div className="seance-top">
         <div>
           <h3 className="seance-title">{seance.nom}</h3>
+          {seance.statut === 'en_cours' && (
+            <span className={`statut-emargement ${seance.statut_session}`}>
+              <span className="statut-dot" />
+              {seance.statut_session === 'ouverte' && 'Émargement ouvert'}
+              {seance.statut_session === 'cloturee' && 'Émargement terminé'}
+              {seance.statut_session === 'non_demarree' && "En attente d'ouverture"}
+            </span>
+          )}
         </div>
       </div>
 
@@ -75,7 +83,9 @@ function SeanceCard({ seance, onStart, onModifier }) {
         </button>
         {seance.statut === 'en_cours' && (
           <button className="start-button" onClick={() => onStart(seance)}>
-            Démarrer l'émargement
+            {seance.statut_session === 'ouverte' && "Reprendre l'émargement"}
+            {seance.statut_session === 'cloturee' && "Rouvrir l'émargement"}
+            {seance.statut_session === 'non_demarree' && "Ouvrir l'émargement"}
           </button>
         )}
       </div>
@@ -144,6 +154,7 @@ export default function MesSeancesEnseignantPage() {
           groupe_id: s.groupe?.id ?? null,
           debutRaw: s.debut_a,
           finRaw: s.fin_a,
+          statut_session: s.statut_session ?? 'non_demarree',
         }));
         setSeances(liste);
       } catch (err) {
@@ -292,6 +303,7 @@ export default function MesSeancesEnseignantPage() {
                     groupe_id: data.groupe?.id ?? null,
                     debutRaw: data.debut_a,
                     finRaw: data.fin_a,
+                    statut_session: data.statut_session ?? 'non_demarree',
                   }
                 : s
             )
