@@ -69,11 +69,13 @@ function SeanceCard({ seance, onStart }) {
         </p>
       </div>
 
-      <div className="seance-actions">
-        <button className="start-button" onClick={() => onStart(seance)}>
-          Démarrer l'émargement
-        </button>
-      </div>
+      {seance.statut === 'en_cours' && (
+        <div className="seance-actions">
+          <button className="start-button" onClick={() => onStart(seance)}>
+            Démarrer l'émargement
+          </button>
+        </div>
+      )}
     </div>
   );
 }
