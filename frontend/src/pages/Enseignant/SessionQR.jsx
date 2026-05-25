@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import './SessionQR.css';
 
 const SessionQR = () => {
@@ -19,8 +19,10 @@ const SessionQR = () => {
 
   const [presencesValidees, setPresencesValidees] = useState({});
   const [validationEnCours, setValidationEnCours] = useState({});
+  const [sessionCloturee, setSessionCloturee] = useState(false);
 
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (location.state?.sessionDemarree && location.state?.sessionData) {
@@ -77,9 +79,11 @@ const SessionQR = () => {
       const donnees = await reponse.json();
 
       if (reponse.ok) {
-        setNombrePresents(donnees.nombre_presents);
-        setJeton(donnees.jeton);
-        setJetonExpireA(donnees.jeton_expire_a);
+        setNombrePresents(donnees.liste_etudiants.filter((e) => e.statut === 'present').length);
+        if (!donnees.cloture_a) {
+          setJeton(donnees.jeton);
+          setJetonExpireA(donnees.jeton_expire_a);
+        }
 
         const nouvellesPresences = {};
 
@@ -245,10 +249,9 @@ const SessionQR = () => {
       );
 
       if (reponse.ok) {
-        setSession(null);
         setJeton('');
         setJetonExpireA(null);
-        setEtudiants([]);
+        setSessionCloturee(true);
       }
     } catch (err) {
       console.error('Échec de la clôture de la session', err);
@@ -298,7 +301,17 @@ const SessionQR = () => {
       <main className="session-main">
         {erreur && <div className="error-message">{erreur}</div>}
 
-        {session ? (
+        {sessionCloturee ? (
+          <div className="start-session-card" style={{ gridColumn: '1 / -1' }}>
+            <h2>Émargement terminé</h2>
+            <p>
+              {nombrePresents} présent(s) sur {seance?.nombre_inscrits || 0} inscrits
+            </p>
+            <button className="start-button" onClick={() => navigate('/enseignant/mes-seances')}>
+              Retour à mes séances
+            </button>
+          </div>
+        ) : session ? (
           <>
             <div className="qr-card">
               <h2>Scanner pour valider votre présence</h2>

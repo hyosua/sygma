@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NonAutoriseException;
+use App\Models\Presence;
 use App\Models\Seance;
 use App\Models\SessionEmargement;
 use App\Models\User;
@@ -101,7 +102,10 @@ class EmargementController extends Controller
 
         $etudiant = User::findOrFail($data['etudiant_id']);
 
-        $presence = $this->emargementService->enregistrerPresence($session, $etudiant);
+        $presence = Presence::updateOrCreate(
+            ['session_emargement_id' => $session->id, 'etudiant_id' => $etudiant->id],
+            ['statut' => 'present', 'scanne_a' => now()]
+        );
 
         return response()->json([
             'message' => 'Présence validée avec succès',

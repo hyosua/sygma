@@ -81,11 +81,9 @@ function SeanceCard({ seance, onStart, onModifier }) {
         <button className="modifier-button" onClick={() => onModifier(seance)}>
           Modifier
         </button>
-        {seance.statut === 'en_cours' && (
+        {seance.statut === 'en_cours' && seance.statut_session === 'non_demarree' && (
           <button className="start-button" onClick={() => onStart(seance)}>
-            {seance.statut_session === 'ouverte' && "Reprendre l'émargement"}
-            {seance.statut_session === 'cloturee' && "Rouvrir l'émargement"}
-            {seance.statut_session === 'non_demarree' && "Ouvrir l'émargement"}
+            Ouvrir l'émargement
           </button>
         )}
       </div>

@@ -30,6 +30,14 @@ class EmargementService
             throw new SeanceNonActiveException();
         }
 
+        $sessionExistante = SessionEmargement::where('seance_id', $seance->id)
+            ->whereNull('cloture_a')
+            ->first();
+
+        if ($sessionExistante) {
+            return $sessionExistante;
+        }
+
         return SessionEmargement::create([
             'seance_id' => $seance->id,
             'is_methode_qr' => $isMethodeQr,
