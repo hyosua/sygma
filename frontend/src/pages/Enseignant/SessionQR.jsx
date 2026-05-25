@@ -20,6 +20,7 @@ const SessionQR = () => {
   const [presencesValidees, setPresencesValidees] = useState({});
   const [validationEnCours, setValidationEnCours] = useState({});
   const [sessionCloturee, setSessionCloturee] = useState(false);
+  const [filtreRecherche, setFiltreRecherche] = useState('');
 
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -362,30 +363,81 @@ const SessionQR = () => {
               <h2>Émargement manuel</h2>
 
               {listeEtudiants.length > 0 ? (
-                <div className="students-list">
-                  {listeEtudiants.map((etudiant) => (
-                    <div key={etudiant.id} className="student-row">
-                      <strong>
-                        {etudiant.prenom} {etudiant.nom}
-                      </strong>
+                <>
+                  <input
+                    type="text"
+                    className="student-search"
+                    placeholder="Rechercher un étudiant..."
+                    value={filtreRecherche}
+                    onChange={(e) => setFiltreRecherche(e.target.value)}
+                  />
+                  {(() => {
+                    const filtre = filtreRecherche.toLowerCase();
+                    const tries = [...listeEtudiants].sort((a, b) => a.nom.localeCompare(b.nom));
+                    const filtres = tries.filter(
+                      (e) =>
+                        e.nom.toLowerCase().includes(filtre) ||
+                        e.prenom.toLowerCase().includes(filtre)
+                    );
+                    const absents = filtres.filter((e) => !presencesValidees[e.id]);
+                    const presents = filtres.filter((e) => presencesValidees[e.id]);
 
-                      <button
-                        type="button"
-                        className={`presence-present-button ${
-                          presencesValidees[etudiant.id] ? 'validated' : ''
-                        }`}
-                        onClick={() => handleChoixPresence(etudiant.id)}
-                        disabled={presencesValidees[etudiant.id] || validationEnCours[etudiant.id]}
-                      >
-                        {validationEnCours[etudiant.id]
-                          ? 'Validation...'
-                          : presencesValidees[etudiant.id]
-                            ? 'Présence validée'
-                            : 'Absent'}
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                    return (
+                      <div className="students-columns">
+                        <div className="students-column">
+                          <div className="column-header absent-header">
+                            À valider <span className="column-count">{absents.length}</span>
+                          </div>
+                          <div className="column-list">
+                            {absents.length === 0 ? (
+                              <p className="column-empty">Tous présents !</p>
+                            ) : (
+                              absents.map((etudiant) => (
+                                <div
+                                  key={etudiant.id}
+                                  className={`student-card${validationEnCours[etudiant.id] ? ' loading' : ''}`}
+                                  onClick={() => handleChoixPresence(etudiant.id)}
+                                  role="button"
+                                  tabIndex={0}
+                                  onKeyDown={(e) =>
+                                    e.key === 'Enter' && handleChoixPresence(etudiant.id)
+                                  }
+                                >
+                                  <span className="student-name">
+                                    {etudiant.prenom} {etudiant.nom}
+                                  </span>
+                                  <span className="student-status-icon">
+                                    {validationEnCours[etudiant.id] ? '…' : ''}
+                                  </span>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="students-column">
+                          <div className="column-header present-header">
+                            Présents <span className="column-count">{presents.length}</span>
+                          </div>
+                          <div className="column-list">
+                            {presents.length === 0 ? (
+                              <p className="column-empty">Aucun présent pour l'instant.</p>
+                            ) : (
+                              presents.map((etudiant) => (
+                                <div key={etudiant.id} className="student-card present">
+                                  <span className="student-name">
+                                    {etudiant.prenom} {etudiant.nom}
+                                  </span>
+                                  <span className="student-status-icon">✓</span>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </>
               ) : (
                 <p>Aucun étudiant trouvé pour ce groupe.</p>
               )}

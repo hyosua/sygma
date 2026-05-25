@@ -240,7 +240,7 @@ class DatabaseSeeder extends Seeder
 
                 SessionEmargement::factory()->create([
                     'seance_id' => $seanceActive->id,
-                    'jeton_expire_a' => now()->addMinutes(10),
+                    'jeton_expire_a' => now()->addSeconds(20),
                 ]);
 
                 $nbSessions++;
@@ -267,7 +267,7 @@ class DatabaseSeeder extends Seeder
 
         SessionEmargement::factory()->create([
             'seance_id' => $seanceDemo->id,
-            'jeton_expire_a' => now()->addMinutes(10),
+            'jeton_expire_a' => now()->addSeconds(20),
         ]);
 
         $this->command->info('-> Séance de démo créée (en cours, avec session ouverte - aucune présence pré-enregistrée).');

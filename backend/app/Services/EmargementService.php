@@ -35,7 +35,7 @@ class EmargementService
             ->first();
 
         if ($sessionExistante) {
-            return $sessionExistante;
+            return $this->rafraichirJeton($sessionExistante);
         }
 
         return SessionEmargement::create([
