@@ -2,20 +2,55 @@
 
 ## Table des matières
 
-1. [Présentation du projet](#présentation-du-projet)
-2. [Stack technique](#stack-technique)
-3. [Infrastructure Docker](#infrastructure-docker)
-4. [Architecture générale](#architecture-générale)
-5. [Modèle de données](#modèle-de-données)
-6. [Architecture backend](#architecture-backend)
-7. [Architecture frontend](#architecture-frontend)
-8. [API REST](#api-rest)
-9. [Gestion des erreurs HTTP](#gestion-des-erreurs-http)
-10. [Authentification et autorisations](#authentification-et-autorisations)
-11. [Tests](#tests)
-12. [CI/CD](#cicd)
-13. [Tests sur mobile](#tests-sur-mobile)
-14. [Sécurité](#sécurité)
+1. [Installation et démarrage](#installation-et-démarrage)
+2. [Présentation du projet](#présentation-du-projet)
+3. [Stack technique](#stack-technique)
+4. [Infrastructure Docker](#infrastructure-docker)
+5. [Variables d'environnement](#variables-denvironnement)
+6. [Architecture générale](#architecture-générale)
+7. [Modèle de données](#modèle-de-données)
+8. [Architecture backend](#architecture-backend)
+9. [Architecture frontend](#architecture-frontend)
+10. [API REST](#api-rest)
+11. [Gestion des erreurs HTTP](#gestion-des-erreurs-http)
+12. [Authentification et autorisations](#authentification-et-autorisations)
+13. [Tests](#tests)
+14. [CI/CD](#cicd)
+15. [Tests sur mobile](#tests-sur-mobile)
+16. [Sécurité](#sécurité)
+
+---
+
+## Installation et démarrage
+
+> Procédure complète dans **[README.md](../README.md)** (prérequis, setup Windows/Mac/Linux, résolution de problèmes courants). Cette section en résume l'essentiel.
+
+**Prérequis machine hôte :** Docker + Docker Compose V2 + `make`
+
+```bash
+git clone https://github.com/hyosua/sygma.git && cd sygma
+cp backend/.env.example backend/.env   # puis renseigner GOOGLE_CLIENT_ID et GOOGLE_CLIENT_SECRET
+cp frontend/.env.example frontend/.env
+make install   # build images + dépendances + migrations + seed
+make start     # démarrer les serveurs
+```
+
+**Session quotidienne :**
+
+```bash
+git pull && make update   # après chaque git pull
+make start
+```
+
+**Compte disponible après `make fresh` (seed) :**
+
+| Rôle | Email | Mot de passe |
+|---|---|---|
+| Gestionnaire | `admin@sygma.com` | `password` |
+
+Les étudiants et enseignants sont également seedés — voir les factories dans `backend/database/seeders/`.
+
+**Workflow Git et conventions de code :** voir **[CONTRIBUTING.md](../CONTRIBUTING.md)** et **[docs/conventions.md](conventions.md)**.
 
 ---
 
@@ -90,6 +125,47 @@ L'environnement de développement est entièrement conteneurisé. **Toutes les i
 
 ---
 
+## Variables d'environnement
+
+### Backend (`backend/.env`)
+
+Copier `backend/.env.example`. Les valeurs par défaut fonctionnent en dev Docker sauf les variables Google OAuth à renseigner manuellement.
+
+| Variable | Valeur par défaut | Obligatoire | Description |
+|---|---|---|---|
+| `APP_KEY` | *(généré par `make install`)* | Oui | Clé de chiffrement Laravel |
+| `APP_URL` | `http://localhost:8000` | Oui | URL publique du backend |
+| `DB_HOST` | `db` | Oui | Nom du conteneur PostgreSQL |
+| `DB_DATABASE` | `sygma` | Oui | Nom de la base |
+| `DB_USERNAME` | `sygma` | Oui | Utilisateur PostgreSQL |
+| `DB_PASSWORD` | `sygma_pass` | Oui | Mot de passe PostgreSQL |
+| `MAIL_MAILER` | `log` | Oui | `smtp` en dev pour utiliser Mailpit |
+| `MAIL_HOST` | `mailpit` | Oui | Nom du conteneur Mailpit |
+| `MAIL_PORT` | `1025` | Oui | Port SMTP de Mailpit |
+| `FRONTEND_URL` | `http://localhost:3000` | Oui | Utilisé pour les liens dans les emails |
+| `SANCTUM_STATEFUL_DOMAINS` | `localhost:3000` | Oui | Domaines autorisés pour les cookies de session |
+| `GOOGLE_CLIENT_ID` | *(vide)* | Si OAuth Google | ID client Google — voir ci-dessous |
+| `GOOGLE_CLIENT_SECRET` | *(vide)* | Si OAuth Google | Secret Google |
+| `GOOGLE_REDIRECT_URI` | `http://localhost:8000/auth/google/callback` | Si OAuth Google | Doit correspondre à la Google Console |
+
+**Obtenir les credentials Google OAuth :**
+1. Aller sur [console.cloud.google.com](https://console.cloud.google.com)
+2. Créer un projet → APIs & Services → Credentials → Create OAuth Client ID
+3. Type : **Web application**
+4. Authorized redirect URI : `http://localhost:8000/auth/google/callback`
+5. Copier `Client ID` → `GOOGLE_CLIENT_ID` et `Client Secret` → `GOOGLE_CLIENT_SECRET`
+
+### Frontend (`frontend/.env`)
+
+Copier `frontend/.env.example`.
+
+| Variable | Valeur par défaut | Description |
+|---|---|---|
+| `VITE_API_URL` | `/api` | Préfixe des appels API (relatif = même origine) |
+| `VITE_BACKEND_URL` | *(vide)* | URL absolue du backend si différente du frontend |
+
+---
+
 ## Architecture générale
 
 L'application suit une architecture **client-serveur découplée** :
@@ -129,7 +205,9 @@ flowchart TD
 
 ## Modèle de données
 
-Le schéma complet (MCD/MLD) est disponible dans `docs/specs/MCD/`.
+![MLD](specs/MCD/MLD.png)
+
+> Schéma MCD complet : `docs/specs/MCD/MCD.png`
 
 **Tables principales :**
 
@@ -273,26 +351,36 @@ app/Exceptions/
 frontend/src/
 ├── pages/
 │   ├── Auth/              # Callback Google OAuth
-│   ├── Email/             # Confirmation email + vérification token
+│   │   └── GoogleSuccesPage.jsx
+│   ├── Conditions/        # CGU
+│   ├── Email/             # Confirmation + vérification email
+│   │   ├── EmailConfirmerPage.jsx
+│   │   └── EmailVerifyPage.jsx
 │   ├── Enseignant/        # Espace enseignant
-│   │   ├── AccueilEnseignantPage.jsx   # Liste des séances
-│   │   ├── SessionQR.jsx               # Gestion session QR en direct
-│   │   ├── PresencesEnseignantPage.jsx # Archives
+│   │   ├── AccueilEnseignantPage.jsx    # Liste des séances
+│   │   ├── SessionQR.jsx                # Gestion session QR en direct
+│   │   ├── PresencesEnseignantPage.jsx  # Archives des présences
 │   │   ├── MesSeancesEnseignantPage.jsx
 │   │   └── ProfilEnseignantPage.jsx
 │   ├── Etudiant/          # Espace étudiant
-│   │   ├── ScanPresence.jsx            # Scanner QR Code
+│   │   ├── AccueilEtudiantPage.jsx
+│   │   ├── ScanPresence.jsx             # Scanner QR Code
 │   │   ├── MesPresences.jsx
-│   │   └── MesSeancesEtudiantPage.jsx
+│   │   ├── MesSeancesEtudiantPage.jsx
+│   │   └── ProfilEtudiantPage.jsx
 │   ├── Gestionnaire/      # Espace gestionnaire
-│   │   ├── AccueilGestionnairePage.jsx
 │   │   ├── PresencesGestionnairePage.jsx
-│   │   ├── ImportComptesPage.jsx       # Import CSV/Excel
+│   │   ├── InvitationsGestionnairePage.jsx
+│   │   ├── GestionnaireGroupesPage.jsx
+│   │   ├── ImportComptesPage.jsx        # Import CSV/Excel
 │   │   └── DemandeGestionnairePage.jsx
 │   ├── Inscription/       # Inscription + choix de rôle
+│   │   ├── InscriptionPage.jsx
+│   │   ├── ChoisirRolePage.jsx          # Choix rôle après Google OAuth
+│   │   └── InscriptionGestionnairePage.jsx
 │   └── Login/             # Page de connexion
 ├── layouts/               # EnseignantLayout, GestionnaireLayout, EtudiantLayout
-├── components/            # CookieBanner, Headers par rôle
+├── components/            # Headers par rôle
 └── styles/                # variables.css, thèmes
 ```
 
@@ -303,20 +391,27 @@ frontend/src/
 | `/` | Redirect `/login` | Public |
 | `/login` | `LoginChoicePage` | Public |
 | `/inscription` | `InscriptionPage` | Public |
+| `/inscription/choisir-role` | `ChoisirRolePage` | Public (Google OAuth) |
 | `/inscription/gestionnaire/:token` | `InscriptionGestionnairePage` | Public (lien email) |
 | `/demande-gestionnaire` | `DemandeGestionnairePage` | Public |
 | `/auth/google/succes` | `GoogleSuccesPage` | Public |
+| `/email/confirmer` | `EmailConfirmerPage` | Public |
 | `/email/verify/:token` | `EmailVerifyPage` | Public |
+| `/conditions` | `ConditionPage` | Public |
 | `/enseignant/accueil` | `AccueilEnseignantPage` | Enseignant |
 | `/enseignant/session/:seanceId` | `SessionQR` | Enseignant |
 | `/enseignant/archives` | `PresencesEnseignantPage` | Enseignant |
 | `/enseignant/mes-seances` | `MesSeancesEnseignantPage` | Enseignant |
-| `/gestionnaire/` | `AccueilGestionnairePage` | Gestionnaire |
+| `/enseignant/profil` | `ProfilEnseignantPage` | Enseignant |
 | `/gestionnaire/presences` | `PresencesGestionnairePage` | Gestionnaire |
+| `/gestionnaire/invitations` | `InvitationsGestionnairePage` | Gestionnaire |
+| `/gestionnaire/groupes` | `GestionnaireGroupesPage` | Gestionnaire |
 | `/gestionnaire/import` | `ImportComptesPage` | Gestionnaire |
+| `/etudiant/accueil` | `AccueilEtudiantPage` | Étudiant |
 | `/etudiant/scan` | `ScanPresence` | Étudiant |
 | `/etudiant/mes-presences` | `MesPresences` | Étudiant |
 | `/etudiant/mes-seances` | `MesSeancesEtudiantPage` | Étudiant |
+| `/etudiant/profil` | `ProfilEtudiantPage` | Étudiant |
 
 ---
 

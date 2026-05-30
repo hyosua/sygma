@@ -169,6 +169,9 @@ return response()->json('Ressource introuvable.', 404);
 
 ---
 
-## Frontend Vue.js
+## Frontend React
 
-> à compléter plus tard...
+- Composants fonctionnels uniquement (pas de classes)
+- Un composant = un fichier, nommé en PascalCase (`SeanceCard.jsx`)
+- Les appels API se font via `fetch` natif avec `credentials: 'include'`
+- Pas de logique métier dans les composants : extraire dans des hooks ou des fonctions utilitaires
