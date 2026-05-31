@@ -57,12 +57,57 @@ Avant le départ de l'équipe actuelle, vérifier que :
 - Fournir un export SQL de la structure (si des changements majeurs hors migrations existent).
 - Vérifier que le `DatabaseSeeder` génère bien un jeu de données de test complet et fonctionnel pour la nouvelle équipe.
 
-## 5. Maintenance et CI/CD
+## 5. Transfert Railway & Vercel
+
+L'infrastructure de production tourne sur Railway (backend) et Vercel (frontend). Un `git push` sur `main` déclenche les deux déploiements automatiquement.
+
+### Railway (backend)
+
+1. Inviter le responsable de la nouvelle équipe comme **Admin** dans le projet Railway existant, ou transférer le projet via `Settings` -> `Transfer Project`.
+2. S'assurer que les variables d'environnement suivantes sont bien renseignées dans le tableau de bord Railway :
+
+| Variable | Valeur |
+|---|---|
+| `APP_ENV` | `production` |
+| `APP_DEBUG` | `false` |
+| `APP_KEY` | générer via `php artisan key:generate --show` |
+| `APP_URL` | URL Railway du service |
+| `DB_*` | fournis automatiquement par le plugin PostgreSQL Railway |
+| `SESSION_DRIVER` | `database` |
+| `SESSION_SAME_SITE` | `none` |
+| `SESSION_SECURE_COOKIE` | `true` |
+| `SANCTUM_STATEFUL_DOMAINS` | domaine Vercel sans `https://` |
+| `FRONTEND_URL` | URL Vercel complète |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | credentials Google OAuth |
+| `GOOGLE_REDIRECT_URI` | `https://<domaine-railway>/auth/google/callback` |
+| `MAIL_MAILER` | `smtp` (ou `log` pour désactiver) |
+
+> **Attention :** ne jamais activer `SEED_ON_DEPLOY=true` en production - cela efface toute la base de données.
+
+### Vercel (frontend)
+
+1. Inviter le responsable de la nouvelle équipe comme **Owner** dans le projet Vercel, ou le transférer via `Settings` -> `Transfer Project`.
+2. Vérifier que la variable d'environnement est bien renseignée :
+
+| Variable | Valeur |
+|---|---|
+| `VITE_API_URL` | URL Railway + `/api` (ex: `https://backend-xxx.up.railway.app/api`) |
+
+3. S'assurer que le fichier `frontend/vercel.json` est présent dans le repo (il gère le routing SPA).
+
+### Vérification post-passation
+
+Après que la nouvelle équipe a pris la main, faire un push de test sur `main` et vérifier :
+- Railway -> onglet "Deployments" : build vert, migrations passées dans les logs.
+- Vercel -> onglet "Deployments" : build Vite vert.
+- Tester une connexion complète depuis le frontend en production.
+
+## 6. Maintenance et CI/CD
 
 - Vérifier que les GitHub Actions (`ci-backend.yml`, `ci-frontend.yml`) sont au vert.
 - Si des services tiers sont utilisés (hébergement, registries), transférer la propriété des comptes ou documenter les accès.
 
-## 6. Contacts
+## 7. Contacts
 
 Hyosua Colléter - [colleterhyosua@gmail.com](mailto:colleterhyosua@gmail.com)
 Yahaya Coulibaly -
