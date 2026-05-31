@@ -153,6 +153,7 @@ class ExportController extends Controller
                     "statut_{$suffixe}_{$dateDebut}_{$dateFin}.xlsx"
                 );
             } elseif ($type === 'P') {
+                ini_set('memory_limit', '256M');
                 $data = $query->get()->map(fn ($row) => (array) $row)->all();
                 $pdf = Pdf::loadView('pdf.liste-personnes', [
                     'items' => $data,
