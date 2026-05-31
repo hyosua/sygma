@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Emargement\EtudiantNonInscritException;
 use App\Exceptions\NonAutoriseException;
 use App\Models\Presence;
 use App\Models\Seance;
@@ -10,6 +11,7 @@ use App\Models\User;
 use App\Services\EmargementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class EmargementController extends Controller
 {
@@ -101,6 +103,16 @@ class EmargementController extends Controller
         }
 
         $etudiant = User::findOrFail($data['etudiant_id']);
+
+        if ($etudiant->groupe_id !== $session->seance->groupe_id) {
+            throw new EtudiantNonInscritException();
+        }
+
+        if (Presence::where('session_emargement_id', $session->id)->where('etudiant_id', $etudiant->id)->where('statut', 'present')->exists()) {
+            throw ValidationException::withMessages([
+                'etudiant_id' => ["L'étudiant a déjà été émargé pour cette séance."],
+            ]);
+        }
 
         $presence = Presence::updateOrCreate(
             ['session_emargement_id' => $session->id, 'etudiant_id' => $etudiant->id],
