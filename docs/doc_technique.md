@@ -18,6 +18,7 @@
 14. [CI/CD](#cicd)
 15. [Tests sur mobile](#tests-sur-mobile)
 16. [Sécurité](#sécurité)
+17. [Déploiement en production](#déploiement-en-production)
 
 ---
 
@@ -887,3 +888,59 @@ En production, Laravel masque les stack traces si `APP_DEBUG=false`. Un rendu pe
 
 - Token de 32 caractères aléatoires, valable 48 h, à usage unique (`used_at`)
 - `updateOrCreate` sur l'email : réinviter un même email renouvelle le token sans créer de doublon
+
+---
+
+## Déploiement en production
+
+**Infrastructure :** backend sur [Railway](https://railway.app), frontend sur [Vercel](https://vercel.com).
+
+**Déploiement continu :** un `git push` sur `main` déclenche automatiquement Railway et Vercel en parallèle. Aucune action manuelle n'est requise après un push.
+
+### Backend - Railway
+
+Railway utilise `backend/Dockerfile.prod` pour le build. Au démarrage, `backend/start.sh` exécute les migrations puis lance `php artisan serve`.
+
+**Variables d'environnement à configurer dans le tableau de bord Railway :**
+
+| Variable | Valeur |
+|---|---|
+| `APP_ENV` | `production` |
+| `APP_DEBUG` | `false` |
+| `APP_KEY` | générer via `php artisan key:generate --show` |
+| `APP_URL` | URL Railway du service (ex: `https://backend-xxx.up.railway.app`) |
+| `DB_*` | fournis automatiquement par le plugin PostgreSQL Railway |
+| `SESSION_DRIVER` | `database` |
+| `SESSION_SAME_SITE` | `none` |
+| `SESSION_SECURE_COOKIE` | `true` |
+| `SANCTUM_STATEFUL_DOMAINS` | domaine Vercel sans `https://` (ex: `sygma-eight.vercel.app`) |
+| `FRONTEND_URL` | URL Vercel complète (ex: `https://sygma-eight.vercel.app`) |
+| `GOOGLE_CLIENT_ID` | credentials Google OAuth |
+| `GOOGLE_CLIENT_SECRET` | credentials Google OAuth |
+| `GOOGLE_REDIRECT_URI` | `https://<domaine-railway>/auth/google/callback` |
+| `MAIL_MAILER` | `smtp` (ou `log` pour désactiver) |
+
+> Ne jamais activer `SEED_ON_DEPLOY=true` en production - cela efface et réinitialise toute la base de données.
+
+### Frontend - Vercel
+
+Vercel détecte automatiquement Vite. Une seule variable à configurer dans le tableau de bord Vercel :
+
+| Variable | Valeur |
+|---|---|
+| `VITE_API_URL` | URL Railway + `/api` (ex: `https://backend-xxx.up.railway.app/api`) |
+
+Le fichier `frontend/vercel.json` gère le routing SPA (toutes les routes redirigent vers `index.html`).
+
+### Vérifications post-déploiement
+
+1. **Railway** - onglet "Deployments" : vérifier que le build est vert et que les migrations ont tourné dans les logs.
+2. **Vercel** - onglet "Deployments" : vérifier que le build Vite est vert.
+3. Tester un appel API depuis le navigateur pour confirmer que le backend répond.
+4. Tester une connexion depuis le frontend pour valider CORS et Sanctum.
+
+### Consulter les logs Railway
+
+Railway > projet > service backend > onglet **"Logs"** (ou "Deployments" > dernier déploiement > "View Logs").
+
+Les erreurs PHP apparaissent sous la forme `production.ERROR: ...` avec la stack trace complète.
