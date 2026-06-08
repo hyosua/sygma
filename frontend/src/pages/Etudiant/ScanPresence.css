@@ -184,6 +184,67 @@
     background-color: var(--primary-hover);
 }
 
+.retry-button--overlay {
+    margin-top: 1.25rem;
+    padding: 0.6rem 1.25rem;
+    width: auto;
+    font-size: 0.9rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+.retry-button--overlay:hover {
+    background-color: var(--primary-hover);
+}
+
+.retry-button--link {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: underline;
+    z-index: 6;
+    white-space: nowrap;
+    padding: 0.25rem 0.5rem;
+}
+
+.retry-button--link:hover {
+    color: white;
+}
+
+.camera-permission-guide {
+    text-align: left;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.camera-permission-guide__titre {
+    font-weight: 600;
+    color: var(--color-dark);
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.camera-permission-guide__steps {
+    padding-left: 1.25rem;
+    margin: 0 0 1.25rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.camera-permission-guide__steps li {
+    margin-bottom: 0.5rem;
+}
+
 .info-message {
     margin-top: 1.5rem;
     padding: 1rem 1.5rem;
