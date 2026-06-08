@@ -19,6 +19,8 @@ const ScanPresence = () => {
   const [statut, setStatut] = useState('chargement'); // chargement, lecture, validation, succes, erreur
   const [message, setMessage] = useState('');
   const [scanKey, setScanKey] = useState(0);
+  const [cameraBloquee, setCameraBloquee] = useState(false);
+  const [permissionRefusee, setPermissionRefusee] = useState(false);
   const scannerRef = useRef(null);
   // Ref miroir pour éviter la closure stale sur localisation
   const localisationRef = useRef(null);
@@ -44,6 +46,28 @@ const ScanPresence = () => {
         }
       );
     }
+  }, []);
+
+  // Timeout : si la caméra ne démarre pas en 5s (iOS Safari), on affiche le bouton relancer
+  useEffect(() => {
+    if (statut !== 'chargement') {
+      setCameraBloquee(false);
+      return;
+    }
+    const timer = setTimeout(() => setCameraBloquee(true), 5000);
+    return () => clearTimeout(timer);
+  }, [statut, scanKey]);
+
+  const relancerCamera = useCallback(() => {
+    // Vider le DOM du reader pour éviter l'erreur "already started" sur iOS
+    const readerEl = document.getElementById('reader');
+    if (readerEl) readerEl.innerHTML = '';
+    dejaTraiteRef.current = false;
+    setCameraBloquee(false);
+    setPermissionRefusee(false);
+    setStatut('chargement');
+    setMessage('');
+    setScanKey((k) => k + 1);
   }, []);
 
   const handleEmargement = useCallback(async (donnees) => {
@@ -155,8 +179,17 @@ const ScanPresence = () => {
           return;
         }
         console.error('Impossible de démarrer la caméra', err);
+        const estRefus =
+          (err instanceof DOMException && err.name === 'NotAllowedError') ||
+          (typeof err === 'string' &&
+            (err.toLowerCase().includes('permission') ||
+              err.toLowerCase().includes('notallowed') ||
+              err.toLowerCase().includes('not allowed')));
+        setPermissionRefusee(estRefus);
         setStatut('erreur');
-        setMessage("L'accès à la caméra a été refusé ou n'est pas disponible.");
+        setMessage(
+          estRefus ? "L'accès à la caméra a été refusé." : "La caméra n'a pas pu démarrer."
+        );
       }
     };
 
@@ -251,9 +284,21 @@ const ScanPresence = () => {
               <div className="scanner-overlay">
                 <div className="spinner"></div>
                 <p>Initialisation caméra...</p>
+                {cameraBloquee && (
+                  <button onClick={relancerCamera} className="retry-button retry-button--overlay">
+                    La caméra ne répond pas - Relancer
+                  </button>
+                )}
               </div>
             )}
-            {statut === 'lecture' && <div className="scan-region-highlight"></div>}
+            {statut === 'lecture' && (
+              <>
+                <div className="scan-region-highlight"></div>
+                <button onClick={relancerCamera} className="retry-button--link">
+                  Relancer la caméra
+                </button>
+              </>
+            )}
           </div>
         )}
 
@@ -277,17 +322,27 @@ const ScanPresence = () => {
             <div className="icon">✕</div>
             <h2>Échec</h2>
             <p>{message}</p>
-            <button
-              onClick={() => {
-                dejaTraiteRef.current = false;
-                setStatut('chargement');
-                setMessage('');
-                setScanKey((k) => k + 1);
-              }}
-              className="retry-button"
-            >
-              Réessayer
-            </button>
+            {permissionRefusee ? (
+              <div className="camera-permission-guide">
+                <p className="camera-permission-guide__titre">Comment autoriser la caméra :</p>
+                <ol className="camera-permission-guide__steps">
+                  <li>
+                    <strong>iOS Safari</strong> : Réglages &gt; Safari &gt; Caméra &gt; Autoriser
+                  </li>
+                  <li>
+                    <strong>Android Chrome</strong> : appuyez sur l&apos;icône cadenas dans la barre
+                    d&apos;adresse &gt; Caméra &gt; Autoriser
+                  </li>
+                </ol>
+                <button onClick={relancerCamera} className="retry-button">
+                  J&apos;ai autorisé la caméra - Réessayer
+                </button>
+              </div>
+            ) : (
+              <button onClick={relancerCamera} className="retry-button">
+                Réessayer
+              </button>
+            )}
           </div>
         )}
       </main>
