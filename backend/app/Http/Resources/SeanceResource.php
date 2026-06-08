@@ -18,7 +18,6 @@ class SeanceResource extends JsonResource
             'salle' => $this->salle,
             'statut' => $this->statut,
             'nombre_inscrits' => $this->nombre_inscrits,
-            'emarge' => $this->when(isset($this->resource->emarge), (bool) $this->emarge),
             'cours' => new CoursResource($this->cours),
             'enseignant' => new EnseignantResource($this->enseignant),
             'groupe' => new GroupeResource($this->groupe),
