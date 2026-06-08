@@ -18,12 +18,7 @@ function MesPresences() {
 
   async function getData() {
     try {
-      let stat;
-      if (statuts == false) {
-        stat = 'a';
-      } else {
-        stat = 'p';
-      }
+      const stat = statuts === false ? 'a' : 'p';
       const user = JSON.parse(localStorage.getItem('user'));
 
       const api = await fetch(`${API_BASE}/mes-presences/${user.id}?statuts=${stat}`, {
@@ -34,12 +29,15 @@ function MesPresences() {
         console.error('Erreur API:', api.status);
         return;
       }
-      const json = await api.json();
 
+      const json = await api.json();
       console.log(json);
-      setData(json.data);
-    } catch {
-      console.log('erreur');
+
+      const donneesTriees = (json.data ?? []).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      setData(donneesTriees);
+    } catch (error) {
+      console.error('Erreur:', error);
     }
   }
 

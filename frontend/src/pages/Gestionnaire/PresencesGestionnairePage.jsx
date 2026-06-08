@@ -73,7 +73,11 @@ export default function PresencesGestionnairePage() {
       );
       const data = await res.json();
       if (res.ok && data.success) {
-        setPresences(data.data);
+        const presencesTriees = (data.data ?? []).sort(
+          (a, b) => new Date(b.presence_date) - new Date(a.presence_date)
+        );
+
+        setPresences(presencesTriees);
       } else {
         setPresences([]);
         if (!data.success) setErreur(null);
