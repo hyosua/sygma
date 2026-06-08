@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import './MesPresences.css';
+import { useLocation } from 'react-router-dom';
 function MesPresences() {
-  const [statuts, setStatuts] = useState(false);
+  const location = useLocation();
+  const [statuts, setStatuts] = useState(location.state?.onglet ?? false); // true = présent, false = absent
   const [data, setData] = useState([]);
 
   const API_BASE = import.meta.env.VITE_API_URL;
