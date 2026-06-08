@@ -110,7 +110,11 @@ export default function PresencesEnseignantPage() {
           coursNomsAutorises.includes(p.cours_nom)
         );
 
-        setPresences(resultatsFiltres);
+        const resultatsTries = resultatsFiltres.sort(
+          (a, b) => new Date(b.presence_date) - new Date(a.presence_date)
+        );
+
+        setPresences(resultatsTries);
       } else {
         setPresences([]);
         setErreur(data.message ?? null);
