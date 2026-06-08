@@ -24,17 +24,18 @@ class EmargementService
      * @param  string  $methode  'qr' ou 'manual'
      * @param  array  $coordonnees  ['latitude' => x, 'longitude' => y] optionnel
      */
-    public function demarrerSession(Seance $seance, bool $isMethodeQr = true, array $coordonnees = []): SessionEmargement
+    public function demarrerSession(Seance $seance, bool $isMethodeQr = true,  int $duree = self::DUREE_VALIDITE_JETON, array $coordonnees = [],): SessionEmargement
     {
         if (! $seance->isActive()) {
             throw new SeanceNonActiveException();
         }
+        $temps = $duree;
 
         return SessionEmargement::create([
             'seance_id' => $seance->id,
             'is_methode_qr' => $isMethodeQr,
             'jeton' => $isMethodeQr ? $this->genererJeton() : null,
-            'jeton_expire_a' => $isMethodeQr ? Carbon::now()->addSeconds(self::DUREE_VALIDITE_JETON) : null,
+            'jeton_expire_a' => $isMethodeQr ? Carbon::now()->addSeconds($temps) : null,
             'latitude' => $coordonnees['latitude'] ?? null,
             'longitude' => $coordonnees['longitude'] ?? null,
         ]);
@@ -104,11 +105,13 @@ class EmargementService
     /**
      * Génère un nouveau jeton pour une session active (Rotation du jeton).
      */
-    public function rafraichirJeton(SessionEmargement $session): SessionEmargement
+    public function rafraichirJeton(SessionEmargement $session, $duree = self::DUREE_VALIDITE_JETON): SessionEmargement
     {
+        $temps = $duree;
+
         $session->update([
             'jeton' => $this->genererJeton(),
-            'jeton_expire_a' => Carbon::now()->addSeconds(self::DUREE_VALIDITE_JETON),
+            'jeton_expire_a' => Carbon::now()->addSeconds($temps),
         ]);
 
         return $session;
@@ -128,7 +131,7 @@ class EmargementService
             ->pluck('id');
 
         // préparer le insertions
-        $absents = $absentsIds->map(fn ($etudiantId) => [
+        $absents = $absentsIds->map(fn($etudiantId) => [
             'session_emargement_id' => $session->id,
             'etudiant_id' => $etudiantId,
             'statut' => 'absent',
@@ -159,7 +162,7 @@ class EmargementService
         $etudiants = $session->seance->groupe->users;
         $presences = $session->presences->keyBy('etudiant_id');
 
-        $listeEtudiants = $etudiants->map(fn ($etudiant) => [
+        $listeEtudiants = $etudiants->map(fn($etudiant) => [
             'etudiant_id' => $etudiant->id,
             'nom' => $etudiant->nom,
             'prenom' => $etudiant->prenom,

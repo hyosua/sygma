@@ -25,7 +25,7 @@ function authHeaders() {
   };
 }
 
-function SeanceCard({ seance, onEmarger }) {
+function SeanceCard({ seance, onEmarger, isEmarged = false }) {
   return (
     <div className="seance-card">
       <div className="seance-top">
@@ -92,6 +92,7 @@ export default function MesSeancesEtudiantPage() {
   const [activeTab, setActiveTab] = useState('en_cours');
   const [seances, setSeances] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([])
 
   useEffect(() => {
     const chargerSeances = async () => {
@@ -123,13 +124,49 @@ export default function MesSeancesEtudiantPage() {
   }, []);
 
   const handleEmarger = (seance) => {
+    console.log("CLICK", seance);
+
+    getEtudiantbyseance(seance.id);
+
+    console.log("LANCER");
     navigate(`/etudiant/scan`, {
       state: {
         seanceId: seance.id,
         seance,
       },
     });
+
+
   };
+
+
+  async function getEtudiantbyseance(seance) {
+    const token = localStorage.getItem('token');
+
+    try {
+      const api = await fetch(`${API_BASE}/api/sessions-emargement/${seance}/statut`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        }
+      })
+      const json = await api.json()
+      console.log(json)
+      setData(json);
+    } catch (ex) {
+      console.log(ex)
+    }
+  }
+
+
+
+
+
+  useEffect(() => {
+
+    // data.
+
+  }, [data])
 
   const filteredSeances = useMemo(() => {
     return seances.filter((seance) => seance.statut === activeTab);
@@ -138,7 +175,6 @@ export default function MesSeancesEtudiantPage() {
   return (
     <div className="mes-seances-page">
       <div className="overlay" />
-
       <div className="content">
         <header className="hero-card">
           <div>

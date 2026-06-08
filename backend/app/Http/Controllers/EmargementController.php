@@ -24,6 +24,7 @@ class EmargementController extends Controller
             'is_methode_qr' => 'required|boolean',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'duree' => 'nullable|numeric'
         ]);
 
         $seance = Seance::findOrFail($request->seance_id);
@@ -37,7 +38,7 @@ class EmargementController extends Controller
             'longitude' => $request->longitude,
         ];
 
-        $session = $this->emargementService->demarrerSession($seance, (bool) $request->is_methode_qr, $coordonnees);
+        $session = $this->emargementService->demarrerSession($seance, (bool) $request->is_methode_qr,$request->duree ,$coordonnees);
 
         return response()->json($session, 201);
     }
@@ -54,9 +55,6 @@ class EmargementController extends Controller
 
         return response()->json($sessionUpdated);
     }
-
-    // Valide la présence d'un étudiant via un jeton.
-
     public function validerPresenceParQR(Request $request)
     {
         $request->validate([

@@ -9,6 +9,10 @@ export default function AccueilEnseignantPage() {
 
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const [dureeEmargement, setDuree] = useState(20);
+  const [settings, setSettings] = useState(false);
+
+
 
   const handleStartEmargement = async (seanceId) => {
     try {
@@ -22,10 +26,15 @@ export default function AccueilEnseignantPage() {
         body: JSON.stringify({
           seance_id: seanceId,
           is_methode_qr: true,
+          duree: dureeEmargement == null || 0 ? 20 : dureeEmargement
         }),
       });
+      console.log(seanceId)
+
 
       const donnees = await reponse.json();
+      console.log(donnees)
+
 
       if (!reponse.ok) {
         alert(donnees.message || 'Erreur lors du démarrage.');
@@ -71,7 +80,6 @@ export default function AccueilEnseignantPage() {
       fetchSeances();
     }
   }, [token, user.id]);
-
   return (
     <div className="enseignant-home-page">
       <div className="home-content">
@@ -91,6 +99,33 @@ export default function AccueilEnseignantPage() {
             {seancesEnCours.map((seance) => (
               <div key={seance.id} className="quick-card session-quick-card">
                 <div className="session-card-content">
+
+                  <button  onClick={() => settings == false ? setSettings(true) : setSettings(false)}>
+                    <img src="/image.png" width={'30%'} alt="" srcset="" />
+                  </button>
+                  <div hidden={settings == false ? false : true}>
+                    <table border={1}>
+                      <tr>
+                        <tbody>
+                          <td>
+
+
+                          </td>
+
+                        </tbody>
+                      </tr>
+                      <tr>
+                        <tbody>
+                          <td>
+                            <img src="/lhorloge.png" width={'5.5%'} alt="" srcset="" />
+
+                            <input type="number" style={{ marginLeft: "350px" }} value={dureeEmargement} min={10} max={300} name="" onChange={(e) => setDuree(e.target.value)} id="" placeholder='Combien de temps souhaitez vous ?' />
+
+                          </td>
+                        </tbody>
+                      </tr>
+                    </table>
+                  </div>
                   <span className="session-badge">Séance en cours</span>
 
                   <h3>{seance.cours?.nom || 'Cours non renseigné'}</h3>
@@ -133,6 +168,12 @@ export default function AccueilEnseignantPage() {
                       Salle {seance.salle || '—'}
                     </p>
                   </div>
+                  <div>
+
+
+
+
+                  </div>
                   <button
                     className="start-emargement-button"
                     onClick={() => handleStartEmargement(seance.id)}
@@ -165,8 +206,8 @@ export default function AccueilEnseignantPage() {
               <p>Accédez à vos informations personnelles et à votre espace enseignant.</p>
             </Link>
           </div>
-        </section>
-      </div>
-    </div>
+        </section >
+      </div >
+    </div >
   );
 }
