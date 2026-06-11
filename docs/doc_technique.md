@@ -28,6 +28,8 @@
 
 **Prérequis machine hôte :** Docker + Docker Compose V2 + `make`
 
+> Docker n'est pas obligatoire — voir [Développement sans Docker](#développement-sans-docker) si vous préférez un setup local.
+
 ```bash
 git clone https://github.com/hyosua/sygma.git && cd sygma
 cp backend/.env.example backend/.env   # puis renseigner GOOGLE_CLIENT_ID et GOOGLE_CLIENT_SECRET
@@ -42,6 +44,27 @@ make start     # démarrer les serveurs
 git pull && make update   # après chaque git pull
 make start
 ```
+
+### Développement sans Docker
+
+Si Docker n'est pas disponible ou non souhaité, le projet tourne avec un setup local classique.
+
+**Prérequis :** PHP 8.2+, Composer, Node 20+, PostgreSQL 16 (avec l'extension PostGIS si vous travaillez sur la géolocalisation)
+
+Chaque commande `make` est un raccourci vers des commandes standard :
+
+| `make` | Équivalent sans Docker |
+|---|---|
+| `make install` | `composer install` (dans `backend/`) + `npm install` (dans `backend/` et `frontend/`) + `php artisan key:generate` + `php artisan migrate --seed` |
+| `make start` | `php artisan serve` (dans `backend/`) + `npm run dev` (dans `frontend/`) |
+| `make update` | `composer install` + `npm install` + `php artisan migrate` |
+| `make fresh` | `php artisan migrate:fresh --seed` |
+| `make test` | `php artisan test` |
+| `make lint-fix` | `./vendor/bin/pint` + `npm run lint:fix` |
+| `make artisan ARGS="..."` | `php artisan ...` |
+| `make composer ARGS="..."` | `composer ...` |
+
+Adapter `backend/.env` : `DB_HOST=127.0.0.1`, `MAIL_MAILER=log` (pas de Mailpit local), `APP_URL=http://localhost:8000`. Le `VITE_API_URL` dans `frontend/.env` pointe vers `http://localhost:8000/api`.
 
 **Compte disponible après `make fresh` (seed) :**
 
