@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Invitation gestionnaire — Sygma</title>
+    <title>Invitation gestionnaire - Sygma</title>
 </head>
 <body style="font-family: sans-serif; padding: 32px;">
     <h2>Vous avez été invité à rejoindre Sygma en tant que gestionnaire</h2>

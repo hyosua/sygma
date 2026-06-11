@@ -89,6 +89,7 @@ class InvitationGestionnaireController extends Controller
     public function approuver(InvitationGestionnaire $invitation)
     {
         $this->invitGestionnaireService->creerInvitation($invitation->email);
+        $invitation->delete();
 
         return response()->json(['message' => 'Invitation envoyée.']);
     }

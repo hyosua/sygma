@@ -11,13 +11,14 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
+        "fakerphp/faker": "^1.23",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.26",
         "laravel/tinker": "^2.9",
         "maatwebsite/excel": "^3.1",
+        "resend/resend-laravel": "^1.4",
         "socialiteproviders/google": "^4.1",
-        "fakerphp/faker": "^1.23",
         "spatie/laravel-permission": "^6.24"
     },
     "require-dev": {

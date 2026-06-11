@@ -24,7 +24,7 @@ class InvitationGestionnaireEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Invitation gestionnaire — Sygma',
+            subject: 'Invitation gestionnaire - Sygma',
         );
     }
 

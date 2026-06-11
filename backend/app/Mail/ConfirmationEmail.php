@@ -23,7 +23,7 @@ class ConfirmationEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Confirmez votre adresse email — Sygma',
+            subject: 'Confirmez votre adresse email - Sygma',
         );
     }
 
